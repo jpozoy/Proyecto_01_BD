@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ERP System</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar-->
+            <aside>
+                <div class="sidebar">
+                    <h3>Modulos</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item @(Context.Request.Path == "/Clientes" ? "active" : "")">
+                            <i class="material-icons">person</i>
+                            <a  asp-area="" asp-page="/Clientes">Clientes</a>
+                        </li>
+                        <li class="nav-item @(Context.Request.Path == "/Venta" ? "active" : "")">
+                            <i class="material-icons">shopping_cart</i>
+                            <a  asp-area="" asp-page="/Venta">Ventas</a>
+                        </li>
+                        <li class="nav-item @(Context.Request.Path == "/Facturacion" ? "active" : "")">
+                            <i class="material-icons">bar_chart</i>
+                            <a  asp-area="" asp-page="/Facturacion">Facturación</a>
+                        </li>
+                        <li class="nav-item @(Context.Request.Path == "/Planillas" ? "active" : "")">
+                            <i class="material-icons">assignment</i>
+                            <a  asp-area="" asp-page="/Planillas">Planillas</a>
+                        </li>
+                        <li class="nav-item @(Context.Request.Path == "/Inventario" ? "active" : "")">
+                            <i class="material-icons">inventory</i>
+                            <a asp-area="" asp-page="/Inventario">Inventario</a>
+                        </li>
+                        <li class="nav-item @(Context.Request.Path == "/Cotizacion" ? "active" : "")">
+                            <i class="material-icons">attach_money</i>
+                            <a  asp-area="" asp-page="/Cotizacion">Cotización</a>
+                        </li>
+                        <li class="nav-item @(Context.Request.Path == "/Casos" ? "active" : "")">
+                            <i class="material-icons">assignment_turned_in</i>
+                            <a  asp-area="" asp-page="/Casos">Casos</a>
+                        </li>
+                        <li class="nav-item @(Context.Request.Path == "/Usuarios" ? "active" : "")">
+                            <i class="material-icons">people</i>
+                            <a  asp-area="" asp-page="/Usuarios">Usuarios</a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Contenido -->
+            <main class="main-content col-md-9 ml-sm-auto">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
