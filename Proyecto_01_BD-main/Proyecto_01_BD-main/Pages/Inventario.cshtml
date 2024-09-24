@@ -1,0 +1,91 @@
+﻿@page
+@functions {
+    // Clase interna para representar un artículo en el inventario
+
+    public class ArticuloInventario
+
+    {
+
+        public int Codigo_Articulo { get; set; }
+
+        public int Codigo_Bodega { get; set; }
+
+        public int Cantidad_Disponible { get; set; }
+
+    }
+
+
+
+    // Lista para almacenar los artículos del inventario
+
+    public List<ArticuloInventario> Inventario { get; set; } = new List<ArticuloInventario>();
+
+
+
+    // Método OnPost para procesar los datos del formulario
+
+    public void OnPost(int codigoArticulo, int codigoBodega, int cantidadDisponible)
+
+    {
+
+        // Crear un nuevo artículo y agregarlo a la lista del inventario
+
+        Inventario.Add(new ArticuloInventario
+
+            {
+
+                Codigo_Articulo = codigoArticulo,
+
+                Codigo_Bodega = codigoBodega,
+
+                Cantidad_Disponible = cantidadDisponible
+
+            });
+
+    }
+}
+
+<link rel="stylesheet" href="/css/styles.css">
+
+<div class="container">
+    <h2>Registro de Inventario</h2>
+
+    <!-- Formulario para registrar un artículo en el inventario -->
+    <form method="post">
+        <div>
+            <label for="codigoArticulo">Código del Artículo:</label>
+            <input type="number" id="codigoArticulo" name="codigoArticulo" required />
+        </div>
+        <div>
+            <label for="codigoBodega">Código de la Bodega:</label>
+            <input type="number" id="codigoBodega" name="codigoBodega" required />
+        </div>
+        <div>
+            <label for="cantidadDisponible">Cantidad Disponible:</label>
+            <input type="number" id="cantidadDisponible" name="cantidadDisponible" min="0" required />
+        </div>
+        <button type="submit">Registrar Artículo</button>
+    </form>
+
+    <!-- Tabla para mostrar los artículos en el inventario -->
+    <h3>Artículos Registrados en Inventario</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Código del Artículo</th>
+                <th>Código de la Bodega</th>
+                <th>Cantidad Disponible</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var articulo in Inventario)
+            {
+                <tr>
+                    <td>@articulo.Codigo_Articulo</td>
+                    <td>@articulo.Codigo_Bodega</td>
+                    <td>@articulo.Cantidad_Disponible</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

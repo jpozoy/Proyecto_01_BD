@@ -1,0 +1,125 @@
+﻿@page
+@functions {
+    // Clase interna para representar a un cliente
+
+    public class Cliente
+
+    {
+
+        public int Cedula { get; set; }
+
+
+
+        // Las propiedades requeridas tienen que estar validadas en el front-end
+
+        public string Nombre { get; set; }
+
+        public string Correo { get; set; }
+
+        public string Sector { get; set; }
+
+        public string Celular { get; set; }
+
+        public string Fax { get; set; }
+
+    }
+
+
+
+    // Lista para almacenar los clientes
+
+    public List<Cliente> Clientes { get; set; } = new List<Cliente>();
+
+
+
+    // Método OnPost para procesar los datos del formulario
+
+    public void OnPost(int cedula, string nombre, string correo, string sector, string celular, string fax)
+
+    {
+
+        // Crear un nuevo cliente y agregarlo a la lista
+
+        Clientes.Add(new Cliente
+
+            {
+
+                Cedula = cedula,
+
+                Nombre = nombre,
+
+                Correo = correo,
+
+                Sector = sector,
+
+                Celular = celular,
+
+                Fax = fax
+
+            });
+
+    }
+}
+
+<link rel="stylesheet" href="/css/styles.css">
+
+<div class="container">
+    <h2>Registro de Cliente</h2>
+
+    <!-- Formulario para registrar los datos del cliente -->
+    <form method="post">
+        <div>
+            <label for="cedula">Cédula:</label>
+            <input type="number" id="cedula" name="cedula" required />
+        </div>
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required />
+        </div>
+        <div>
+            <label for="correo">Correo:</label>
+            <input type="email" id="correo" name="correo" required />
+        </div>
+        <div>
+            <label for="sector">Sector:</label>
+            <input type="text" id="sector" name="sector" required />
+        </div>
+        <div>
+            <label for="celular">Celular:</label>
+            <input type="tel" id="celular" name="celular" required />
+        </div>
+        <div>
+            <label for="fax">Fax (opcional):</label>
+            <input type="tel" id="fax" name="fax" />
+        </div>
+        <button type="submit">Registrar Cliente</button>
+    </form>
+
+    <!-- Tabla para mostrar los registros de clientes -->
+    <h3>Clientes Registrados</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Sector</th>
+                <th>Celular</th>
+                <th>Fax</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cliente in Clientes)
+            {
+                <tr>
+                    <td>@cliente.Cedula</td>
+                    <td>@cliente.Nombre</td>
+                    <td>@cliente.Correo</td>
+                    <td>@cliente.Sector</td>
+                    <td>@cliente.Celular</td>
+                    <td>@cliente.Fax</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

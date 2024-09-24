@@ -1,0 +1,124 @@
+﻿@page
+@functions {
+    // Clase interna para representar los registros de la planilla
+
+    public class RegistroPlanilla
+
+    {
+
+        public string Cedula { get; set; }
+
+        public int HorasTrabajadas { get; set; }
+
+        public int HorasExtras { get; set; }
+
+        public decimal SalarioPagado { get; set; }
+
+        public string Mes { get; set; }
+
+    }
+
+
+
+    // Lista para almacenar los registros de planilla
+
+    public List<RegistroPlanilla> Planilla { get; set; } = new List<RegistroPlanilla>();
+
+
+
+    // Método OnPost para procesar los datos del formulario
+
+    public void OnPost(string cedula, int horasTrabajadas, int horasExtras, decimal salarioPagado, string mes)
+
+    {
+
+        // Crear un nuevo registro de planilla y agregarlo a la lista
+
+        Planilla.Add(new RegistroPlanilla
+
+            {
+
+                Cedula = cedula,
+
+                HorasTrabajadas = horasTrabajadas,
+
+                HorasExtras = horasExtras,
+
+                SalarioPagado = salarioPagado,
+
+                Mes = mes
+
+            });
+
+    }
+}
+
+<link rel="stylesheet" href="/css/styles.css">
+
+<div class="container">
+    <h2>Registro de Planilla</h2>
+
+    <!-- Formulario para registrar los datos de planilla -->
+    <form method="post">
+        <div>
+            <label for="cedula">Cédula del Usuario:</label>
+            <input type="text" id="cedula" name="cedula" required />
+        </div>
+        <div>
+            <label for="horasTrabajadas">Horas Trabajadas:</label>
+            <input type="number" id="horasTrabajadas" name="horasTrabajadas" min="0" required />
+        </div>
+        <div>
+            <label for="horasExtras">Horas Extras:</label>
+            <input type="number" id="horasExtras" name="horasExtras" min="0" required />
+        </div>
+        <div>
+            <label for="salarioPagado">Salario Pagado (en colones):</label>
+            <input type="number" id="salarioPagado" name="salarioPagado" step="0.01" min="0" required />
+        </div>
+        <div>
+            <label for="mes">Mes:</label>
+            <select id="mes" name="mes" required>
+                <option value="Enero">Enero</option>
+                <option value="Febrero">Febrero</option>
+                <option value="Marzo">Marzo</option>
+                <option value="Abril">Abril</option>
+                <option value="Mayo">Mayo</option>
+                <option value="Junio">Junio</option>
+                <option value="Julio">Julio</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Septiembre">Septiembre</option>
+                <option value="Octubre">Octubre</option>
+                <option value="Noviembre">Noviembre</option>
+                <option value="Diciembre">Diciembre</option>
+            </select>
+        </div>
+        <button type="submit">Registrar Planilla</button>
+    </form>
+
+    <!-- Tabla para mostrar los registros de planilla -->
+    <h3>Registros de Planilla</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Cédula</th>
+                <th>Horas Trabajadas</th>
+                <th>Horas Extras</th>
+                <th>Salario Pagado</th>
+                <th>Mes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var registro in Planilla)
+            {
+                <tr>
+                    <td>@registro.Cedula</td>
+                    <td>@registro.HorasTrabajadas</td>
+                    <td>@registro.HorasExtras</td>
+                    <td>@registro.SalarioPagado.ToString("C")</td>
+                    <td>@registro.Mes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,163 @@
+﻿@page
+@functions {
+    // Clase interna para representar una factura
+
+    public class Factura
+
+    {
+
+        public int Numero_Factura { get; set; }
+
+        public DateTime Fecha { get; set; }
+
+        public string Estado { get; set; }
+
+        public string Cedula_Cliente { get; set; }
+
+        public string Nombre_Local { get; set; }
+
+        public string Cedula_Local { get; set; }
+
+        public string Vendedor { get; set; }
+
+    }
+
+
+
+    // Clase interna para representar un cliente
+
+    public class Cliente
+
+    {
+
+        public string Cedula { get; set; }
+
+        public string Nombre { get; set; }
+
+    }
+
+
+
+    // Lista de facturas
+
+    public List<Factura> Facturas { get; set; } = new List<Factura>();
+
+
+
+    // Lista de clientes registrados (suponiendo que ya existen)
+
+    public List<Cliente> Clientes { get; set; } = new List<Cliente>
+    {
+        new Cliente { Cedula = "001", Nombre = "Juan Pérez" },
+        new Cliente { Cedula = "002", Nombre = "María García" }
+        // Puedes agregar más clientes aquí
+    };
+
+
+
+    // Método OnPost para procesar los datos del formulario
+
+    public void OnPost(int numeroFactura, DateTime fecha, string estado, string cedulaCliente, string nombreLocal, string cedulaLocal, string vendedor)
+
+    {
+
+        // Crear una nueva factura y agregarla a la lista de facturas
+
+        Facturas.Add(new Factura
+
+            {
+
+                Numero_Factura = numeroFactura,
+
+                Fecha = fecha,
+
+                Estado = estado,
+
+                Cedula_Cliente = cedulaCliente,
+
+                Nombre_Local = nombreLocal,
+
+                Cedula_Local = cedulaLocal,
+
+                Vendedor = vendedor
+
+            });
+
+    }
+}
+
+<link rel="stylesheet" href="/css/styles.css">
+
+<div class="container">
+    <h2>Registro de Factura</h2>
+
+    <!-- Formulario para registrar una factura -->
+    <form method="post">
+        <div>
+            <label for="numeroFactura">Número de Factura:</label>
+            <input type="number" id="numeroFactura" name="numeroFactura" required />
+        </div>
+        <div>
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required />
+        </div>
+        <div>
+            <label for="estado">Estado:</label>
+            <input type="text" id="estado" name="estado" required />
+        </div>
+        <div>
+            <label for="cedulaCliente">Cédula del Cliente:</label>
+            <select id="cedulaCliente" name="cedulaCliente" required>
+                <option value="" disabled selected>Selecciona una cédula</option>
+                @foreach (var cliente in Clientes)
+
+                {
+                    <option value="@cliente.Cedula">@cliente.Cedula - @cliente.Nombre</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label for="nombreLocal">Nombre del Local:</label>
+            <input type="text" id="nombreLocal" name="nombreLocal" required />
+        </div>
+        <div>
+            <label for="cedulaLocal">Cédula del Local (opcional):</label>
+            <input type="text" id="cedulaLocal" name="cedulaLocal" />
+        </div>
+        <div>
+            <label for="vendedor">Vendedor (opcional):</label>
+            <input type="text" id="vendedor" name="vendedor" />
+        </div>
+        <button type="submit">Registrar Factura</button>
+    </form>
+
+    <!-- Tabla para mostrar las facturas registradas -->
+    <h3>Facturas Registradas</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Número de Factura</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Cédula Cliente</th>
+                <th>Nombre del Local</th>
+                <th>Cédula del Local</th>
+                <th>Vendedor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var factura in Facturas)
+            {
+                <tr>
+                    <td>@factura.Numero_Factura</td>
+                    <td>@factura.Fecha.ToShortDateString()</td>
+                    <td>@factura.Estado</td>
+                    <td>@factura.Cedula_Cliente</td>
+                    <td>@factura.Nombre_Local</td>
+                    <td>@factura.Cedula_Local</td>
+                    <td>@factura.Vendedor</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
