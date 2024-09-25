@@ -1,8 +1,59 @@
 ﻿@page
-@model Proyecto_01_BD.Pages.CotizacionModel
+@using System.Data.SqlClient;
+@using Proyecto_01_BD.Clases;
 @{
-    ViewData["Title"] = "Cotizacion";
+
+    ViewData["Title"] = "Cotización";
+    // Crear conexion
+    ConexionBD conexion = new ConexionBD();
+    SqlCommand comando = new SqlCommand("SELECT Codigo_Cotizacion, Cliente, Monto_Total FROM Cotizacion", conexion.conectarbd);
+    List<Cotizacion> cotizaciones = new List<Cotizacion>();
+
+    try
+    {
+        conexion.Abrir();
+        SqlDataReader reader = comando.ExecuteReader();
+        while (reader.Read())
+        {
+            cotizaciones.Add(new Cotizacion()
+                    {
+                        //Indicar entre parentisis el indice del dato
+                        Codigo_Cotizacion = reader.GetString(0),
+                        Cliente = reader.GetString(1),
+                        Monto_Total = reader.GetDecimal(2)
+
+                    });
+            Console.WriteLine(reader.GetString(1));
+        }
+    }
+    catch (SqlException ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+    finally
+    {
+        conexion.Cerrar();
+
+    }
+
 }
 
-<h2>Cotizacion</h2>
-<p>Apartado de Cotizacion.</p>
+
+<h2>Cotización</h2>
+<div class="table-section">
+    <p>Listado de cotizaciones</p>
+    <div class="grid-table">
+        <!-- Cabeceras -->
+        <div class="grid-header">Id</div>
+        <div class="grid-header">Cliente</div>
+        <div class="grid-header">Total</div>
+
+        <!-- Datos -->
+        @foreach (var cot in cotizaciones)
+        {
+            <div class="grid-item">@cot.Codigo_Cotizacion</div>
+            <div class="grid-item">@cot.Cliente</div>
+            <div class="grid-item">@cot.Monto_Total</div>
+        }
+    </div>
+</div>

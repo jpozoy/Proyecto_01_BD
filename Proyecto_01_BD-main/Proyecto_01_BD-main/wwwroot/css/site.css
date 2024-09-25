@@ -93,3 +93,23 @@ aside .sidebar li{
     margin-left: 1rem;
 }
 
+/*Estilos Vista Cotizaci n*/
+.grid-table {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas de igual tama o */
+    gap: 10px; /* Espacio entre celdas */
+    background-color: #f8f8f8;
+    padding: 10px;
+}
+
+.grid-header {
+    font-weight: bold;
+    background-color: #e2e2e2;
+    padding: 10px;
+    border-bottom: 2px solid #ccc;
+}
+
+.grid-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
