@@ -92,44 +92,62 @@
     <h2>Registro de Factura</h2>
 
     <!-- Formulario para registrar una factura -->
-    <form method="post">
-        <div>
-            <label for="numeroFactura">Número de Factura:</label>
-            <input type="number" id="numeroFactura" name="numeroFactura" required />
-        </div>
-        <div>
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" required />
-        </div>
-        <div>
-            <label for="estado">Estado:</label>
-            <input type="text" id="estado" name="estado" required />
-        </div>
-        <div>
-            <label for="cedulaCliente">Cédula del Cliente:</label>
-            <select id="cedulaCliente" name="cedulaCliente" required>
-                <option value="" disabled selected>Selecciona una cédula</option>
-                @foreach (var cliente in Clientes)
+    <div class="form-facturacion">
+        <form method="post">
+            <!-- Número de Factura -->
+            <div class="form-group">
+                <label for="numeroFactura">Número de Factura:</label>
+                <input type="number" id="numeroFactura" name="numeroFactura" class="form-input" required />
+            </div>
 
-                {
-                    <option value="@cliente.Cedula">@cliente.Cedula - @cliente.Nombre</option>
-                }
-            </select>
-        </div>
-        <div>
-            <label for="nombreLocal">Nombre del Local:</label>
-            <input type="text" id="nombreLocal" name="nombreLocal" required />
-        </div>
-        <div>
-            <label for="cedulaLocal">Cédula del Local (opcional):</label>
-            <input type="text" id="cedulaLocal" name="cedulaLocal" />
-        </div>
-        <div>
-            <label for="vendedor">Vendedor (opcional):</label>
-            <input type="text" id="vendedor" name="vendedor" />
-        </div>
-        <button type="submit">Registrar Factura</button>
-    </form>
+            <!-- Fecha -->
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" class="form-input" required />
+            </div>
+
+            <!-- Estado -->
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <input type="text" id="estado" name="estado" class="form-input" required />
+            </div>
+
+            <!-- Cédula del Cliente -->
+            <div class="form-group">
+                <label for="cedulaCliente">Cédula del Cliente:</label>
+                <select id="cedulaCliente" name="cedulaCliente" class="form-input" required>
+                    <option value="" disabled selected>Selecciona una cédula</option>
+                    @foreach (var cliente in Clientes)
+                    {
+                        <option value="@cliente.Cedula">@cliente.Cedula - @cliente.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Nombre del Local -->
+            <div class="form-group">
+                <label for="nombreLocal">Nombre del Local:</label>
+                <input type="text" id="nombreLocal" name="nombreLocal" class="form-input" required />
+            </div>
+
+            <!-- Cédula del Local -->
+            <div class="form-group">
+                <label for="cedulaLocal">Cédula del Local (opcional):</label>
+                <input type="text" id="cedulaLocal" name="cedulaLocal" class="form-input" />
+            </div>
+
+            <!-- Vendedor -->
+            <div class="form-group">
+                <label for="vendedor">Vendedor (opcional):</label>
+                <input type="text" id="vendedor" name="vendedor" class="form-input" />
+            </div>
+
+            <!-- Botón de enviar -->
+            <div class="form-group">
+                <button type="submit" class="form-button">Registrar Factura</button>
+            </div>
+        </form>
+    </div>
 
     <!-- Tabla para mostrar las facturas registradas -->
     <h3>Facturas Registradas</h3>

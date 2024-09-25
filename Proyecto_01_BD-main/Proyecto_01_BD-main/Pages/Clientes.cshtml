@@ -67,33 +67,50 @@
     <h2>Registro de Cliente</h2>
 
     <!-- Formulario para registrar los datos del cliente -->
-    <form method="post">
-        <div>
-            <label for="cedula">Cédula:</label>
-            <input type="number" id="cedula" name="cedula" required />
-        </div>
-        <div>
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required />
-        </div>
-        <div>
-            <label for="correo">Correo:</label>
-            <input type="email" id="correo" name="correo" required />
-        </div>
-        <div>
-            <label for="sector">Sector:</label>
-            <input type="text" id="sector" name="sector" required />
-        </div>
-        <div>
-            <label for="celular">Celular:</label>
-            <input type="tel" id="celular" name="celular" required />
-        </div>
-        <div>
-            <label for="fax">Fax (opcional):</label>
-            <input type="tel" id="fax" name="fax" />
-        </div>
-        <button type="submit">Registrar Cliente</button>
-    </form>
+    <div class="form-cliente">
+        <form method="post">
+            <!-- Cédula -->
+            <div class="form-group">
+                <label for="cedula">Cédula:</label>
+                <input type="number" id="cedula" name="cedula" class="form-input" required />
+            </div>
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="form-input" required />
+            </div>
+
+            <!-- Correo -->
+            <div class="form-group">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" class="form-input" required />
+            </div>
+
+            <!-- Sector -->
+            <div class="form-group">
+                <label for="sector">Sector:</label>
+                <input type="text" id="sector" name="sector" class="form-input" required />
+            </div>
+
+            <!-- Celular -->
+            <div class="form-group">
+                <label for="celular">Celular:</label>
+                <input type="tel" id="celular" name="celular" class="form-input" required />
+            </div>
+
+            <!-- Fax -->
+            <div class="form-group">
+                <label for="fax">Fax (opcional):</label>
+                <input type="tel" id="fax" name="fax" class="form-input" />
+            </div>
+
+            <!-- Botón -->
+            <div class="form-group">
+                <button type="submit" class="form-button">Registrar Cliente</button>
+            </div>
+        </form>
+    </div>
 
     <!-- Tabla para mostrar los registros de clientes -->
     <h3>Clientes Registrados</h3>

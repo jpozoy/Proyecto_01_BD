@@ -59,42 +59,58 @@
     <h2>Registro de Planilla</h2>
 
     <!-- Formulario para registrar los datos de planilla -->
-    <form method="post">
-        <div>
-            <label for="cedula">Cédula del Usuario:</label>
-            <input type="text" id="cedula" name="cedula" required />
-        </div>
-        <div>
-            <label for="horasTrabajadas">Horas Trabajadas:</label>
-            <input type="number" id="horasTrabajadas" name="horasTrabajadas" min="0" required />
-        </div>
-        <div>
-            <label for="horasExtras">Horas Extras:</label>
-            <input type="number" id="horasExtras" name="horasExtras" min="0" required />
-        </div>
-        <div>
-            <label for="salarioPagado">Salario Pagado (en colones):</label>
-            <input type="number" id="salarioPagado" name="salarioPagado" step="0.01" min="0" required />
-        </div>
-        <div>
-            <label for="mes">Mes:</label>
-            <select id="mes" name="mes" required>
-                <option value="Enero">Enero</option>
-                <option value="Febrero">Febrero</option>
-                <option value="Marzo">Marzo</option>
-                <option value="Abril">Abril</option>
-                <option value="Mayo">Mayo</option>
-                <option value="Junio">Junio</option>
-                <option value="Julio">Julio</option>
-                <option value="Agosto">Agosto</option>
-                <option value="Septiembre">Septiembre</option>
-                <option value="Octubre">Octubre</option>
-                <option value="Noviembre">Noviembre</option>
-                <option value="Diciembre">Diciembre</option>
-            </select>
-        </div>
-        <button type="submit">Registrar Planilla</button>
-    </form>
+    <div class="form-planilla">
+        <form method="post">
+            <!-- Cédula del Usuario -->
+            <div class="form-group">
+                <label for="cedula">Cédula del Usuario:</label>
+                <input type="text" id="cedula" name="cedula" class="form-input" required />
+            </div>
+
+            <!-- Horas Trabajadas -->
+            <div class="form-group">
+                <label for="horasTrabajadas">Horas Trabajadas:</label>
+                <input type="number" id="horasTrabajadas" name="horasTrabajadas" class="form-input" min="0" required />
+            </div>
+
+            <!-- Horas Extras -->
+            <div class="form-group">
+                <label for="horasExtras">Horas Extras:</label>
+                <input type="number" id="horasExtras" name="horasExtras" class="form-input" min="0" required />
+            </div>
+
+            <!-- Salario Pagado -->
+            <div class="form-group">
+                <label for="salarioPagado">Salario Pagado (en colones):</label>
+                <input type="number" id="salarioPagado" name="salarioPagado" class="form-input" step="0.01" min="0" required />
+            </div>
+
+            <!-- Mes -->
+            <div class="form-group">
+                <label for="mes">Mes:</label>
+                <select id="mes" name="mes" class="form-input" required>
+                    <option value="Enero">Enero</option>
+                    <option value="Febrero">Febrero</option>
+                    <option value="Marzo">Marzo</option>
+                    <option value="Abril">Abril</option>
+                    <option value="Mayo">Mayo</option>
+                    <option value="Junio">Junio</option>
+                    <option value="Julio">Julio</option>
+                    <option value="Agosto">Agosto</option>
+                    <option value="Septiembre">Septiembre</option>
+                    <option value="Octubre">Octubre</option>
+                    <option value="Noviembre">Noviembre</option>
+                    <option value="Diciembre">Diciembre</option>
+                </select>
+            </div>
+
+            <!-- Botón de enviar -->
+            <div class="form-group">
+                <button type="submit" class="form-button">Registrar Planilla</button>
+            </div>
+        </form>
+    </div>
+
 
     <!-- Tabla para mostrar los registros de planilla -->
     <h3>Registros de Planilla</h3>

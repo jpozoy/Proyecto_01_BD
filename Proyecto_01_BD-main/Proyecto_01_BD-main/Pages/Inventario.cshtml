@@ -51,21 +51,32 @@
     <h2>Registro de Inventario</h2>
 
     <!-- Formulario para registrar un artículo en el inventario -->
-    <form method="post">
-        <div>
-            <label for="codigoArticulo">Código del Artículo:</label>
-            <input type="number" id="codigoArticulo" name="codigoArticulo" required />
-        </div>
-        <div>
-            <label for="codigoBodega">Código de la Bodega:</label>
-            <input type="number" id="codigoBodega" name="codigoBodega" required />
-        </div>
-        <div>
-            <label for="cantidadDisponible">Cantidad Disponible:</label>
-            <input type="number" id="cantidadDisponible" name="cantidadDisponible" min="0" required />
-        </div>
-        <button type="submit">Registrar Artículo</button>
-    </form>
+    <div class="form-inventario">
+        <form method="post">
+            <!-- Código del Artículo -->
+            <div class="form-group">
+                <label for="codigoArticulo">Código del Artículo:</label>
+                <input type="number" id="codigoArticulo" name="codigoArticulo" class="form-input" required />
+            </div>
+
+            <!-- Código de la Bodega -->
+            <div class="form-group">
+                <label for="codigoBodega">Código de la Bodega:</label>
+                <input type="number" id="codigoBodega" name="codigoBodega" class="form-input" required />
+            </div>
+
+            <!-- Cantidad Disponible -->
+            <div class="form-group">
+                <label for="cantidadDisponible">Cantidad Disponible:</label>
+                <input type="number" id="cantidadDisponible" name="cantidadDisponible" class="form-input" min="0" required />
+            </div>
+
+            <!-- Botón de enviar -->
+            <div class="form-group">
+                <button type="submit" class="form-button">Registrar Artículo</button>
+            </div>
+        </form>
+    </div>
 
     <!-- Tabla para mostrar los artículos en el inventario -->
     <h3>Artículos Registrados en Inventario</h3>

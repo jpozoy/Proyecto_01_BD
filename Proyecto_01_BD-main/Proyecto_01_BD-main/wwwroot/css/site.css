@@ -117,7 +117,7 @@ aside .sidebar li{
 .form-cotizacion form {
     display: flex;
     flex-direction: column;
-    max-width: 500px; /* Ajusta el valor según tus necesidades */
+    margin-left: 10px
 
 }
 
@@ -129,17 +129,16 @@ aside .sidebar li{
     margin-left: 5px;
 }
 
-    /* Evita que los botones se estiren demasiado */
-    .button-header-cotizacion button {
-        background-color: #7380ec;
-        color: white;
-        padding: 5px;
-        font-weight: 600;
-        margin: 5px;
-        flex-grow: 0; /* Evita que el botón crezca */
-    }
 
-/* Agrupa los inputs de manera vertical */
+.button-header-cotizacion button {
+    background-color: #7380ec;
+    color: white;
+    padding: 5px;
+    font-weight: 600;
+    margin: 5px;
+    flex-grow: 0; 
+}
+
 .form-group {
     font-weight: 600;
     display: flex;
@@ -148,19 +147,17 @@ aside .sidebar li{
     width: 100%;
 }
 
-    /* Estilo para los inputs del formulario */
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        padding: 10px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 100%;
-        box-sizing: border-box; /* Evita que el padding se sume al width */
-    }
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
 
-    /* Si deseas un tamaño específico para los inputs */
-    .form-group input {
-        max-width: 100%; /* Asegura que el input no se extienda más allá de su contenedor */
-    }
+.form-group input {
+    max-width: 100%; 
+}
