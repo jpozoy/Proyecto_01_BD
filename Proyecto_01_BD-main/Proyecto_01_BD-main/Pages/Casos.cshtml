@@ -1,8 +1,233 @@
-﻿@page
-@model Proyecto_01_BD.Pages.CasosModel
-@{
-    ViewData["Title"] = "Casos";
+@page
+@functions {
+    // Clase interna para representar un caso
+
+    public class Caso
+
+    {
+
+        public string Codigo_Caso { get; set; }
+
+        public string Cliente { get; set; }
+
+        public string Vendedor { get; set; }
+
+        public string Direccion { get; set; }
+
+        public string Asunto { get; set; }
+
+        public string Tipo { get; set; }
+
+        public string Estado { get; set; }
+
+        public string Prioridad { get; set; }
+
+        public string Descripcion { get; set; }
+
+        public DateTime Fecha { get; set; }
+
+        public string Numero_Factura { get; set; }
+
+        public string Codigo_Cotizacion { get; set; }
+
+    }
+
+
+
+    // Listas de ejemplo para los clientes registrados
+
+    public List<string> Clientes { get; set; } = new List<string> { "Cliente001 - Juan Perez", "Cliente002 - Ana Garcia", "Cliente003 - Luis Ramirez" };
+
+
+
+    // Lista de vendedores registrados
+
+    public List<string> Vendedores { get; set; } = new List<string> { "Vendedor001 - Carlos Mendez", "Vendedor002 - Maria Lopez", "Vendedor003 - Pablo Herrera" };
+
+
+
+    // Lista de prioridades (tres opciones)
+
+    public List<string> Prioridades { get; set; } = new List<string> { "Alta", "Media", "Baja" };
+
+
+
+    // Lista de facturas existentes
+
+    public List<string> Facturas { get; set; } = new List<string> { "Factura001", "Factura002", "Factura003" };
+
+
+
+    // Lista para almacenar los casos registrados
+
+    public List<Caso> Casos { get; set; } = new List<Caso>();
+
+
+
+    // Método OnPost para procesar los datos del formulario
+
+    public void OnPost(string codigoCaso, string cliente, string vendedor, string direccion, string asunto, string tipo, string estado, string prioridad, string descripcion, DateTime fecha, string numeroFactura, string codigoCotizacion)
+
+    {
+
+        // Crear un nuevo caso y agregarlo a la lista de casos
+
+        Casos.Add(new Caso
+
+            {
+
+                Codigo_Caso = codigoCaso,
+
+                Cliente = cliente,
+
+                Vendedor = vendedor,
+
+                Direccion = direccion,
+
+                Asunto = asunto,
+
+                Tipo = tipo,
+
+                Estado = estado,
+
+                Prioridad = prioridad,
+
+                Descripcion = descripcion,
+
+                Fecha = fecha,
+
+                Numero_Factura = numeroFactura,
+
+                Codigo_Cotizacion = codigoCotizacion
+
+            });
+
+    }
 }
 
-<h2>Casos</h2>
-<p>Apartado de Casos.</p>
+<link rel="stylesheet" href="/css/styles.css">
+
+<div class="container">
+    <h2>Registro de Casos</h2>
+
+    <!-- Formulario para registrar un caso -->
+    <form method="post">
+        <div>
+            <label for="codigoCaso">Código del Caso:</label>
+            <input type="text" id="codigoCaso" name="codigoCaso" required />
+        </div>
+        <div>
+            <label for="cliente">Cliente:</label>
+            <select id="cliente" name="cliente" required>
+                <option value="" disabled selected>Selecciona un cliente</option>
+                @foreach (var cliente in Clientes)
+
+                {
+                    <option value="@cliente">@cliente</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label for="vendedor">Vendedor:</label>
+            <select id="vendedor" name="vendedor" required>
+                <option value="" disabled selected>Selecciona un vendedor</option>
+                @foreach (var vendedor in Vendedores)
+
+                {
+                    <option value="@vendedor">@vendedor</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" required />
+        </div>
+        <div>
+            <label for="asunto">Asunto:</label>
+            <input type="text" id="asunto" name="asunto" required />
+        </div>
+        <div>
+            <label for="tipo">Tipo:</label>
+            <input type="text" id="tipo" name="tipo" required />
+        </div>
+        <div>
+            <label for="estado">Estado:</label>
+            <input type="text" id="estado" name="estado" required />
+        </div>
+        <div>
+            <label for="prioridad">Prioridad:</label>
+            <select id="prioridad" name="prioridad" required>
+                <option value="" disabled selected>Selecciona la prioridad</option>
+                @foreach (var prioridad in Prioridades)
+
+                {
+                    <option value="@prioridad">@prioridad</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
+        </div>
+        <div>
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required />
+        </div>
+        <div>
+            <label for="numeroFactura">Número de Factura:</label>
+            <select id="numeroFactura" name="numeroFactura">
+                <option value="" disabled selected>Selecciona una factura</option>
+                @foreach (var factura in Facturas)
+
+                {
+                    <option value="@factura">@factura</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label for="codigoCotizacion">Código de Cotización:</label>
+            <input type="text" id="codigoCotizacion" name="codigoCotizacion" />
+        </div>
+        <button type="submit">Registrar Caso</button>
+    </form>
+
+    <!-- Tabla para mostrar los casos registrados -->
+    <h3>Casos Registrados</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Código del Caso</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Dirección</th>
+                <th>Asunto</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Número de Factura</th>
+                <th>Código de Cotización</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var caso in Casos)
+            {
+                <tr>
+                    <td>@caso.Codigo_Caso</td>
+                    <td>@caso.Cliente</td>
+                    <td>@caso.Vendedor</td>
+                    <td>@caso.Direccion</td>
+                    <td>@caso.Asunto</td>
+                    <td>@caso.Tipo</td>
+                    <td>@caso.Estado</td>
+                    <td>@caso.Prioridad</td>
+                    <td>@caso.Descripcion</td>
+                    <td>@caso.Fecha.ToShortDateString()</td>
+                    <td>@caso.Numero_Factura</td>
+                    <td>@caso.Codigo_Cotizacion</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
