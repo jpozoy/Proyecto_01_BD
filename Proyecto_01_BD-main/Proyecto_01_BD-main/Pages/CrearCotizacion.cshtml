@@ -1,0 +1,88 @@
+﻿@page
+@{
+    ViewData["Title"] = "Cotización";
+}
+<div class="table-section">
+    <p>Agregar una cotización</p>
+    <div class="button-header-cotizacion">
+        <button onclick="window.location.href='/Cotizacion';">Consultar</button>
+        <button>Agregar</button>
+    </div>
+    <div class="form-cotizacion">
+        <form method="post">
+            <!-- Cliente -->
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <input type="text" id="cliente" name="cliente" required />
+            </div>
+
+            <!-- Vendedor -->
+            <div class="form-group">
+                <label for="vendedor">Vendedor:</label>
+                <input type="text" id="vendedor" name="vendedor" required />
+            </div>
+
+            <!-- Dirección -->
+            <div class="form-group">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" required />
+            </div>
+
+            <!-- Asunto -->
+            <div class="form-group">
+                <label for="asunto">Asunto:</label>
+                <input type="text" id="asunto" name="asunto" required />
+            </div>
+
+            <!-- Tipo -->
+            <div class="form-group">
+                <label for="tipo">Tipo:</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="">Seleccione un tipo</option>
+                    <option value="nuevo">Nuevo</option>
+                    <option value="renovacion">Renovación</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </div>
+
+            <!-- Estado -->
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccione un estado</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="aprobado">Aprobado</option>
+                    <option value="rechazado">Rechazado</option>
+                </select>
+            </div>
+
+            <!-- Prioridad -->
+            <div class="form-group">
+                <label for="prioridad">Prioridad:</label>
+                <select id="prioridad" name="prioridad" required>
+                    <option value="">Seleccione una prioridad</option>
+                    <option value="alta">Alta</option>
+                    <option value="media">Media</option>
+                    <option value="baja">Baja</option>
+                </select>
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+            </div>
+
+            <!-- Fecha -->
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required />
+            </div>
+
+            <!-- Botón de enviar -->
+            <div class="form-group">
+                <button type="submit">Guardar Cotización</button>
+            </div>
+        </form>
+    </div>
+</div>
