@@ -1,56 +1,89 @@
 ﻿@page
+@using System.Data.SqlClient;
 @functions {
+    // Clase interna para representar un Usuario
     public class Usuario
-
     {
-
         public string Cedula { get; set; }
-
         public string Nombre { get; set; }
-
-        public string Puesto { get; set; }
-
-        public string Departamento { get; set; }
-
-        public string Rol { get; set; }
-
-        public decimal Salario { get; set; }
-
+        public string Apellido1 { get; set; }
+        public string Apellido2 { get; set; }
+        public string Telefono { get; set; }
+        public string Correo { get; set; }
+        public DateTime Fecha_Nacimiento { get; set; }
+        public int Edad { get; set; }
+        public string Lugar_Residencia { get; set; }
         public DateTime Fecha_Ingreso { get; set; }
-
+        public int Salario { get; set; }
+        public string Puesto { get; set; }
+        public string Departamento { get; set; }
+        public string Rol { get; set; }
     }
 
-
-
+    // Lista para almacenar usuarios (opcional)
     public List<Usuario> Usuarios { get; set; } = new List<Usuario>();
 
-
-
-    public void OnGet()
-
+    // Método para insertar datos en la base de datos
+    public void InsertarUsuario(Usuario usuario)
     {
+        ConexionBD conexion = new ConexionBD();
+        {
+            conexion.Abrir();
 
-        // Cargar datos de ejemplo si es necesario
+            string query = @"INSERT INTO Usuario (Cedula, Nombre, Apellido1, Apellido2, Telefono, Correo, Fecha_Nacimiento, Edad, Lugar_Residencia, Fecha_Ingreso, Salario, Puesto, Departamento, Rol) 
+                             VALUES (@Cedula, @Nombre, @Apellido1, @Apellido2, @Telefono, @Correo, @Fecha_Nacimiento, @Edad, @Lugar_Residencia, @Fecha_Ingreso, @Salario, @Puesto, @Departamento, @Rol)";
 
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                comando.Parameters.AddWithValue("@Cedula", usuario.Cedula);
+                comando.Parameters.AddWithValue("@Nombre", usuario.Nombre);
+                comando.Parameters.AddWithValue("@Apellido1", usuario.Apellido1);
+                comando.Parameters.AddWithValue("@Apellido2", usuario.Apellido2);
+                comando.Parameters.AddWithValue("@Telefono", usuario.Telefono);
+                comando.Parameters.AddWithValue("@Correo", usuario.Correo);
+                comando.Parameters.AddWithValue("@Fecha_Nacimiento", usuario.Fecha_Nacimiento);
+                comando.Parameters.AddWithValue("@Edad", usuario.Edad);
+                comando.Parameters.AddWithValue("@Lugar_Residencia", usuario.Lugar_Residencia);
+                comando.Parameters.AddWithValue("@Fecha_Ingreso", usuario.Fecha_Ingreso);
+                comando.Parameters.AddWithValue("@Salario", usuario.Salario);
+                comando.Parameters.AddWithValue("@Puesto", usuario.Puesto);
+                comando.Parameters.AddWithValue("@Departamento", usuario.Departamento);
+                comando.Parameters.AddWithValue("@Rol", usuario.Rol);
+
+                comando.ExecuteNonQuery(); // Ejecutar el comando
+            }
+
+            conexion.Cerrar();
+        }
     }
 
-
-
-    public void OnPost(string cedula, string nombre, string puesto, string departamento, string rol, decimal salario, DateTime fechaIngreso)
-
+    // Método OnPost para procesar los datos del formulario
+    public void OnPost(string cedula, string nombre, string apellido1, string apellido2, string telefono, string correo, DateTime fecha_nacimiento, int edad, string lugar_residencia, DateTime fecha_ingreso, int salario, string puesto, string departamento, string rol)
     {
+        // Crear un nuevo usuario y agregarlo a la lista
+        Usuario nuevoUsuario = new Usuario
+        {
+            Cedula = cedula,
+            Nombre = nombre,
+            Apellido1 = apellido1,
+            Apellido2 = apellido2,
+            Telefono = telefono,
+            Correo = correo,
+            Fecha_Nacimiento = fecha_nacimiento,
+            Edad = edad,
+            Lugar_Residencia = lugar_residencia,
+            Fecha_Ingreso = fecha_ingreso,
+            Salario = salario,
+            Puesto = puesto,
+            Departamento = departamento,
+            Rol = rol
+        };
 
-        Usuarios.Add(new Usuario
-            {
-                Cedula = cedula,
-                Nombre = nombre,
-                Puesto = puesto,
-                Departamento = departamento,
-                Rol = rol,
-                Salario = salario,
-                Fecha_Ingreso = fechaIngreso
-            });
+        // Insertar el usuario en la base de datos
+        InsertarUsuario(nuevoUsuario);
 
+        // Agregar el usuario a la lista para mostrar en la tabla (opcional)
+        Usuarios.Add(nuevoUsuario);
     }
 }
 
@@ -73,6 +106,60 @@
                 <input type="text" id="nombre" name="nombre" class="form-input" required />
             </div>
 
+            <!-- Apellido1 -->
+            <div class="form-group">
+                <label for="apellido1">Primer Apellido:</label>
+                <input type="text" id="apellido1" name="apellido1" class="form-input" required />
+            </div>
+
+            <!-- Apellido2 -->
+            <div class="form-group">
+                <label for="apellido2">Segundo Apellido:</label>
+                <input type="text" id="apellido2" name="apellido2" class="form-input" required />
+            </div>
+
+            <!-- Teléfono -->
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" class="form-input" />
+            </div>
+
+            <!-- Correo -->
+            <div class="form-group">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" class="form-input" required />
+            </div>
+
+            <!-- Fecha de Nacimiento -->
+            <div class="form-group">
+                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-input" required />
+            </div>
+
+            <!-- Edad -->
+            <div class="form-group">
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" name="edad" class="form-input" required />
+            </div>
+
+            <!-- Lugar de Residencia -->
+            <div class="form-group">
+                <label for="lugar_residencia">Lugar de Residencia:</label>
+                <input type="text" id="lugar_residencia" name="lugar_residencia" class="form-input" required />
+            </div>
+
+            <!-- Fecha de Ingreso -->
+            <div class="form-group">
+                <label for="fecha_ingreso">Fecha de Ingreso:</label>
+                <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-input" required />
+            </div>
+
+            <!-- Salario -->
+            <div class="form-group">
+                <label for="salario">Salario:</label>
+                <input type="number" id="salario" name="salario" class="form-input" required />
+            </div>
+
             <!-- Puesto -->
             <div class="form-group">
                 <label for="puesto">Puesto:</label>
@@ -91,21 +178,9 @@
                 <input type="text" id="rol" name="rol" class="form-input" required />
             </div>
 
-            <!-- Salario -->
+            <!-- Botón para registrar -->
             <div class="form-group">
-                <label for="salario">Salario:</label>
-                <input type="number" id="salario" name="salario" class="form-input" step="0.01" required />
-            </div>
-
-            <!-- Fecha de Ingreso -->
-            <div class="form-group">
-                <label for="fechaIngreso">Fecha de Ingreso:</label>
-                <input type="date" id="fechaIngreso" name="fechaIngreso" class="form-input" required />
-            </div>
-
-            <!-- Botón de agregar usuario -->
-            <div class="form-group">
-                <button type="submit" class="form-button">Agregar Usuario</button>
+                <button type="submit" class="form-button">Registrar Usuario</button>
             </div>
         </form>
     </div>

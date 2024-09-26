@@ -1,63 +1,71 @@
 ﻿@page
+@using System.Data.SqlClient;
 @functions {
     // Clase interna para representar a un cliente
-
     public class Cliente
-
     {
-
         public int Cedula { get; set; }
-
-
-
-        // Las propiedades requeridas tienen que estar validadas en el front-end
-
         public string Nombre { get; set; }
-
+        public string Apellido1 { get; set; }
+        public string Apellido2 { get; set; }
         public string Correo { get; set; }
-
         public string Sector { get; set; }
-
         public string Celular { get; set; }
-
         public string Fax { get; set; }
-
     }
 
-
-
     // Lista para almacenar los clientes
-
     public List<Cliente> Clientes { get; set; } = new List<Cliente>();
 
+    // Método para insertar datos en la base de datos
+    public void InsertarCliente(Cliente cliente)
+    {
+        ConexionBD conexion = new ConexionBD();
+        {
+            conexion.Abrir(); // Abre la conexión
 
+            string query = "INSERT INTO Cliente (Cedula, Nombre,Apellido1, Apellido2, Correo, Sector, Celular, Fax) " +
+                           "VALUES (@Cedula, @Nombre, @Correo, @Apellido1, @Apellido2, @Sector, @Celular, @Fax)";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                comando.Parameters.AddWithValue("@Cedula", cliente.Cedula);
+                comando.Parameters.AddWithValue("@Nombre", cliente.Nombre);
+                comando.Parameters.AddWithValue("@Apellido1", cliente.Apellido1);
+                comando.Parameters.AddWithValue("@Apellido2", cliente.Apellido2);
+                comando.Parameters.AddWithValue("@Correo", cliente.Correo);
+                comando.Parameters.AddWithValue("@Sector", cliente.Sector);
+                comando.Parameters.AddWithValue("@Celular", cliente.Celular);
+                comando.Parameters.AddWithValue("@Fax", cliente.Fax);
+
+                comando.ExecuteNonQuery(); // Ejecuta el comando INSERT
+            }
+
+            conexion.Cerrar(); // Cierra la conexión
+        }
+    }
 
     // Método OnPost para procesar los datos del formulario
-
-    public void OnPost(int cedula, string nombre, string correo, string sector, string celular, string fax)
-
+    public void OnPost(int cedula, string nombre ,string apellido1, string apellido2, string correo, string sector, string celular, string fax)
     {
+        // Crear un nuevo cliente
+        Cliente nuevoCliente = new Cliente
+        {
+            Cedula = cedula,
+            Nombre = nombre,
+            Apellido1 = apellido1,
+            Apellido2 = apellido2,
+            Correo = correo,
+            Sector = sector,
+            Celular = celular,
+            Fax = fax
+        };
 
-        // Crear un nuevo cliente y agregarlo a la lista
+        // Insertar en la base de datos
+        InsertarCliente(nuevoCliente);
 
-        Clientes.Add(new Cliente
-
-            {
-
-                Cedula = cedula,
-
-                Nombre = nombre,
-
-                Correo = correo,
-
-                Sector = sector,
-
-                Celular = celular,
-
-                Fax = fax
-
-            });
-
+        // Agregar el cliente a la lista para mostrar en la tabla (opcional)
+        Clientes.Add(nuevoCliente);
     }
 }
 
@@ -79,6 +87,18 @@
             <div class="form-group">
                 <label for="nombre">Nombre:</label>
                 <input type="text" id="nombre" name="nombre" class="form-input" required />
+            </div>
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label for="apellido1">Apellido 1:</label>
+                <input type="text" id="apellido1" name="apellido1" class="form-input" required />
+            </div>
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label for="apellido2">Apellido 2:</label>
+                <input type="text" id="apellido2" name="apellido2" class="form-input" required />
             </div>
 
             <!-- Correo -->
