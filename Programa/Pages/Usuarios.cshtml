@@ -1,12 +1,206 @@
-﻿@page
+﻿
+@page
+@using Proyecto_01_BD.Clases;
 <link rel="stylesheet" href="/css/styles.css">
 
+@{
+    // Crear una instacia de la clase CatalogoDAO
+    CatalogoDAO catalogoDAO = new CatalogoDAO();
+
+    //Obtener datos de tablas catalogo
+
+    List<String> listaPuestos = catalogoDAO.ObtenerPuestos();
+    List<String> listaDepartamentos = catalogoDAO.ObtenerDepartamentos();
+    List<String> listaRoles = catalogoDAO.ObtenerRoles();
+
+    Usuario usuario = new Usuario();
+
+    // Crear una lista de usuarios
+    List<Usuario> listaUsuarios = usuario.ObtenerUsuarios();
+
+
+}
+@functions {
+    public string Mensaje { get; set; }
+
+    public void OnPost(string action, string cedula)
+    {
+        if (action == "editar")
+        {
+            Mensaje = $"Se presionó Editar para el usuario con cédula {cedula}";
+        }
+        else if (action == "eliminar")
+        {
+            Mensaje = $"Se presionó Eliminar para el usuario con cédula {cedula}";
+        }
+        else if (action == "registrar")
+        {
+            Console.WriteLine("Xd se esta registrando");
+            // Crear una nueva instancia de Usuario con los datos del formulario
+            Usuario nuevoUsuario = new Usuario
+                {
+                    Cedula = Request.Form["cedula"],
+                    Nombre = Request.Form["nombre"],
+                    Apellido1 = Request.Form["apellido1"],
+                    Apellido2 = Request.Form["apellido2"],
+                    Telefono = Request.Form["telefono"],
+                    Correo = Request.Form["correo"],
+                    Fecha_Nacimiento = DateTime.Parse(Request.Form["fecha_nacimiento"]),
+                    Lugar_Residencia = Request.Form["lugar_residencia"],
+                    Fecha_Ingreso = DateTime.Parse(Request.Form["fecha_ingreso"]),
+                    Salario = decimal.Parse(Request.Form["salario"]),
+                    Puesto = Request.Form["puesto"],
+                    Departamento = Request.Form["departamento"],
+                    Nombre_Rol = Request.Form["rol"]
+                };
+
+                // Llamar al método para registrar el usuario
+                nuevoUsuario.RegistrarUsuario();
+        }
+
+        Console.WriteLine(Mensaje); // Imprimir en consola
+    }
+}
 <div class="container">
     <h2>Gestión de Usuarios</h2>
-
-    <ul>
-        <li><a href="AgregarUsuario">Agregar Usuario</a></li>
-        <li><a href="ModificarUsuario">Modificar Usuario</a></li>
-        <li><a href="EliminarUsuario">Eliminar Usuario</a></li>
-    </ul>
+    <!-- Botón para abrir el modal de agregar -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarModal">
+        Agregar
+    </button>
 </div>
+<div class="grid-table-usuarios">
+    <!-- Cabeceras -->
+    <div class="grid-header">Cedula</div>
+    <div class="grid-header">Usuario</div>
+    <div class="grid-header">Correo</div>
+    <div class="grid-header">Puesto</div>
+    <div class="grid-header">Acciones</div>
+
+    <!-- Datos -->
+    @foreach (var cot in listaUsuarios)
+    {
+        <div class="grid-item">@cot.Cedula</div>
+        <div class="grid-item">@cot.Nombre @cot.Apellido1</div>
+        <div class="grid-item">@cot.Correo</div>
+        <div class="grid-item">@cot.Puesto</div>
+        <div class="grid-item">
+            <!-- Formulario para el botón Editar -->
+            <button type="button" class="btn btn-primary" name="action" value="editar" data-bs-toggle="modal" data-bs-target="#editarModal-@cot.Cedula">
+                Editar
+            </button>
+
+            <!-- Formulario para el botón Eliminar -->
+            <form method="post">
+                <input type="hidden" name="cedula" value="@cot.Cedula" />
+                <button type="submit" class="btn btn-primary" name="action" value="eliminar">Eliminar</button>
+            </form>
+        </div>
+        <div class="modal fade" id="editarModal-@cot.Cedula" tabindex="-1" aria-labelledby="editarModalLabel-@cot.Cedula" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarModalLabel-@cot.Cedula">Editar Usuario - @cot.Nombre</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" asp-page-handler="Editar">
+                            <input type="hidden" name="cedula" value="@cot.Cedula" />
+
+                            <label>Nombre:</label>
+                            <input type="text" name="nombre" value="@cot.Nombre" class="form-control" />
+
+                            <label>Correo:</label>
+                            <input type="email" name="correo" value="@cot.Correo" class="form-control" />
+
+                            <!-- Agrega más campos si es necesario -->
+
+                            <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal para agregar usuario -->
+<div class="modal fade" id="agregarModal" tabindex="-1" aria-labelledby="agregarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agregarModalLabel">Agregar Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="Agregar">
+                    <label>Cédula:</label>
+                    <input type="text" name="cedula" class="form-control" />
+
+                    <label>Nombre:</label>
+                    <input type="text" name="nombre" class="form-control" />
+
+                    <label>Primer Apellido:</label>
+                    <input type="text" name="apellido1" class="form-control" />
+
+                    <label>Segundo Apellido:</label>
+                    <input type="text" name="apellido2" class="form-control" />
+
+                    <label>Teléfono:</label>
+                    <input type="text" name="telefono" class="form-control" />
+
+                    <label>Correo:</label>
+                    <input type="email" name="correo" class="form-control" />
+
+                    <label>Fecha Nacimiento</label>
+                    <input type="date" name="fecha_nacimiento" class="form-control" />
+
+                    <label>Lugar de Residencia:</label>
+                    <input type="text" name="lugar_residencia" class="form-control" />
+
+                    <label>Fecha de Ingreso</label>
+                    <input type="date" name="fecha_ingreso" class="form-control" />
+
+                    <label>Salario:</label>
+                    <input type="number" name="salario" class="form-control" />
+
+
+                    <label for="departamento">Departamento:</label>
+                    <select name="departamento" id="departamento" class="form-control">
+                        <option value="">Seleccione un departamento</option>
+                        @foreach (var departamento in listaDepartamentos)
+                        {
+                            <option value="@departamento">@departamento</option>
+                        }
+                    </select>
+
+                    <label for="puesto">Puesto:</label>
+                    <select name="puesto" id="puesto" class="form-control">
+                        <option value="">Seleccione un puesto</option>
+                        @foreach (var puesto in listaPuestos)
+                        {
+                            <option value="@puesto">@puesto</option>
+                        }
+                    </select>
+
+                    <label for="rol">Rol:</label>
+                    <select name="rol" id="rol" class="form-control">
+                        <option value="">Seleccione un rol</option>
+                        @foreach (var rol in listaRoles)
+                        {
+                            <option value="@rol">@rol</option>
+                        }
+                    </select>
+
+                    <button type="submit" class="btn btn-primary mt-3" name="action" value="registrar">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Mensaje))
+{
+    <div class="alert alert-info">
+        @Mensaje
+    </div>
+}

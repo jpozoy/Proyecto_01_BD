@@ -8,7 +8,7 @@ BEGIN
     CREATE DATABASE SistemaERP;
 END
 
-Use SistemaERP_2
+Use SistemaERP
 Go
 
 --Tabla de Local
@@ -127,8 +127,8 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Rol (
-        Codigo_Rol varchar(12) primary key not null,
-        Nombre_Rol varchar(50) not null,
+        Nombre_Rol varchar(12) primary key not null,
+
         Descripcion varchar(100)
     );
 END
@@ -149,14 +149,13 @@ BEGIN
 		Telefono varchar(8),
 		Correo varchar(50),
 		Fecha_Nacimiento Date,
-		Edad int,
 		Lugar_Residencia varchar(20),
 		Fecha_Ingreso Date,
 		Salario decimal(18,2),
 		Puesto varchar(20),
 		Departamento varchar(20),
-		Codigo_Rol varchar(12),
-		foreign key (Codigo_Rol) references Rol(Codigo_Rol),
+		Nombre_Rol varchar(12),
+		foreign key (Nombre_Rol) references Rol(Nombre_Rol),
 		foreign key (Departamento) references Departamento(Departamento),
 		foreign key (Puesto) references Puesto(Puesto)
     );
@@ -167,13 +166,13 @@ END
 IF NOT EXISTS (
     SELECT * 
     FROM INFORMATION_SCHEMA.TABLES 
-    WHERE TABLE_NAME = 'Historio_Puesto' AND TABLE_SCHEMA = 'dbo'
+    WHERE TABLE_NAME = 'Historico_Puesto' AND TABLE_SCHEMA = 'dbo'
 )
 
 BEGIN
-    CREATE TABLE Historio_Puesto  (
+    CREATE TABLE Historico_Puesto  (
 		Cedula_Usuario varchar(12) not null,
-		Fecha_Inicio Date not null,
+		Fecha_Inicio Datetime not null,
 		Fecha_Fin Date,
 		Puesto varchar(20),
 		Departamento varchar(20),
@@ -182,6 +181,7 @@ BEGIN
 
     );
 END
+
 
 -- Tabla de Historico_Salario
 IF NOT EXISTS (
@@ -193,15 +193,17 @@ IF NOT EXISTS (
 BEGIN
     CREATE TABLE Historico_Salario  (
 		Cedula_Usuario varchar(12) not null,
-		Fecha_Inicio Date not null,
+		Fecha_Inicio Datetime not null,
 		Fecha_Fin Date,
 		Puesto varchar(20),
-		Monto decimal(18,2),
+		Monto decimal(18,2) not null,
 		Departamento varchar(20),
 		primary key (Cedula_Usuario, Fecha_Inicio),
 		foreign key (Cedula_Usuario) references Usuario(Cedula)
     );
 END
+
+
 
 -- Tabla de modulo 
 IF NOT EXISTS (
@@ -239,11 +241,11 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Rol_Modulo_Accion (
-        Codigo_Rol varchar(12) not null,
+        Nombre_Rol varchar(12) not null,
         Codigo_Modulo varchar(12) not null,
         Codigo_Accion varchar(12) not null,
-        primary key (Codigo_Rol, Codigo_Modulo, Codigo_Accion),
-        foreign key (Codigo_Rol) references Rol(Codigo_Rol),
+        primary key (Nombre_Rol, Codigo_Modulo, Codigo_Accion),
+        foreign key (Nombre_Rol) references Rol(Nombre_Rol),
         foreign key (Codigo_Modulo) references Modulo(Codigo_Modulo),
         foreign key (Codigo_Accion) references Accion(Codigo_Accion)
     );

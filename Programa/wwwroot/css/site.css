@@ -161,3 +161,14 @@ aside .sidebar li{
 .form-group input {
     max-width: 100%; 
 }
+
+/*Estilos de vista usuarios*/
+
+/*Estilos tabla usuarios*/
+.grid-table-usuarios {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 4 columnas de igual tama o */
+    gap: 10px; /* Espacio entre celdas */
+    background-color: #f8f8f8;
+    padding: 10px;
+}

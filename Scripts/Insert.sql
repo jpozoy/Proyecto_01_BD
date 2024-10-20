@@ -340,3 +340,8 @@ INSERT INTO Tareas_Caso (Codigo_Tarea, Nombre_Tarea, Decripcion_Tarea, Codigo_Ca
 ('T028', 'Ofrecer soporte especializado', 'Proporcionar soporte técnico especializado', 'CS028'),
 ('T029', 'Procesar pago', 'Resolver el problema reportado con el pago del cliente', 'CS029'),
 ('T030', 'Verificar estado del caso', 'Comprobar el estado del caso abierto por el cliente', 'CS030');
+
+Insert into Rol (Nombre_Rol, Descripcion) values 
+('Admin','Rol administrativo'),
+('Editor','Permisos de edicion'),
+('Analista','Permisos de visualizacion');
