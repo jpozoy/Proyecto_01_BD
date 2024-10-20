@@ -81,6 +81,6 @@ go
 
 exec Editar_Salario '70304641', 645000;
 
-select * from Historico_Salario
+select * from Historico_Puesto
 
 

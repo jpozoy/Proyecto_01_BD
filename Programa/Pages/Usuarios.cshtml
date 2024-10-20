@@ -22,16 +22,17 @@
 }
 @functions {
     public string Mensaje { get; set; }
+    Usuario usuario = new Usuario();
 
     public void OnPost(string action, string cedula)
     {
-        if (action == "editar")
+        if (action == "editar_salario")
         {
-            Mensaje = $"Se presionó Editar para el usuario con cédula {cedula}";
+            usuario.EditarSalario(cedula, decimal.Parse(Request.Form["nSalario"]));
         }
-        else if (action == "eliminar")
+        else if (action == "editar_puesto")
         {
-            Mensaje = $"Se presionó Eliminar para el usuario con cédula {cedula}";
+            usuario.EditarPuesto(cedula, Request.Form["puesto"]);
         }
         else if (action == "registrar")
         {
@@ -54,8 +55,8 @@
                     Nombre_Rol = Request.Form["rol"]
                 };
 
-                // Llamar al método para registrar el usuario
-                nuevoUsuario.RegistrarUsuario();
+            // Llamar al método para registrar el usuario
+            nuevoUsuario.RegistrarUsuario();
         }
 
         Console.WriteLine(Mensaje); // Imprimir en consola
@@ -85,36 +86,57 @@
         <div class="grid-item">@cot.Puesto</div>
         <div class="grid-item">
             <!-- Formulario para el botón Editar -->
-            <button type="button" class="btn btn-primary" name="action" value="editar" data-bs-toggle="modal" data-bs-target="#editarModal-@cot.Cedula">
-                Editar
+            <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cot.Cedula">
+                Editar Salario
             </button>
-
             <!-- Formulario para el botón Eliminar -->
-            <form method="post">
-                <input type="hidden" name="cedula" value="@cot.Cedula" />
-                <button type="submit" class="btn btn-primary" name="action" value="eliminar">Eliminar</button>
-            </form>
+            <button type="submit" class="btn btn-primary" name="action" value="eliminar" data-bs-toggle="modal" data-bs-target="#editarPuestoModal-@cot.Cedula">
+                Editar Puesto
+            </button>
         </div>
-        <div class="modal fade" id="editarModal-@cot.Cedula" tabindex="-1" aria-labelledby="editarModalLabel-@cot.Cedula" aria-hidden="true">
+        //Editar Salario
+        <div class="modal fade" id="editarSalarioModal-@cot.Cedula" tabindex="-1" aria-labelledby="editarSalarioModallLabel-@cot.Cedula" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editarModalLabel-@cot.Cedula">Editar Usuario - @cot.Nombre</h5>
+                        <h5 class="modal-title" id="editarSalarioModalLabel-@cot.Cedula">Editar Usuario - @cot.Nombre</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" asp-page-handler="Editar">
+                        <form method="post" asp-page-handler="EditarSalario">
                             <input type="hidden" name="cedula" value="@cot.Cedula" />
 
-                            <label>Nombre:</label>
-                            <input type="text" name="nombre" value="@cot.Nombre" class="form-control" />
+                            <label>Ingrese el nuevo salario</label>
+                            <input type="number" name="nSalario" class="form-control" />
 
-                            <label>Correo:</label>
-                            <input type="email" name="correo" value="@cot.Correo" class="form-control" />
+                            <button type="submit" class="btn btn-primary mt-3" name=" action" value="editar_salario">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        //Modal de editar puesto
+        <div class="modal fade" id="editarPuestoModal-@cot.Cedula" tabindex="-1" aria-labelledby="editarPuestoModallLabel-@cot.Cedula" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarPuestoModalLabel-@cot.Cedula">Editar Usuario - @cot.Nombre</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" asp-page-handler="EditarPuesto">
+                            <input type="hidden" name="cedula" value="@cot.Cedula" />
 
-                            <!-- Agrega más campos si es necesario -->
+                            <label>Ingrese el nuevo puesto</label>
+                            <select name="puesto" id="puesto" class="form-control">
+                                <option value="">Seleccione un puesto</option>
+                                @foreach (var puesto in listaPuestos)
+                                {
+                                    <option value="@puesto">@puesto</option>
+                                }
+                            </select>
 
-                            <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+                            <button type="submit" class="btn btn-primary mt-3" name="action" value="editar_puesto">Guardar</button>
                         </form>
                     </div>
                 </div>

@@ -97,5 +97,54 @@ namespace Proyecto_01_BD.Clases
             conexion.Cerrar();
             return usuarios;
         }
+        //Metodo para actualizar puesto
+        public void EditarPuesto(string Cedula, string Puesto)
+        {
+            //Conectarse a la bd
+            conexion.Abrir();
+
+            //LLama al procedimienot almacenado
+            string storedProcedure = "Editar_Puesto";
+
+            using (SqlCommand comando = new SqlCommand(storedProcedure, conexion.conectarbd))
+            {
+                //indicar que se esta llamando al procedimiento
+                comando.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //Agregar los parametros al procedimiento almacenado
+                comando.Parameters.AddWithValue("@Cedula", Cedula);
+                comando.Parameters.AddWithValue("@Puesto", Puesto);
+
+                //Ejecutar el procedimienot almacenado
+                comando.ExecuteNonQuery();
+            }
+            conexion.Cerrar();
+        }
+
+        //Metodo para actualizar salario
+        public void EditarSalario(string Cedula, decimal Salario)
+        {
+            //Conectarse a la bd
+            conexion.Abrir();
+
+            //LLama al procedimienot almacenado
+            string storedProcedure = "Editar_Salario";
+
+            using (SqlCommand comando = new SqlCommand(storedProcedure, conexion.conectarbd))
+            {
+                //indicar que se esta llamando al procedimiento
+                comando.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //Agregar los parametros al procedimiento almacenado
+                comando.Parameters.AddWithValue("@Cedula", Cedula);
+                comando.Parameters.AddWithValue("@Salario", Salario);
+
+                //Ejecutar el procedimienot almacenado
+                comando.ExecuteNonQuery();
+            }
+            conexion.Cerrar();
+        }
+
+        
     }
 }
