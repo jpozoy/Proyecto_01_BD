@@ -1,12 +1,12 @@
 -- Procedimiento para guardar usuarios
 create procedure Registrar_Usuario
 @Cedula varchar(12), @Nombre varchar(20), @Apellido1 varchar(20), @Apellido2 varchar(20), @Telefono varchar(8), @Correo varchar(50), @Fecha_Nacimiento Date,
-@Lugar_Residencia varchar(20), @Fecha_Ingreso Date, @Salario decimal(18,2), @Puesto varchar(20), @Departamento varchar(20), @Nombre_Rol varchar(12)
+@Lugar_Residencia varchar(20), @Fecha_Ingreso Date, @Salario decimal(18,2), @Puesto varchar(20), @Departamento varchar(20), @Contrasena varchar(60)
 as
 begin
 	--Insertar datos de Usuario
-	insert into Usuario (Cedula, Nombre, Apellido1, Apellido2, Telefono, Correo, Fecha_Nacimiento, Lugar_Residencia, Fecha_Ingreso, Salario, Puesto, Departamento, Nombre_Rol)
-    values (@Cedula, @Nombre, @Apellido1, @Apellido2, @Telefono, @Correo, @Fecha_Nacimiento, @Lugar_Residencia, @Fecha_Ingreso, @Salario, @Puesto, @Departamento, @Nombre_Rol);
+	insert into Usuario (Cedula, Nombre, Apellido1, Apellido2, Telefono, Correo, Fecha_Nacimiento, Lugar_Residencia, Fecha_Ingreso, Salario, Puesto, Departamento, Contrasena)
+    values (@Cedula, @Nombre, @Apellido1, @Apellido2, @Telefono, @Correo, @Fecha_Nacimiento, @Lugar_Residencia, @Fecha_Ingreso, @Salario, @Puesto, @Departamento, @Contrasena);
 	--Insertar en historico puesto
 	insert into Historico_Puesto (Cedula_Usuario, Fecha_Inicio, Puesto, Departamento)
 	values (@Cedula, GETDATE() , @Puesto, @Departamento);
@@ -15,8 +15,6 @@ begin
 	values (@Cedula, GETDATE(), @Puesto, @Salario, @Departamento);
 end;
 go
-
-
 
 
 exec Registrar_Usuario '703040641', 'Jefferson', 'Pozo', 'Vallejos', '64819943', 'pozo@gmail.cr', '2003-11-30', 'Limon', '2024-10-19', 46500,'Gerente', 'Finanzas', 'CR001';
@@ -82,5 +80,7 @@ go
 exec Editar_Salario '70304641', 645000;
 
 select * from Historico_Puesto
+select * from Historico_Salario
+select * from Usuario
 
 

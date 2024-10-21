@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using BCrypt.Net;
 namespace Proyecto_01_BD.Clases
 {
     public class Usuario
@@ -16,7 +17,7 @@ namespace Proyecto_01_BD.Clases
         public decimal Salario { get; set; }
         public string Puesto { get; set; }
         public string Departamento { get; set; }
-        public string Nombre_Rol { get; set; }
+        public string Password { get; set; }
 
         //Crear un objeto nuevo de la conexion
         ConexionBD conexion = new ConexionBD();
@@ -48,12 +49,17 @@ namespace Proyecto_01_BD.Clases
                 comando.Parameters.AddWithValue("@Salario", this.Salario);
                 comando.Parameters.AddWithValue("@Puesto", this.Puesto);
                 comando.Parameters.AddWithValue("@Departamento", this.Departamento);
-                comando.Parameters.AddWithValue("@Nombre_Rol", this.Nombre_Rol);
+                comando.Parameters.AddWithValue("@Contrasena", this.Password);
 
                 //Ejecutar el procedimienot almacenado
                 comando.ExecuteNonQuery();
             }
             conexion.Cerrar();
+        }
+        //Metodo para hashear la contraseña
+        public string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         //Metodo para obtener la lista de usuarios
@@ -87,7 +93,6 @@ namespace Proyecto_01_BD.Clases
                             Salario = Convert.ToDecimal(lector["Salario"]),
                             Puesto = lector["Puesto"].ToString(),
                             Departamento = lector["Departamento"].ToString(),
-                            Nombre_Rol = lector["Nombre_Rol"].ToString()
                         };
 
                         usuarios.Add(usuario);

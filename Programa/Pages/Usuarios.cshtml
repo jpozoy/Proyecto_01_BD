@@ -12,6 +12,8 @@
     List<String> listaPuestos = catalogoDAO.ObtenerPuestos();
     List<String> listaDepartamentos = catalogoDAO.ObtenerDepartamentos();
     List<String> listaRoles = catalogoDAO.ObtenerRoles();
+    List<String> listaModulos = catalogoDAO.ObtenerModulos();
+    List<String> listaAcciones = catalogoDAO.ObtenerAcciones();
 
     Usuario usuario = new Usuario();
 
@@ -28,6 +30,7 @@
     {
         if (action == "editar_salario")
         {
+            Console.WriteLine("Esto sucede ?");
             usuario.EditarSalario(cedula, decimal.Parse(Request.Form["nSalario"]));
         }
         else if (action == "editar_puesto")
@@ -52,9 +55,8 @@
                     Salario = decimal.Parse(Request.Form["salario"]),
                     Puesto = Request.Form["puesto"],
                     Departamento = Request.Form["departamento"],
-                    Nombre_Rol = Request.Form["rol"]
                 };
-
+            nuevoUsuario.Password = nuevoUsuario.HashPassword(Request.Form["contrasena"]);
             // Llamar al método para registrar el usuario
             nuevoUsuario.RegistrarUsuario();
         }
@@ -62,11 +64,14 @@
         Console.WriteLine(Mensaje); // Imprimir en consola
     }
 }
-<div class="container">
-    <h2>Gestión de Usuarios</h2>
+<h2>Gestión de Usuarios</h2>
+<div class="header-container-usuario">
     <!-- Botón para abrir el modal de agregar -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarModal">
         Agregar
+    </button>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearRolModal">
+        Crear Rol
     </button>
 </div>
 <div class="grid-table-usuarios">
@@ -109,7 +114,7 @@
                             <label>Ingrese el nuevo salario</label>
                             <input type="number" name="nSalario" class="form-control" />
 
-                            <button type="submit" class="btn btn-primary mt-3" name=" action" value="editar_salario">Guardar</button>
+                            <button type="submit" class="btn btn-primary mt-3" name="action" value="editar_salario">Guardar</button>
                         </form>
                     </div>
                 </div>
@@ -173,6 +178,9 @@
                     <label>Correo:</label>
                     <input type="email" name="correo" class="form-control" />
 
+                    <label>Contraseña:</label>
+                    <input type="password" name="contrasena" class="form-control" />
+
                     <label>Fecha Nacimiento</label>
                     <input type="date" name="fecha_nacimiento" class="form-control" />
 
@@ -204,14 +212,6 @@
                         }
                     </select>
 
-                    <label for="rol">Rol:</label>
-                    <select name="rol" id="rol" class="form-control">
-                        <option value="">Seleccione un rol</option>
-                        @foreach (var rol in listaRoles)
-                        {
-                            <option value="@rol">@rol</option>
-                        }
-                    </select>
 
                     <button type="submit" class="btn btn-primary mt-3" name="action" value="registrar">Guardar</button>
                 </form>
@@ -219,6 +219,51 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para crear un rol -->
+<div class="modal fade" id="crearRolModal" tabindex="-1" aria-labelledby="crearRolModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearRolModalLabel">Crear Nuevo Rol</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="Agregar">
+
+                    <!-- Input para el nombre del rol -->
+                    <label>Nombre Rol:</label>
+                    <input type="text" name="nombre-rol" class="form-control" />
+
+                    <!-- Loop para mostrar los módulos -->
+                    @foreach (var modulo in listaModulos)
+                    {
+                        <div class="mb-3">
+                            <!-- Título del módulo -->
+                            <label for="modulo">@modulo:</label>
+
+                            <!-- Lista de acciones del módulo -->
+                            <div>
+                                @foreach (var accion in listaAcciones)
+                                {
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="acciones" value="@accion" id="@accion" />
+                                        <label class="form-check-label" for="@accion">@accion</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Botón para guardar -->
+                    <button type="submit" class="btn btn-primary mt-3" name="action" value="registrar_rol">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 @if (!string.IsNullOrEmpty(Mensaje))
 {

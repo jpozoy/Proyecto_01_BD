@@ -77,5 +77,50 @@ namespace Proyecto_01_BD.Clases
             return departamentos;
         }
 
+        //Metodo para obtener los modulos
+        public List<string> ObtenerModulos()
+        {
+            List<string> modulos = new List<string>();
+            conexion.Abrir();
+
+            string query = @"SELECT Nombre_Modulo FROM Modulo";
+
+            using (SqlCommand comando = new SqlCommand (query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        modulos.Add(lector["Nombre_Modulo"].ToString());
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return modulos;
+        }
+
+        // Metodo para obtener las acciones
+        public List<string> ObtenerAcciones()
+        {
+            List<string> acciones = new List<string>();
+            conexion.Abrir();
+
+            string query = @"SELECT Nombre_Accion FROM Accion";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        acciones.Add(lector["Nombre_Accion"].ToString());
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return acciones;
+        }
     }
 }

@@ -127,11 +127,12 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Rol (
-        Nombre_Rol varchar(12) primary key not null,
-
+        Nombre_Rol varchar(20) primary key not null,
         Descripcion varchar(100)
     );
 END
+
+
 
 -- Tabla Usuario
 IF NOT EXISTS (
@@ -154,10 +155,26 @@ BEGIN
 		Salario decimal(18,2),
 		Puesto varchar(20),
 		Departamento varchar(20),
-		Nombre_Rol varchar(12),
-		foreign key (Nombre_Rol) references Rol(Nombre_Rol),
+		Contrasena varchar(60) not null,
 		foreign key (Departamento) references Departamento(Departamento),
 		foreign key (Puesto) references Puesto(Puesto)
+    );
+END
+
+-- Tabla intermedia Rol y Usuarios
+-- Tabla de rol
+IF NOT EXISTS (
+    SELECT * 
+    FROM INFORMATION_SCHEMA.TABLES 
+    WHERE TABLE_NAME = 'Rol_Usuarios' AND TABLE_SCHEMA = 'dbo'
+)
+BEGIN
+    CREATE TABLE Rol_Usuarios (
+        Nombre_Rol varchar(20) not null,
+        Cedula_Usuario varchar(12) not null,
+		primary key (Nombre_Rol, Cedula_Usuario),
+		foreign key (Nombre_Rol) references Rol(Nombre_Rol),
+		foreign key (Cedula_Usuario) references Usuario(Cedula)
     );
 END
 
@@ -213,8 +230,7 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Modulo (
-        Codigo_Modulo varchar(12) primary key not null,
-        Nombre_Modulo varchar(50) not null,
+        Nombre_Modulo varchar(20) not null primary key,
         Descripcion varchar(100)
     );
 END
@@ -227,8 +243,7 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Accion (
-        Codigo_Accion varchar(12) primary key not null,
-        Nombre_Accion varchar(50) not null,
+        Nombre_Accion varchar(20) not null primary key,
         Descripcion varchar(100)
     );
 END
@@ -241,13 +256,13 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Rol_Modulo_Accion (
-        Nombre_Rol varchar(12) not null,
-        Codigo_Modulo varchar(12) not null,
-        Codigo_Accion varchar(12) not null,
-        primary key (Nombre_Rol, Codigo_Modulo, Codigo_Accion),
+        Nombre_Rol varchar(20) not null,
+        Modulo varchar(20) not null,
+        Accion varchar(20) not null,
+        primary key (Nombre_Rol, Modulo, Accion),
         foreign key (Nombre_Rol) references Rol(Nombre_Rol),
-        foreign key (Codigo_Modulo) references Modulo(Codigo_Modulo),
-        foreign key (Codigo_Accion) references Accion(Codigo_Accion)
+        foreign key (Modulo) references Modulo(Nombre_Modulo),
+        foreign key (Accion) references Accion(Nombre_Accion)
     );
 END
 

@@ -345,3 +345,20 @@ Insert into Rol (Nombre_Rol, Descripcion) values
 ('Admin','Rol administrativo'),
 ('Editor','Permisos de edicion'),
 ('Analista','Permisos de visualizacion');
+use SistemaERP
+
+insert into Accion (Nombre_Accion, Descripcion) values
+('Edición','Permite  editar entidades'),
+('Visualización','Permite visualizar la información'),
+('Reportes','Permite generar reportes');
+
+insert into Modulo (Nombre_Modulo, Descripcion) values
+('Usuarios','Geston de usuarios'),
+('Planillas','Gestion de planillas'),
+('Inventarios','Gestion de inventarios'),
+('Clientes','Gestion de clientes'),
+('Ventas','Gestion de vendedores'),
+('Cotizacion','Gestion de cotizacines'),
+('Facturas','Gestion de facturas'),
+('Casos','Gestion de Casos');
+

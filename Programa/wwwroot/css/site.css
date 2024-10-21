@@ -165,6 +165,14 @@ aside .sidebar li{
 /*Estilos de vista usuarios*/
 
 /*Estilos tabla usuarios*/
+.header-container-usuario {
+    display: flex;
+}
+
+.header-container-usuario button {
+    margin: 8px
+}
+
 .grid-table-usuarios {
     display: grid;
     grid-template-columns: repeat(5, 1fr); /* 4 columnas de igual tama o */
