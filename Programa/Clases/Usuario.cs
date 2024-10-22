@@ -1,5 +1,7 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using BCrypt.Net;
+using Microsoft.AspNetCore.Components.Web;
 namespace Proyecto_01_BD.Clases
 {
     public class Usuario
@@ -150,6 +152,54 @@ namespace Proyecto_01_BD.Clases
             conexion.Cerrar();
         }
 
-        
+        //Metodo para registrar un rol
+        public void RegistrarRol (string Rol, string Accion, string Modulo)
+        {
+            //Conectarse a la bd
+            conexion.Abrir();
+
+            //LLama al procedimienot almacenado
+            string storedProcedure = "Crear_Rol";
+
+            using (SqlCommand comando = new SqlCommand(storedProcedure, conexion.conectarbd))
+            {
+                //indicar que se esta llamando al procedimiento
+                comando.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //Agregar los parametros al procedimiento almacenado
+                comando.Parameters.AddWithValue("@Rol_Nombre", Rol);
+                comando.Parameters.AddWithValue("@Accion", Accion);
+                comando.Parameters.AddWithValue("@Module", Modulo);
+
+                //Ejecutar el procedimienot almacenado
+                comando.ExecuteNonQuery();
+            }
+            conexion.Cerrar();
+        }
+
+        //Metodo para asignar roles
+        public void AsignarRol(string Cedula, string Rol)
+        {
+            //Conectarse a la bd
+            conexion.Abrir();
+
+            //LLama al procedimienot almacenado
+            string storedProcedure = "Asignar_Rol";
+
+            using (SqlCommand comando = new SqlCommand(storedProcedure, conexion.conectarbd))
+            {
+                //indicar que se esta llamando al procedimiento
+                comando.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //Agregar los parametros al procedimiento almacenado
+                comando.Parameters.AddWithValue("@Rol", Rol);
+                comando.Parameters.AddWithValue("@Cedula", Cedula);
+
+                //Ejecutar el procedimienot almacenado
+                comando.ExecuteNonQuery();
+            }
+            conexion.Cerrar();
+        }
+
     }
 }

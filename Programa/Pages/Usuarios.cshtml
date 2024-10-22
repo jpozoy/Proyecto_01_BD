@@ -60,8 +60,40 @@
             // Llamar al método para registrar el usuario
             nuevoUsuario.RegistrarUsuario();
         }
+        else if (action == "registrar_rol")
+        {
+            string rol = Request.Form["nombreRol"];
+            string[] accionesSeleccionadas = Request.Form["modulosAcciones"].ToString().Split(',');
+            if (accionesSeleccionadas != null && accionesSeleccionadas.Length > 0)
+            {
+                foreach (string seleccion in accionesSeleccionadas)
+                {
+                    // Separar el módulo de la acción
+                    string[] partes = seleccion.Split(':');
+                    if (partes.Length == 2)
+                    {
+                        string modulo = partes[0];
+                        string accion = partes[1];
 
-        Console.WriteLine(Mensaje); // Imprimir en consola
+                        // Llamada al metodo para registrar el rol
+                        usuario.RegistrarRol(rol, accion, modulo);
+                    }
+                }
+            }
+        }
+        else if (action == "asignar_rol")
+        {
+            string cedulaRol= Request.Form["cedula"];
+            string[] rolesSeleccionados = Request.Form["rolesSeleccionados"].ToString().Split(',');
+
+            if (rolesSeleccionados != null && rolesSeleccionados.Length > 0)
+            {
+                foreach (string rol in rolesSeleccionados)
+                {
+                    usuario.AsignarRol(cedulaRol, rol);
+                }
+            }
+        }
     }
 }
 <h2>Gestión de Usuarios</h2>
@@ -90,13 +122,18 @@
         <div class="grid-item">@cot.Correo</div>
         <div class="grid-item">@cot.Puesto</div>
         <div class="grid-item">
-            <!-- Formulario para el botón Editar -->
+            <!-- Formulario para el botón editar salario-->
             <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cot.Cedula">
                 Editar Salario
             </button>
-            <!-- Formulario para el botón Eliminar -->
-            <button type="submit" class="btn btn-primary" name="action" value="eliminar" data-bs-toggle="modal" data-bs-target="#editarPuestoModal-@cot.Cedula">
+            <!-- Formulario para el botón editar puesto -->
+            <button type="submit" class="btn btn-primary" name="action" value="editarPuestoModal" data-bs-toggle="modal" data-bs-target="#editarPuestoModal-@cot.Cedula">
                 Editar Puesto
+            </button>
+
+            <!-- Formulario para el botón asignar rol -->
+            <button type="submit" class="btn btn-primary" name="action" value="asignarRol" data-bs-toggle="modal" data-bs-target="#asignarRolModal-@cot.Cedula">
+                Asignar Rol
             </button>
         </div>
         //Editar Salario
@@ -129,7 +166,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" asp-page-handler="EditarPuesto">
+                        <form method="post" asp-page-handler="AsignarRol">
                             <input type="hidden" name="cedula" value="@cot.Cedula" />
 
                             <label>Ingrese el nuevo puesto</label>
@@ -147,6 +184,38 @@
                 </div>
             </div>
         </div>
+
+        //Modal de asisgnar rol
+        <div class="modal fade" id="asignarRolModal-@cot.Cedula" tabindex="-1" aria-labelledby="asignarRolModalLabel-@cot.Cedula" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="asignarRolModalLabel-@cot.Cedula">Asignar Roles - @cot.Nombre</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" asp-page-handler="AsignarRol">
+                            <input type="hidden" name="cedula" value="@cot.Cedula" />
+
+                            <label>Elija los roles a asignar</label>
+                            <div>
+                                @foreach (var rol in listaRoles)
+                                {
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="rolesSeleccionados" value="@rol" id="rol-@rol-@cot.Cedula" />
+                                        <label class="form-check-label" for="rol-@rol-@cot.Cedula">@rol</label>
+                                    </div>
+                                }
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mt-3" name="action" value="asignar_rol">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     }
 </div>
 
@@ -230,10 +299,9 @@
             </div>
             <div class="modal-body">
                 <form method="post" asp-page-handler="Agregar">
-
                     <!-- Input para el nombre del rol -->
                     <label>Nombre Rol:</label>
-                    <input type="text" name="nombre-rol" class="form-control" />
+                    <input type="text" name="nombreRol" class="form-control" />
 
                     <!-- Loop para mostrar los módulos -->
                     @foreach (var modulo in listaModulos)
@@ -242,13 +310,13 @@
                             <!-- Título del módulo -->
                             <label for="modulo">@modulo:</label>
 
-                            <!-- Lista de acciones del módulo -->
+                            <!-- Lista de acciones compartidas por todos los módulos -->
                             <div>
                                 @foreach (var accion in listaAcciones)
                                 {
                                     <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" name="acciones" value="@accion" id="@accion" />
-                                        <label class="form-check-label" for="@accion">@accion</label>
+                                        <input type="checkbox" class="form-check-input" name="modulosAcciones" value="@modulo:@accion" id="@modulo-@accion" />
+                                        <label class="form-check-label" for="@modulo-@accion">@accion</label>
                                     </div>
                                 }
                             </div>
@@ -262,7 +330,6 @@
         </div>
     </div>
 </div>
-
 
 
 @if (!string.IsNullOrEmpty(Mensaje))

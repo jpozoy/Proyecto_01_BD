@@ -82,5 +82,56 @@ exec Editar_Salario '70304641', 645000;
 select * from Historico_Puesto
 select * from Historico_Salario
 select * from Usuario
+go
+--Procedimiento almacenda para crear un rol
 
+create procedure Crear_Rol 
+@Rol_Nombre varchar(20), 
+@Accion varchar(20), 
+@Module varchar(20)
+as
+begin
+    -- Comenzar una transacción para mantener la consistencia
+    begin tran;
+    
+    -- Verificar si el rol ya existe
+    if not exists (select 1 from Rol where Nombre_Rol = @Rol_Nombre)
+    begin
+        -- Insertar el nuevo rol en la tabla Rol si no existe
+        insert into Rol (Nombre_Rol) values (@Rol_Nombre);
+    end
 
+    -- Insertar la relación en la tabla intermedia Rol_Modulo_Accion
+    insert into Rol_Modulo_Accion (Nombre_Rol, Accion, Modulo) 
+    values (@Rol_Nombre, @Accion, @Module);
+
+    -- Confirmar la transacción
+    commit tran;
+end;
+go
+
+exec Crear_Rol 'Admin', 'Edición' ,'Casos'
+exec Crear_Rol 'Admin', 'Reportes' ,'Casos'
+
+select * from Rol_Modulo_Accion
+go
+
+-- Procedimiento almacenado para asignar roles a usuarios, evitando duplicados
+create procedure Asignar_Rol 
+    @Cedula varchar(12), 
+    @Rol varchar(20)
+as
+begin
+    -- Verificar si el rol ya está asignado al usuario
+    if not exists (
+        select 1 
+        from Rol_Usuarios 
+        where Cedula_Usuario = @Cedula 
+          and Nombre_Rol = @Rol
+    )
+    begin
+        -- Si no existe, insertar el nuevo registro
+        insert into Rol_Usuarios (Cedula_Usuario, Nombre_Rol) 
+        values (@Cedula, @Rol)
+    end
+end;
