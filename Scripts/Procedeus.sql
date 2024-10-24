@@ -16,10 +16,6 @@ begin
 end;
 go
 
-
-exec Registrar_Usuario '703040641', 'Jefferson', 'Pozo', 'Vallejos', '64819943', 'pozo@gmail.cr', '2003-11-30', 'Limon', '2024-10-19', 46500,'Gerente', 'Finanzas', 'CR001';
-go
-
 -- Procedimiento para editar usuarios (Gestionar salario)
 create procedure Editar_Salario
 @Cedula varchar(12), @Salario decimal(18,2)
@@ -77,12 +73,6 @@ begin
 end;
 go
 
-exec Editar_Salario '70304641', 645000;
-
-select * from Historico_Puesto
-select * from Historico_Salario
-select * from Usuario
-go
 --Procedimiento almacenda para crear un rol
 
 create procedure Crear_Rol 
@@ -108,12 +98,6 @@ begin
     -- Confirmar la transacción
     commit tran;
 end;
-go
-
-exec Crear_Rol 'Admin', 'Edición' ,'Casos'
-exec Crear_Rol 'Admin', 'Reportes' ,'Casos'
-
-select * from Rol_Modulo_Accion
 go
 
 -- Procedimiento almacenado para asignar roles a usuarios, evitando duplicados

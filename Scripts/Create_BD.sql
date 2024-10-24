@@ -7,6 +7,7 @@ IF NOT EXISTS (
 BEGIN
     CREATE DATABASE SistemaERP;
 END
+go
 
 Use SistemaERP
 Go
@@ -48,8 +49,7 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Zona (
-		Codigo_Zona varchar(12) not null primary key,
-		Nombre_Zona varchar(50) not null,
+		Nombre_Zona varchar(30) not null primary key,
 		Descripcion_zona varchar(100) not null
     );
 END
@@ -62,13 +62,12 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE Sector (
-		Codigo_Sector varchar(12) not null primary key,
-		Nombre_Sector varchar(50) not null,
+		Nombre_Sector varchar(30) not null primary key,
 		Descripcion_Sector varchar(100) not null
     );
 END
 
---Tabla de catalogo Tipo_Cotizacion
+--Tabla de catalogo Puesto
 IF NOT EXISTS (
     SELECT * 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -109,10 +108,10 @@ BEGIN
 		Celular varchar(8),
 		Correo varchar(50),
 		Fax varchar(20),
-		Zona varchar(12),
-		Sector varchar(12)
-		foreign key (Zona) references Zona(Codigo_Zona),
-		foreign key (Sector) references Sector(Codigo_Sector)
+		Zona varchar(30),
+		Sector varchar(30)
+		foreign key (Zona) references Zona(Nombre_Zona),
+		foreign key (Sector) references Sector(Nombre_Sector)
 		-- Relacion a tablas catalago
 
 
@@ -392,30 +391,36 @@ IF NOT EXISTS (
 BEGIN
     CREATE TABLE Cotizacion  (
 		Codigo_Cotizacion  varchar(12) primary key not null,
+		-- Select
 		Cliente varchar(12) not null,
+		-- Gestionar mediante el usuario logueado
 		Vendedor varchar(12) not null,
 		Mes_Proyectado_Cierre date,
 		Monto_Total decimal(18,2),
 		Descripcion varchar(50),
 		Fecha date,
 		Fecha_Cierre date,
+		-- Nullable, se agrega al denegar
 		Motivo_Denegacion varchar(50),
+		-- ?????
 		Contra_Quien_Denego varchar(50),
+		-- Catalogo
 		Estado varchar(20),
 		Tipo varchar(20),
-		Zona varchar(12),
-		Sector varchar(12),
+		Zona varchar(30),
+		Sector varchar(30),
 		Probabilidad varchar(4),
 		foreign key (Cliente) references Cliente(Cedula),
 		foreign key (Vendedor) references Usuario(Cedula),
 		--Conexion a tablas catalogo
-		foreign key (Zona) references Zona(Codigo_Zona),
-		foreign key (Sector) references Sector(Codigo_Sector),
+		foreign key (Zona) references Zona(Nombre_Zona),
+		foreign key (Sector) references Sector(Nombre_Sector),
 		foreign key (Estado) references Estado_Cotizacion(Estado),
 		foreign key (Tipo) references Tipo_Cotizacion(Tipo),
 		foreign key (Probabilidad) references Probabilidad_Cotizacion(Probabilidad)
     );
 END
+
 
 --Tabla intermedia entre Factura y Articulos
 
@@ -435,6 +440,25 @@ BEGIN
 		foreign key (Codigo_Cotizacion) references Cotizacion(Codigo_Cotizacion)
     );
 END 
+
+--Tabla de tareas por Cotizacion
+
+IF NOT EXISTS (
+    SELECT * 
+    FROM INFORMATION_SCHEMA.TABLES 
+    WHERE TABLE_NAME = 'Tareas_Cotizacion' AND TABLE_SCHEMA = 'dbo'
+)
+  
+BEGIN
+    CREATE TABLE Tareas_Cotizacion  (
+		Codigo_Tarea varchar(12) not null primary key,
+		Nombre_Tarea varchar(20) not null,
+		Decripcion_Tarea varchar(100) not null,
+		Codigo_Cotizacion varchar(12),
+		foreign key (Codigo_Cotizacion) references Cotizacion(Codigo_Cotizacion)
+    );
+END
+
 
 -- Tabla bodega
 
