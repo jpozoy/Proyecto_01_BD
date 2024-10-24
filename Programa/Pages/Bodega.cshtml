@@ -7,7 +7,7 @@
     List<Bodega> bodegas = Bodega.ObtenerBodegas();
     string CodigoBodegaSeleccionada = Request.Query["CodigoBodega"];
 
-    // Si hay una bodega seleccionada, obtener los artículos
+    // Si hay una bodega seleccionada, obtener los artÃ­culos
     List<Articulo> articulos = new List<Articulo>();
     if (!string.IsNullOrEmpty(CodigoBodegaSeleccionada))
     {
@@ -22,22 +22,22 @@
         <option value="">Seleccione una bodega</option>
         @foreach (var bodega in bodegas)
         {
-            <option value="@bodega.CodigoBodega" @(CodigoBodegaSeleccionada == bodega.CodigoBodega ? "selected" : "")>
+            <option value="@bodega.CodigoBodega" selected="@(CodigoBodegaSeleccionada == bodega.CodigoBodega ? "selected" : null)">
                 @bodega.Nombre (@bodega.Ubicacion)
             </option>
         }
     </select>
-    <button type="submit" class="btn btn-primary mt-3">Ver Artículos</button>
+    <button type="submit" class="btn btn-primary mt-3">Ver ArtÃ­culos</button>
 </form>
 
 @if (!string.IsNullOrEmpty(CodigoBodegaSeleccionada))
 {
-    <h3>Artículos en Bodega: @CodigoBodegaSeleccionada</h3>
+    <h3>ArtÃ­culos en Bodega: @CodigoBodegaSeleccionada</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>Código Artículo</th>
-                <th>Nombre Artículo</th>
+                <th>CÃ³digo ArtÃ­culo</th>
+                <th>Nombre ArtÃ­culo</th>
                 <th>Cantidad en Stock</th>
             </tr>
         </thead>
