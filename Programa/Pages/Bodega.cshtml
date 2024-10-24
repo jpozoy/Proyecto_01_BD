@@ -1,0 +1,55 @@
+@page
+@using Proyecto_01_BD.Clases;
+<link rel="stylesheet" href="/css/styles.css">
+
+@{
+    // Obtener lista de bodegas
+    List<Bodega> bodegas = Bodega.ObtenerBodegas();
+    string CodigoBodegaSeleccionada = Request.Query["CodigoBodega"];
+
+    // Si hay una bodega seleccionada, obtener los artículos
+    List<Articulo> articulos = new List<Articulo>();
+    if (!string.IsNullOrEmpty(CodigoBodegaSeleccionada))
+    {
+        articulos = Bodega.VerArticulosPorBodega(CodigoBodegaSeleccionada);
+    }
+}
+
+<h2>Seleccione una Bodega</h2>
+
+<form method="get">
+    <select name="CodigoBodega" class="form-control">
+        <option value="">Seleccione una bodega</option>
+        @foreach (var bodega in bodegas)
+        {
+            <option value="@bodega.CodigoBodega" @(CodigoBodegaSeleccionada == bodega.CodigoBodega ? "selected" : "")>
+                @bodega.Nombre (@bodega.Ubicacion)
+            </option>
+        }
+    </select>
+    <button type="submit" class="btn btn-primary mt-3">Ver Artículos</button>
+</form>
+
+@if (!string.IsNullOrEmpty(CodigoBodegaSeleccionada))
+{
+    <h3>Artículos en Bodega: @CodigoBodegaSeleccionada</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Código Artículo</th>
+                <th>Nombre Artículo</th>
+                <th>Cantidad en Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var articulo in articulos)
+            {
+                <tr>
+                    <td>@articulo.CodigoArticulo</td>
+                    <td>@articulo.NombreArticulo</td>
+                    <td>@articulo.Cantidad</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
