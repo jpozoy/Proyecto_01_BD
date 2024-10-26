@@ -1,63 +1,292 @@
 ﻿@page
 @using System.Data.SqlClient;
 @using Proyecto_01_BD.Clases;
+@using System.Text.Json;
 @{
+    //Crear una instancia de CalagoDAO
 
-    ViewData["Title"] = "Cotización";
-    // Crear conexion
-    ConexionBD conexion = new ConexionBD();
-    SqlCommand comando = new SqlCommand("SELECT Codigo_Cotizacion, Cliente, Monto_Total FROM Cotizacion", conexion.conectarbd);
-    List<Cotizacion> cotizaciones = new List<Cotizacion>();
-
-    try
-    {
-        conexion.Abrir();
-        SqlDataReader reader = comando.ExecuteReader();
-        while (reader.Read())
-        {
-            cotizaciones.Add(new Cotizacion()
-                    {
-                        //Indicar entre parentisis el indice del dato
-                        Codigo_Cotizacion = reader.GetString(0),
-                        Cliente = reader.GetString(1),
-                        Monto_Total = reader.GetDecimal(2)
-
-                    });
-            Console.WriteLine(reader.GetString(1));
-        }
-    }
-    catch (SqlException ex)
-    {
-        Console.WriteLine(ex.Message);
-    }
-    finally
-    {
-        conexion.Cerrar();
-
-    }
-
+    CatalogoDAO catalogoDAO = new CatalogoDAO();
+    //Obtener datos (a modo de catalago)
+    List<Cliente> clientes = catalogoDAO.ObtenerClientes();
+    List<Usuario> usuarios = catalogoDAO.ObtenerUsuarios();
+    List<string> zonas = catalogoDAO.ObtenerZona();
+    List<string> sectores = catalogoDAO.ObtenerSector();
+    List<string> tipos = catalogoDAO.ObtenerTipoCotizacion();
+    List<string> estados = catalogoDAO.EstadoCotizacion();
+    List<string> probabilidades = catalogoDAO.ProbabilidadCotizacion();
+    List<Articulo> articulos = catalogoDAO.ObtenerArticulos();
 }
 
+@functions {
+    public void OnPost(string cliente, string vendedor, string direccion, string asunto, string tipo, string estado,
+                       string probabilidad, string descripcion, DateTime fecha, List<Articulo> articulos)
+    {
+        // Ejemplo de acceso a los datos individuales
+        Console.WriteLine($"Cliente: {cliente}");
+        Console.WriteLine($"Vendedor: {vendedor}");
+        Console.WriteLine($"Dirección: {direccion}");
+        Console.WriteLine($"Asunto: {asunto}");
+        Console.WriteLine($"Tipo: {tipo}");
+        Console.WriteLine($"Estado: {estado}");
+        Console.WriteLine($"Probabilidad: {probabilidad}");
+        Console.WriteLine($"Descripción: {descripcion}");
+        Console.WriteLine($"Fecha: {fecha}");
 
-<h2>Cotización</h2>
-<div class="table-section">
-    <p>Listado de cotizaciones</p>
-    <div class="button-header-cotizacion">
-        <button>Consultar</button>
-        <button onclick="window.location.href='/CrearCotizacion';">Agregar</button>
-    </div>
+        // Procesa la lista de artículos
+        foreach (var articulo in articulos)
+        {
+            Console.WriteLine($"Artículo: {articulo.codigo_articulo}, Cantidad: {articulo.cantidad}");
+        }
+
+        // Aquí puedes implementar la lógica para guardar los datos en la base de datos
+    }
+}
+
+<!-- Radio buttons ocultos para controlar la visibilidad -->
+<input type="radio" id="ver-listado" name="toggle" checked hidden />
+<input type="radio" id="ver-crear" name="toggle" hidden />
+
+<!-- Sección de listado de cotizaciones -->
+<div class="seccion" id="listado-cotizaciones">
+    <label for="ver-crear" class="btn">Agregar Cotización</label>
+    <h2>Cotizaciones</h2>
     <div class="grid-table">
         <!-- Cabeceras -->
         <div class="grid-header">Id</div>
         <div class="grid-header">Cliente</div>
         <div class="grid-header">Total</div>
 
-        <!-- Datos -->
-        @foreach (var cot in cotizaciones)
-        {
-            <div class="grid-item">@cot.Codigo_Cotizacion</div>
-            <div class="grid-item">@cot.Cliente</div>
-            <div class="grid-item">@cot.Monto_Total</div>
-        }
+        <!-- Datos de ejemplo -->
+        <div class="grid-item">001</div>
+        <div class="grid-item">Cliente A</div>
+        <div class="grid-item">$500.00</div>
+
     </div>
 </div>
+
+<!-- Sección de creación de cotizaciones -->
+<div class="seccion" id="crear-cotizacion">
+    <label for="ver-listado" class="btn">Consultar Cotizaciones</label>
+    <h2>Agregar Cotización</h2>
+    <form method="post" onsubmit="enviarArticulos(event)">
+        <!-- Cliente -->
+
+        <label for="cliente">Cliente:</label>
+        <select name="cliente" id="cliente" class="form-control">
+            <option value="">Seleccione un cliente</option>
+            @foreach (var cliente in clientes)
+            {
+                <option value="@cliente.Cedula">@cliente.NombreCompleto</option>
+            }
+        </select>
+
+        <!-- Vendedor -->
+        <label for="vendedor">Vendedor:</label>
+        <select name="vendedor" id="vendedor" class="form-control">
+            <option value="">Seleccione un vendedor</option>
+            @foreach (var vendedor in usuarios)
+            {
+                <option value="@vendedor.Cedula">@vendedor.NombreCompleto</option>
+            }
+        </select>
+        <!-- Dirección -->
+        <div class="form-group">
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" required />
+        </div>
+
+        <!-- Asunto -->
+        <div class="form-group">
+            <label for="asunto">Asunto:</label>
+            <input type="text" id="asunto" name="asunto" required />
+        </div>
+
+        <!-- Tipo -->
+        <div class="form-group">
+            <label for="tipo">Tipo:</label>
+            <select id="tipo" name="tipo" required>
+                <option value="">Seleccione un tipo</option>
+                @foreach (var tipo in tipos)
+                {
+                    <option value="@tipo">@tipo</option>
+                }
+            </select>
+        </div>
+
+        <!-- Estado -->
+        <div class="form-group">
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="">Seleccione un estado</option>
+                @foreach (var estado in estados)
+                {
+                    <option value="@estado">@estado</option>
+                }
+            </select>
+        </div>
+
+        <!-- Probalidad -->
+        <div class="form-group">
+            <label for="probabilidad">Probabilidad:</label>
+            <select id="probabilidad" name="probabilidad" required>
+                <option value="">Seleccione una probabilidad</option>
+                @foreach (var probabilidad in probabilidades)
+                {
+                    <option value="@probabilidad">@probabilidad</option>
+                }
+            </select>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+        </div>
+
+        <!-- Fecha -->
+        <div class="form-group">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required />
+        </div>
+
+        <!-- Sección para manejar articulos-->
+        <div class="form">
+            <!--Formulario para agregar un articulo-->
+            <label for="nombreArticulo">Articulo:</label>
+            <select id="nombreArticulo" class="form-control">
+                <option value="">Seleccione un articulo</option>
+                @foreach (var articulo in articulos)
+                {
+                    <option value='@Html.Raw(Json.Serialize(articulo))'>@articulo.nombre_articulo</option>
+                }
+            </select>
+
+            <div class="form-group">
+                <label for="cantidadArticulo">Cantidad:</label>
+                <input type="number" id="cantidadArticulo" class="form-control" />
+            </div>
+            <button type="button" onclick="agregarArticulo()">Agregar Artículo</button>
+
+            <!-- Tabla para mostrar los artículos agregados -->
+            <h4>Lista de Artículos</h4>
+            <table id="tablaArticulos" class="table">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán los artículos dinámicamente -->
+                </tbody>
+            </table>
+
+            <!-- Contenedor para campos ocultos -->
+            <div id="listaArticulosOculta"></div>
+
+
+        <!-- Botón de enviar -->
+        <div class="form-group">
+                <button type="submit" >Guardar Cotización</button>
+        </div>
+    </form>
+</div>
+
+<!-- Script para manejar la adición de artículos -->
+
+<script>
+    // Array para almacenar los artículos
+    let articulos = [];
+
+    // Función para agregar un artículo
+    // Función para agregar un artículo
+    function agregarArticulo() {
+        const articuloSeleccionado = document.getElementById('nombreArticulo').value;
+        const cantidad = document.getElementById('cantidadArticulo').value;
+
+        if (articuloSeleccionado && cantidad) {
+            // Parsear el JSON del value seleccionado para obtener el objeto artículo
+            const articulo = JSON.parse(articuloSeleccionado);
+
+            // Agregar el artículo al array con la cantidad
+            articulos.push({ ...articulo, cantidad });
+
+            // Actualizar la tabla
+            actualizarTablaArticulos();
+        }
+    }
+
+    // Función para eliminar un artículo del array
+    function eliminarArticulo(index) {
+        articulos.splice(index, 1); // Eliminar el artículo del array
+        actualizarTablaArticulos(); // Actualizar la tabla
+    }
+
+    // Función para actualizar la tabla visual con los artículos
+    function actualizarTablaArticulos() {
+        const tabla = document.getElementById('tablaArticulos').getElementsByTagName('tbody')[0];
+        tabla.innerHTML = ''; // Limpiar la tabla
+
+        articulos.forEach((articulo, index) => {
+            const fila = tabla.insertRow();
+            fila.innerHTML = `
+                <td>${articulo.codigo_articulo}</td>
+                <td>${articulo.nombre_articulo}</td>
+                <td>${articulo.cantidad}</td>
+                <td><button type="button" onclick="eliminarArticulo(${index})">Eliminar</button></td>
+            `;
+        });
+    }
+
+    // Función para generar campos ocultos con los artículos y enviarlos
+    function enviarArticulos(event) {
+        const contenedorOculto = document.getElementById('listaArticulosOculta');
+        contenedorOculto.innerHTML = ''; // Limpiar campos ocultos
+
+        articulos.forEach((articulo, index) => {
+            for (const [key, value] of Object.entries(articulo)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `articulos[${index}].${key}`;
+                input.value = value;
+                contenedorOculto.appendChild(input);
+            }
+        });
+    }
+</script>
+
+
+<style>
+    /* Ocultar secciones por defecto */
+    .seccion {
+        display: none;
+    }
+
+    /* Mostrar listado cuando está seleccionado */
+    #ver-listado:checked ~ #listado-cotizaciones {
+        display: block;
+    }
+
+    /* Mostrar formulario de creación cuando está seleccionado */
+    #ver-crear:checked ~ #crear-cotizacion {
+        display: block;
+    }
+
+    /* Estilos básicos de botones */
+    .btn {
+        display: inline-block;
+        margin-bottom: 10px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+</style>

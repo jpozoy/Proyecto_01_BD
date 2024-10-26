@@ -20,6 +20,7 @@ namespace Proyecto_01_BD.Clases
         public string Puesto { get; set; }
         public string Departamento { get; set; }
         public string Password { get; set; }
+        public string NombreCompleto { get; set; }
 
         //Crear un objeto nuevo de la conexion
         ConexionBD conexion = new ConexionBD();

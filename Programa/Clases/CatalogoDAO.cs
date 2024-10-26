@@ -122,5 +122,205 @@ namespace Proyecto_01_BD.Clases
             conexion.Cerrar();
             return acciones;
         }
+
+        // Metodo para obtener clientes
+        public List<Cliente> ObtenerClientes()
+        {
+            List<Cliente> clientes = new List<Cliente>();
+            conexion.Abrir();
+
+            // Consulta para obtener Cedula y Nombre_Completo
+            string query = @"SELECT Cedula, Nombre_Completo FROM Listado_Clientes";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        // Crear un objeto Cliente con los valores de la consulta
+                        Cliente cliente = new Cliente
+                        {
+                            Cedula = lector["Cedula"].ToString(),
+                            NombreCompleto = lector["Nombre_Completo"].ToString()
+                        };
+                        clientes.Add(cliente);
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return clientes;
+        }
+
+        //Obtener usuarios momentaneamente para la cotizacion
+        public List<Usuario> ObtenerUsuarios()
+        {
+            List<Usuario> usuarios = new List<Usuario>();
+            conexion.Abrir();
+
+            string query = @"SELECT Cedula, Nombre_Completo FROM Listado_Usuarios";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        // Crear un objeto Cliente con los valores de la consulta
+                        Usuario usuario = new Usuario
+                        {
+                            Cedula = lector["Cedula"].ToString(),
+                            NombreCompleto = lector["Nombre_Completo"].ToString()
+                        };
+                        usuarios.Add(usuario);
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return usuarios;
+        }
+        // Metodo para obtener Sector
+        public List<string> ObtenerSector()
+        {
+            List<string> sectores = new List<string>();
+            conexion.Abrir();
+
+            string query = @"SELECT Nombre_Sector FROM Sector";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        sectores.Add(lector["Nombre_Sector"].ToString());
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return sectores;
+        }
+        // Metodo para obtener zona
+        public List<string> ObtenerZona()
+        {
+            List<string> zonas = new List<string>();
+            conexion.Abrir();
+
+            string query = @"SELECT Nombre_Zona FROM Zona";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        zonas.Add(lector["Nombre_Zona"].ToString());
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return zonas;
+        }
+        // Metodo para obtener Tipo_Cotizacion
+        public List<string> ObtenerTipoCotizacion()
+        {
+            List<string> tipos = new List<string>();
+            conexion.Abrir();
+
+            string query = @"SELECT Tipo FROM Tipo_Cotizacion";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        tipos.Add(lector["Tipo"].ToString());
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return tipos;
+        }
+        // Metodo para obtener Probalidad_Cotizacion
+        public List<string> ProbabilidadCotizacion()
+        {
+            List<string> probalidades = new List<string>();
+            conexion.Abrir();
+
+            string query = @"SELECT Probabilidad FROM Probabilidad_Cotizacion";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        probalidades.Add(lector["Probabilidad"].ToString());
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return probalidades;
+        }
+
+        // Metodo para obtener Estado_Cotizacion
+        public List<string> EstadoCotizacion()
+        {
+            List<string> estados = new List<string>();
+            conexion.Abrir();
+
+            string query = @"SELECT Estado FROM Estado_Cotizacion";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        estados.Add(lector["Estado"].ToString());
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return estados;
+        }
+
+        // Metodo para obtener Articulos
+        public List<Articulo> ObtenerArticulos()
+        {
+            List<Articulo> articulos = new List<Articulo>();
+            conexion.Abrir();
+
+            string query = @"SELECT Codigo_Articulo, Nombre_Articulo, Costo FROM Articulo";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        // Crear un objeto Cliente con los valores de la consulta
+                        Articulo articulo = new Articulo
+                        {
+                            codigo_articulo = lector["Codigo_Articulo"].ToString(),
+                            nombre_articulo = lector["Nombre_Articulo"].ToString(),
+                            costo = Convert.ToDecimal(lector["Costo"])
+                        };
+                        articulos.Add(articulo);
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return articulos;
+        }
     }
 }

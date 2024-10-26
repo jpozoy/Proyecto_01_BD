@@ -372,3 +372,6 @@ insert into Estado_Cotizacion (Estado) values ('abierta'),  ('aprobada'), ('dene
 insert into Tipo_Cotizacion (Tipo) values ('Detalle') , ('Mayoreo'), ('Preventa'), ('Personalizada') ;
 
 insert into Probabilidad_Cotizacion (Probabilidad) values ('0%'),('25%'), ('50%'), ('75%'), ('100%');
+
+select * from Probabilidad_Cotizacion
+

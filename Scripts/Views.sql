@@ -1,7 +1,7 @@
 -- Vista de listado de Usuarios
-create view Listado_Usuarios
+create or alter view Listado_Usuarios
 as
-select Cedula, Concat(Nombre, Apellido1, Apellido2) as Nombre_Completo, Correo, Puesto 
+select Cedula, CONCAT(Nombre, ' ', Apellido1, ' ', Apellido2) as Nombre_Completo
 from Usuario
 go
 
@@ -17,4 +17,5 @@ select Cedula, CONCAT(Nombre, ' ', Apellido1, ' ', Apellido2)  as Nombre_Complet
 from Cliente
 go
 
-select * from Listado_Clientes
+
+SELECT Cedula, Nombre_Completo FROM Listado_Usuarios

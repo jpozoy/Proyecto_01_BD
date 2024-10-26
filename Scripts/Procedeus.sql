@@ -1,3 +1,6 @@
+use SistemaERP
+go
+
 -- Procedimiento para guardar usuarios
 create procedure Registrar_Usuario
 @Cedula varchar(12), @Nombre varchar(20), @Apellido1 varchar(20), @Apellido2 varchar(20), @Telefono varchar(8), @Correo varchar(50), @Fecha_Nacimiento Date,
@@ -119,3 +122,72 @@ begin
         values (@Cedula, @Rol)
     end
 end;
+go
+
+-- Modulo de cotizacion
+
+CREATE PROCEDURE Registrar_Cotizacion
+    @Cliente varchar(12),
+    @Vendedor varchar(12),
+    @Mes_Proyectado_Cierre date = NULL,
+    @Monto_Total decimal(18,2) = NULL,
+    @Descripcion varchar(50) = NULL,
+    @Fecha date = NULL,
+    @Fecha_Cierre date = NULL,
+    @Estado varchar(20) = NULL,
+    @Tipo varchar(20) = NULL,
+    @Zona varchar(30) = NULL,
+    @Sector varchar(30) = NULL,
+    @Probabilidad varchar(4) = NULL,
+    @CodigoCotizacionSalida varchar(12) OUTPUT -- Parámetro de salida
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @NuevoCodigo varchar(12);
+
+    -- Generar el próximo Codigo_Cotizacion consecutivo
+    SELECT @NuevoCodigo = 
+        RIGHT('000000' + CAST(ISNULL(MAX(CAST(Codigo_Cotizacion AS INT)), 0) + 1 AS VARCHAR), 6)
+    FROM Cotizacion;
+
+    -- Insertar el nuevo registro con el Codigo_Cotizacion generado
+    INSERT INTO Cotizacion (
+        Codigo_Cotizacion,
+        Cliente,
+        Vendedor,
+        Mes_Proyectado_Cierre,
+        Monto_Total,
+        Descripcion,
+        Fecha,
+        Fecha_Cierre,
+        Estado,
+        Tipo,
+        Zona,
+        Sector,
+        Probabilidad
+    )
+    VALUES (
+        @NuevoCodigo,
+        @Cliente,
+        @Vendedor,
+        @Mes_Proyectado_Cierre,
+        @Monto_Total,
+        @Descripcion,
+        @Fecha,
+        @Fecha_Cierre,
+        @Estado,
+        @Tipo,
+        @Zona,
+        @Sector,
+        @Probabilidad
+    );
+
+    -- Asignar el nuevo código al parámetro de salida
+    SET @CodigoCotizacionSalida = @NuevoCodigo;
+END;
+
+
+
+
+select * from Cotizacion

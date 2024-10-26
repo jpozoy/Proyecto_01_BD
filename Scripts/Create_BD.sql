@@ -80,7 +80,7 @@ BEGIN
     );
 END
 
---Tabla de catalogo Tipo_Cotizacion
+--Tabla de catalogo Departamento
 IF NOT EXISTS (
     SELECT * 
     FROM INFORMATION_SCHEMA.TABLES 
