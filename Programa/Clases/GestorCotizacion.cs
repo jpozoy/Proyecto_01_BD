@@ -28,10 +28,7 @@ namespace Proyecto_01_BD.Clases
                 comando.Parameters.AddWithValue("@Cliente", cotizacion.Cliente);
                 comando.Parameters.AddWithValue("@Vendedor", cotizacion.Vendedor);
                 comando.Parameters.AddWithValue("@Mes_Proyectado_Cierre", cotizacion.Mes_Proyectado_Cierre);
-                comando.Parameters.AddWithValue("@Monto_Total", cotizacion.Monto_Total);
                 comando.Parameters.AddWithValue("@Descripcion", cotizacion.Descripcion);
-                comando.Parameters.AddWithValue("@Fecha", cotizacion.Fecha);
-                comando.Parameters.AddWithValue("@Fecha_Cierre", cotizacion.Fecha_Cierre);
                 comando.Parameters.AddWithValue("@Estado", cotizacion.Estado);
                 comando.Parameters.AddWithValue("@Tipo", cotizacion.Tipo);
                 comando.Parameters.AddWithValue("@Zona", cotizacion.Zona);
@@ -54,6 +51,69 @@ namespace Proyecto_01_BD.Clases
 
             // Retornar el código de la cotización generado
             return codigoGenerado;
+        }
+
+        //Agregar nuevas cotizaciones
+        public void AgregarArticulos (string cotizacion, string articulo, int cantidad)
+        {
+
+            // Conectarse a la base de datos
+            conexion.Abrir();
+
+            // Llamar al procedimiento almacenado
+            string storedProcedure = "Agregar_Articulos_Cotizacion";
+
+            using (SqlCommand comando = new SqlCommand(storedProcedure, conexion.conectarbd))
+            {
+                //indicar que se esta llamando al procedimiento
+                comando.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //Agregar los parametros al procedimiento almacenado
+                comando.Parameters.AddWithValue("@Cotizacion", cotizacion);
+                comando.Parameters.AddWithValue("@Articulo", articulo);
+                comando.Parameters.AddWithValue("@Cantidad", cantidad);
+
+                //Ejecutar el procedimienot almacenado
+                comando.ExecuteNonQuery();
+            }
+            conexion.Cerrar();
+
+        }
+
+        //Obtener listado de cotizaciones
+        public List<Cotizacion> ObtenerCotizaciones()
+        {
+            //Crear una lista para almacenar las cotizaciones
+            List<Cotizacion> cotizaciones = new List<Cotizacion>();
+            // Conectarse a la base de datos
+            conexion.Abrir();
+
+            // Llamar al procedimiento almacenado
+            string query = "select Codigo_Cotizacion, Cliente, Vendedor,Fecha, Monto_Total, Estado from Listado_Cotizaciones ";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        // Crear un objeto Cliente con los valores de la consulta
+                        Cotizacion cotizacion = new Cotizacion
+                        {
+                            Codigo_Cotizacion = lector["Codigo_Cotizacion"].ToString(),
+                            Cliente = lector["Cliente"].ToString(),
+                            Vendedor = lector["Vendedor"].ToString(),
+                            Fecha = Convert.ToDateTime(lector["Fecha"]),
+                            Monto_Total = 1200,
+                            Estado = lector["Estado"].ToString(),
+                        };
+                        cotizaciones.Add(cotizacion);
+                    }
+                }
+
+            }
+            conexion.Cerrar();
+            return cotizaciones;
         }
     }
 }

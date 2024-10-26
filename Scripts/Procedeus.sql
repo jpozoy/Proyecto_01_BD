@@ -2,7 +2,7 @@ use SistemaERP
 go
 
 -- Procedimiento para guardar usuarios
-create procedure Registrar_Usuario
+create or alter procedure Registrar_Usuario
 @Cedula varchar(12), @Nombre varchar(20), @Apellido1 varchar(20), @Apellido2 varchar(20), @Telefono varchar(8), @Correo varchar(50), @Fecha_Nacimiento Date,
 @Lugar_Residencia varchar(20), @Fecha_Ingreso Date, @Salario decimal(18,2), @Puesto varchar(20), @Departamento varchar(20), @Contrasena varchar(60)
 as
@@ -20,7 +20,7 @@ end;
 go
 
 -- Procedimiento para editar usuarios (Gestionar salario)
-create procedure Editar_Salario
+create or alter procedure Editar_Salario
 @Cedula varchar(12), @Salario decimal(18,2)
 as
 begin
@@ -48,7 +48,7 @@ end;
 go
 
 --Procedimiento para editar puesto
-create procedure Editar_Puesto
+create or alter procedure Editar_Puesto
 @Cedula varchar(12), @Puesto varchar (20)
 as
 begin
@@ -78,7 +78,7 @@ go
 
 --Procedimiento almacenda para crear un rol
 
-create procedure Crear_Rol 
+create or alter procedure Crear_Rol 
 @Rol_Nombre varchar(20), 
 @Accion varchar(20), 
 @Module varchar(20)
@@ -104,7 +104,7 @@ end;
 go
 
 -- Procedimiento almacenado para asignar roles a usuarios, evitando duplicados
-create procedure Asignar_Rol 
+create or alter procedure Asignar_Rol 
     @Cedula varchar(12), 
     @Rol varchar(20)
 as
@@ -126,14 +126,13 @@ go
 
 -- Modulo de cotizacion
 
-CREATE PROCEDURE Registrar_Cotizacion
+-- Procedimiento para registra una cotizacion
+
+CREATE OR ALTER PROCEDURE Registrar_Cotizacion
     @Cliente varchar(12),
     @Vendedor varchar(12),
     @Mes_Proyectado_Cierre date = NULL,
-    @Monto_Total decimal(18,2) = NULL,
     @Descripcion varchar(50) = NULL,
-    @Fecha date = NULL,
-    @Fecha_Cierre date = NULL,
     @Estado varchar(20) = NULL,
     @Tipo varchar(20) = NULL,
     @Zona varchar(30) = NULL,
@@ -157,10 +156,8 @@ BEGIN
         Cliente,
         Vendedor,
         Mes_Proyectado_Cierre,
-        Monto_Total,
         Descripcion,
-        Fecha,
-        Fecha_Cierre,
+		Fecha,
         Estado,
         Tipo,
         Zona,
@@ -172,10 +169,8 @@ BEGIN
         @Cliente,
         @Vendedor,
         @Mes_Proyectado_Cierre,
-        @Monto_Total,
         @Descripcion,
-        @Fecha,
-        @Fecha_Cierre,
+		CAST(GETDATE() AS DATE),
         @Estado,
         @Tipo,
         @Zona,
@@ -186,8 +181,22 @@ BEGIN
     -- Asignar el nuevo código al parámetro de salida
     SET @CodigoCotizacionSalida = @NuevoCodigo;
 END;
+go
 
-
+-- Procedimiento para agregar articulos a la cotización
+create or alter procedure Agregar_Articulos_Cotizacion 
+	@Cotizacion varchar(12),
+	@Articulo varchar(12),
+	@Cantidad int
+as
+begin
+	-- Agregar articulos a la tabla intermedia
+	insert into Cotizacion_Articulos (Codigo_Cotizacion, Articulo, Cantidad)
+	values (@Cotizacion, @Articulo, @Cantidad);
+	
+end;
+go
 
 
 select * from Cotizacion
+select * from Cotizacion_Articulos

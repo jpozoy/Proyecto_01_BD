@@ -15,30 +15,45 @@
     List<string> estados = catalogoDAO.EstadoCotizacion();
     List<string> probabilidades = catalogoDAO.ProbabilidadCotizacion();
     List<Articulo> articulos = catalogoDAO.ObtenerArticulos();
+
+    //Crear instacia de GestorCotizacion
+    GestorCotizacion gestorCotizacion = new GestorCotizacion();
+    //Crear una lista de cotizaciones
+    List<Cotizacion> cotizaciones = gestorCotizacion.ObtenerCotizaciones();
+
 }
 
 @functions {
-    public void OnPost(string cliente, string vendedor, string direccion, string asunto, string tipo, string estado,
+    // Nueva instancia de gestor de cotizacion
+    GestorCotizacion gestorCotizacion = new GestorCotizacion();
+
+    public void OnPost(string cliente, string vendedor, string direccion, string zona, string sector, string tipo, string estado,
                        string probabilidad, string descripcion, DateTime fecha, List<Articulo> articulos)
     {
-        // Ejemplo de acceso a los datos individuales
-        Console.WriteLine($"Cliente: {cliente}");
-        Console.WriteLine($"Vendedor: {vendedor}");
-        Console.WriteLine($"Dirección: {direccion}");
-        Console.WriteLine($"Asunto: {asunto}");
-        Console.WriteLine($"Tipo: {tipo}");
-        Console.WriteLine($"Estado: {estado}");
-        Console.WriteLine($"Probabilidad: {probabilidad}");
-        Console.WriteLine($"Descripción: {descripcion}");
-        Console.WriteLine($"Fecha: {fecha}");
+        //Crear una instancia de Cotizacion
+        Cotizacion cotizacion = new Cotizacion
+        {
+            Cliente = cliente,
+            Vendedor = vendedor,
+            Mes_Proyectado_Cierre = fecha,
+            Descripcion = descripcion,
+            Zona = zona,
+            Sector = sector,
+            Estado = estado,
+            Tipo = tipo,
+            Probabilidad = probabilidad
+
+
+        };
+        //Insertar la nueva cotización y obtener el codigo generado
+        string cotizacionGenerada = gestorCotizacion.CrearCotizacion(cotizacion);
 
         // Procesa la lista de artículos
         foreach (var articulo in articulos)
         {
             Console.WriteLine($"Artículo: {articulo.codigo_articulo}, Cantidad: {articulo.cantidad}");
+            gestorCotizacion.AgregarArticulos(cotizacionGenerada, articulo.codigo_articulo, articulo.cantidad);
         }
-
-        // Aquí puedes implementar la lógica para guardar los datos en la base de datos
     }
 }
 
@@ -50,16 +65,25 @@
 <div class="seccion" id="listado-cotizaciones">
     <label for="ver-crear" class="btn">Agregar Cotización</label>
     <h2>Cotizaciones</h2>
-    <div class="grid-table">
+    <div class="grid-table-cotizacion">
         <!-- Cabeceras -->
         <div class="grid-header">Id</div>
         <div class="grid-header">Cliente</div>
-        <div class="grid-header">Total</div>
+        <div class="grid-header">Vendedor</div>
+        <div class="grid-header">Fecha</div>
+        <div class="grid-header">Monto_Total</div>
+        <div class="grid-header">Estado</div>
 
         <!-- Datos de ejemplo -->
-        <div class="grid-item">001</div>
-        <div class="grid-item">Cliente A</div>
-        <div class="grid-item">$500.00</div>
+        @foreach (var cotizacion in cotizaciones)
+        {
+            <div class="grid-item">@cotizacion.Codigo_Cotizacion</div>
+            <div class="grid-item">@cotizacion.Cliente</div>
+            <div class="grid-item">@cotizacion.Vendedor</div>
+            <div class="grid-item">@cotizacion.Fecha</div>
+            <div class="grid-item">@cotizacion.Monto_Total</div>
+            <div class="grid-item">@cotizacion.Estado</div>
+        }
 
     </div>
 </div>
@@ -95,10 +119,28 @@
             <input type="text" id="direccion" name="direccion" required />
         </div>
 
-        <!-- Asunto -->
+        <!-- Zona -->
         <div class="form-group">
-            <label for="asunto">Asunto:</label>
-            <input type="text" id="asunto" name="asunto" required />
+            <label for="zona">Zona:</label>
+            <select id="zona" name="zona" required>
+                <option value="">Seleccione una zona</option>
+                @foreach (var zona in zonas)
+                {
+                    <option value="@zona">@zona</option>
+                }
+            </select>
+        </div>
+
+        <!-- Zona -->
+        <div class="form-group">
+            <label for="sector">Sector:</label>
+            <select id="sector" name="sector" required>
+                <option value="">Seleccione un sector</option>
+                @foreach (var sector in sectores)
+                {
+                    <option value="@sector">@sector</option>
+                }
+            </select>
         </div>
 
         <!-- Tipo -->
@@ -143,10 +185,10 @@
             <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
         </div>
 
-        <!-- Fecha -->
+        <!-- Fecha proyectada cierre-->
         <div class="form-group">
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" required />
+            <label for="fecha">Mes proyectado cierre:</label>
+            <input type="month" id="fecha" name="fecha" required />
         </div>
 
         <!-- Sección para manejar articulos-->
@@ -160,32 +202,32 @@
                     <option value='@Html.Raw(Json.Serialize(articulo))'>@articulo.nombre_articulo</option>
                 }
             </select>
+        </div>
 
-            <div class="form-group">
-                <label for="cantidadArticulo">Cantidad:</label>
-                <input type="number" id="cantidadArticulo" class="form-control" />
-            </div>
-            <button type="button" onclick="agregarArticulo()">Agregar Artículo</button>
+        <div class="form-group">
+            <label for="cantidadArticulo">Cantidad:</label>
+            <input type="number" id="cantidadArticulo" class="form-control" />
+        </div>
+        <button type="button" onclick="agregarArticulo()">Agregar Artículo</button>
 
-            <!-- Tabla para mostrar los artículos agregados -->
-            <h4>Lista de Artículos</h4>
-            <table id="tablaArticulos" class="table">
-                <thead>
-                    <tr>
-                        <th>Codigo</th>
-                        <th>Nombre</th>
-                        <th>Cantidad</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Aquí se agregarán los artículos dinámicamente -->
-                </tbody>
-            </table>
+        <!-- Tabla para mostrar los artículos agregados -->
+        <h4>Lista de Artículos</h4>
+        <table id="tablaArticulos" class="table">
+            <thead>
+                <tr>
+                    <th>Codigo</th>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se agregarán los artículos dinámicamente -->
+            </tbody>
+        </table>
 
-            <!-- Contenedor para campos ocultos -->
-            <div id="listaArticulosOculta"></div>
-
+        <!-- Contenedor para campos ocultos -->
+        <div id="listaArticulosOculta"></div>
 
         <!-- Botón de enviar -->
         <div class="form-group">
@@ -193,8 +235,6 @@
         </div>
     </form>
 </div>
-
-<!-- Script para manejar la adición de artículos -->
 
 <script>
     // Array para almacenar los artículos
