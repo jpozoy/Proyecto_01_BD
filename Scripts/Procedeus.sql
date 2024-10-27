@@ -220,3 +220,31 @@ BEGIN
     END CATCH
 END;
 GO
+
+
+---sp para registrar la planilla y calcula el pago
+CREATE PROCEDURE sp_RegistrarPlanilla
+    @Cedula VARCHAR(12),
+    @HorasTrabajadas INT,
+    @HorasExtras INT,
+    @Salario DECIMAL(18, 2),
+    @SalarioTotal DECIMAL(18, 2) OUTPUT
+AS
+BEGIN
+    DECLARE @SalarioPorHora DECIMAL(18, 2);
+    DECLARE @PagoHorasExtras DECIMAL(18, 2);
+
+    -- Calcular el salario por hora
+    SET @SalarioPorHora = @Salario / 200;
+
+    -- Calcular el pago de las horas extras
+    SET @PagoHorasExtras = @HorasExtras * @SalarioPorHora * 1.5;
+
+    -- Salario total incluyendo el pago de horas extras
+    SET @SalarioTotal = @Salario + @PagoHorasExtras;
+
+    -- Insertar el registro en la tabla de planilla
+    INSERT INTO Planilla_Usuario (Cedula_Usuario, Horas_Trabajadas, Horas_Extras, Salario_Pagado)
+    VALUES (@Cedula, @HorasTrabajadas, @HorasExtras, @SalarioTotal);
+END
+
