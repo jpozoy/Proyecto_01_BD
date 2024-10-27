@@ -84,7 +84,7 @@ create or alter procedure Crear_Rol
 @Module varchar(20)
 as
 begin
-    -- Comenzar una transacciÛn para mantener la consistencia
+    -- Comenzar una transacci√≥n para mantener la consistencia
     begin tran;
     
     -- Verificar si el rol ya existe
@@ -94,11 +94,11 @@ begin
         insert into Rol (Nombre_Rol) values (@Rol_Nombre);
     end
 
-    -- Insertar la relaciÛn en la tabla intermedia Rol_Modulo_Accion
+    -- Insertar la relaci√≥n en la tabla intermedia Rol_Modulo_Accion
     insert into Rol_Modulo_Accion (Nombre_Rol, Accion, Modulo) 
     values (@Rol_Nombre, @Accion, @Module);
 
-    -- Confirmar la transacciÛn
+    -- Confirmar la transacci√≥n
     commit tran;
 end;
 go
@@ -109,7 +109,7 @@ create or alter procedure Asignar_Rol
     @Rol varchar(20)
 as
 begin
-    -- Verificar si el rol ya est· asignado al usuario
+    -- Verificar si el rol ya est√° asignado al usuario
     if not exists (
         select 1 
         from Rol_Usuarios 
@@ -138,14 +138,14 @@ CREATE OR ALTER PROCEDURE Registrar_Cotizacion
     @Zona varchar(30) = NULL,
     @Sector varchar(30) = NULL,
     @Probabilidad varchar(4) = NULL,
-    @CodigoCotizacionSalida varchar(12) OUTPUT -- Par·metro de salida
+    @CodigoCotizacionSalida varchar(12) OUTPUT -- Par√°metro de salida
 AS
 BEGIN
     SET NOCOUNT ON;
 
     DECLARE @NuevoCodigo varchar(12);
 
-    -- Generar el prÛximo Codigo_Cotizacion consecutivo
+    -- Generar el pr√≥ximo Codigo_Cotizacion consecutivo
     SELECT @NuevoCodigo = 
         RIGHT('000000' + CAST(ISNULL(MAX(CAST(Codigo_Cotizacion AS INT)), 0) + 1 AS VARCHAR), 6)
     FROM Cotizacion;
@@ -178,12 +178,12 @@ BEGIN
         @Probabilidad
     );
 
-    -- Asignar el nuevo cÛdigo al par·metro de salida
+    -- Asignar el nuevo c√≥digo al par√°metro de salida
     SET @CodigoCotizacionSalida = @NuevoCodigo;
 END;
 go
 
--- Procedimiento para agregar articulos a la cotizaciÛn
+-- Procedimiento para agregar articulos a la cotizaci√≥n
 create or alter procedure Agregar_Articulos_Cotizacion 
 	@Cotizacion varchar(12),
 	@Articulo varchar(12),
@@ -200,3 +200,23 @@ go
 
 select * from Cotizacion
 select * from Cotizacion_Articulos
+
+CREATE OR ALTER PROCEDURE sp_InsertarMovimientoInventario
+    @TipoMovimiento VARCHAR(20),
+    @CodigoArticulo INT,
+    @CodigoBodegaOrigen INT = NULL,
+    @CodigoBodegaDestino INT,
+    @Cantidad INT,
+    @FechaMovimiento DATETIME
+AS
+BEGIN
+    BEGIN TRY
+        INSERT INTO Movimiento_Inventario (TipoMovimiento, Codigo_Articulo, Codigo_Bodega_Origen, Codigo_Bodega_Destino, Cantidad, FechaMovimiento)
+        VALUES (@TipoMovimiento, @CodigoArticulo, @CodigoBodegaOrigen, @CodigoBodegaDestino, @Cantidad, @FechaMovimiento);
+    END TRY
+    BEGIN CATCH
+        -- Manejo de errores
+        SELECT ERROR_MESSAGE() AS ErrorMensaje;
+    END CATCH
+END;
+GO
