@@ -1,0 +1,99 @@
+﻿@page
+@using Proyecto_01_BD.Clases
+@functions {
+    // Clase interna para representar un movimiento en el inventario
+    public class MovimientoInventario
+    {
+        public string TipoMovimiento { get; set; }
+        public int CodigoArticulo { get; set; }
+        public int CodigoBodegaOrigen { get; set; }
+        public int CodigoBodegaDestino { get; set; }
+        public int Cantidad { get; set; }
+        public DateTime FechaMovimiento { get; set; }
+    }
+
+    // Lista para almacenar los movimientos de inventario
+    public List<MovimientoInventario> MovimientosInventario { get; set; } = new List<MovimientoInventario>();
+
+    // Método para procesar el registro del movimiento de inventario
+    public void OnPostRegistrarMovimiento(string tipoMovimiento, int codigoArticulo, int codigoBodegaOrigen, int codigoBodegaDestino, int cantidad)
+    {
+        MovimientoInventario movimiento = new MovimientoInventario
+        {
+            TipoMovimiento = tipoMovimiento,
+            CodigoArticulo = codigoArticulo,
+            CodigoBodegaOrigen = codigoBodegaOrigen, 
+            CodigoBodegaDestino = codigoBodegaDestino,
+            Cantidad = cantidad,
+            FechaMovimiento = DateTime.Now
+        };
+
+        MovimientosInventario.Add(movimiento);
+    }
+}
+
+<link rel="stylesheet" href="/css/styles.css">
+
+<h2>Registro de Movimientos de Inventario</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="tipoMovimiento">Tipo de Movimiento:</label>
+        <select id="tipoMovimiento" name="tipoMovimiento" class="form-input" required>
+            <option value="Entrada">Entrada</option>
+            <option value="Movimiento">Movimiento</option>
+            <option value="Salida">Salida</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="codigoArticulo">Código del Artículo:</label>
+        <input type="number" id="codigoArticulo" name="codigoArticulo" class="form-input" required />
+    </div>
+
+    <div class="form-group">
+        <label for="codigoBodegaOrigen">Código de Bodega Origen:</label>
+        <input type="number" id="codigoBodegaOrigen" name="codigoBodegaOrigen" class="form-input" />
+    </div>
+
+    <div class="form-group">
+        <label for="codigoBodegaDestino">Código de Bodega Destino:</label>
+        <input type="number" id="codigoBodegaDestino" name="codigoBodegaDestino" class="form-input" />
+    </div>
+
+    <div class="form-group">
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" name="cantidad" class="form-input" required />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="form-button">Registrar Movimiento</button>
+    </div>
+</form>
+
+<h3>Movimientos Registrados en el Inventario</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Tipo de Movimiento</th>
+            <th>Código del Artículo</th>
+            <th>Bodega Origen</th>
+            <th>Bodega Destino</th>
+            <th>Cantidad</th>
+            <th>Fecha del Movimiento</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movimiento in MovimientosInventario)
+        {
+            <tr>
+                <td>@movimiento.TipoMovimiento</td>
+                <td>@movimiento.CodigoArticulo</td>
+                <td>@movimiento.CodigoBodegaOrigen</td>
+                <td>@movimiento.CodigoBodegaDestino</td>
+                <td>@movimiento.Cantidad</td>
+                <td>@movimiento.FechaMovimiento</td>
+            </tr>
+        }
+    </tbody>
+</table>
