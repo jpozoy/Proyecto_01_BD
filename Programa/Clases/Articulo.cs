@@ -1,11 +1,20 @@
-﻿namespace Proyecto_01_BD.Clases
+namespace Proyecto_01_BD.Clases
 {
     public class Articulo
     {
-        public string codigo_articulo { get; set; }
-        public string nombre_articulo { get; set; }
-        public decimal costo { get; set; }
-        public int cantidad { get; set; }
+        public string CodigoArticulo { get; set; }
+        public string NombreArticulo { get; set; }
+        public int Cantidad { get; set; }
 
+        // Constructor vac�o
+        public Articulo() { }
+
+        // Constructor con par�metros
+        public Articulo(string codigoArticulo, string nombreArticulo, int cantidad)
+        {
+            CodigoArticulo = codigoArticulo;
+            NombreArticulo = nombreArticulo;
+            Cantidad = cantidad;
+        }
     }
 }
