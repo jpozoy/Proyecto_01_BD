@@ -45,3 +45,24 @@ JOIN
 JOIN 
     Bodega b ON i.Codigo_Bodega = b.Codigo_Bodega;
 GO
+
+
+---vw para planilla
+
+CREATE VIEW vw_PlanillaDetalle AS
+SELECT
+    p.Codigo_Planilla,
+    u.Cedula,
+    u.Nombre,
+    u.Apellido1,
+    u.Apellido2,
+    pu.Horas_Trabajadas,
+    pu.Horas_Extras,
+    pu.Salario_Pagado,
+    pu.Departamento
+FROM
+    Planilla p
+JOIN
+    Planilla_Usuario pu ON p.Codigo_Planilla = pu.Codigo_Planilla
+JOIN
+    Usuario u ON u.Cedula = pu.Cedula_Usuario;
