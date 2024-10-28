@@ -67,3 +67,4 @@ JOIN
     Planilla_Usuario pu ON p.Codigo_Planilla = pu.Codigo_Planilla
 JOIN
     Usuario u ON u.Cedula = pu.Cedula_Usuario;
+

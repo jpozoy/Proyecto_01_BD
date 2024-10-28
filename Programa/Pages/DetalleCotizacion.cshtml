@@ -1,0 +1,87 @@
+﻿@page
+@using Proyecto_01_BD.Clases;
+@{
+    var codigoCotizacion = Request.Query["codigo"]; // Obtener el código de la URL
+    Cotizacion cotizacion = null;
+    List<Articulo2> articulosCotizacion = new List<Articulo2>();
+
+    if (!string.IsNullOrEmpty(codigoCotizacion))
+    {
+        // Obtener los datos de la cotización y los artículos
+        cotizacion = ObtenerCotizacionPorCodigo(codigoCotizacion);
+        articulosCotizacion = ObtenerArticulosPorCotizacion(codigoCotizacion);
+    }
+}
+
+@if (cotizacion != null)
+{
+    <h1>Detalle de Cotización</h1>
+
+    <!-- Tabla de información de la cotización -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Código de Cotización</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Fecha Proyectada de Cierre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@cotizacion.Codigo_Cotizacion</td>
+                <td>@cotizacion.Cliente</td>
+                <td>@cotizacion.Vendedor</td>
+                <td>@cotizacion.Descripcion</td>
+                <td>@cotizacion.Estado</td>
+                <td>@cotizacion.Mes_Proyectado_Cierre.ToString("yyyy-MM")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tabla de artículos asociados a la cotización -->
+    <h2>Lista de Artículos</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Código de Artículo</th>
+                <th>Nombre de Artículo</th>
+                <th>Cantidad</th>
+                <th>Precio Estándar</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var articulo in articulosCotizacion)
+            {
+                <tr>
+                    <td>@articulo.codigo_articulo</td>
+                    <td>@articulo.nombre_articulo</td>
+                    <td>@articulo.cantidad</td>
+                    <td>@articulo.costo.ToString("C")</td>
+                    <td>@(articulo.cantidad * articulo.costo).ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h1>La cotización no existe</h1>
+}
+
+@functions {
+    private Cotizacion ObtenerCotizacionPorCodigo(string codigo)
+    {
+        GestorCotizacion gestor = new GestorCotizacion();
+        return gestor.ObtenerCotizacionCodigo(codigo);
+    }
+
+    private List<Articulo2> ObtenerArticulosPorCotizacion(string codigoCotizacion)
+    {
+        GestorCotizacion gestor = new GestorCotizacion();
+        return gestor.ObtenerArticulosPorCotizacion(codigoCotizacion);
+    }
+}

@@ -1,16 +1,34 @@
 
+--Funcion par obtener cotizacion por codigo.
 CREATE OR ALTER FUNCTION ObtenerCotizacionPorCodigo (@CodigoCotizacion VARCHAR(12))
 RETURNS TABLE
 AS
 RETURN (
-    SELECT Codigo_Cotizacion, Cliente, Vendedor, Mes_Proyectado_Cierre, Monto_Total, Fecha, Fecha_Cierre, Estado, Tipo, Zona, Sector, Probabilidad, Descripcion, Mes_Proyectado_Cierre
+    SELECT Codigo_Cotizacion, Cliente, Vendedor, Mes_Proyectado_Cierre, Monto_Total, Fecha, Fecha_Cierre, Estado, Tipo, Zona, Sector, Probabilidad, Descripcion
     FROM Cotizacion
     WHERE Codigo_Cotizacion = @CodigoCotizacion
 );
 go
 
-select * from Cotizacion
+--Funcion pra retornar articulos por codigo de cotizacion
 
-select * from ObtenerCotizacionPorCodigo('000001')
+CREATE OR ALTER FUNCTION Obtener_Articulos_Cotizacion (@CodigoCotizacion VARCHAR(12))
+RETURNS TABLE
+AS
+Return (
+		SELECT 
+		ca.Codigo_Cotizacion,
+		a.Codigo_Articulo,
+		a.Nombre_Articulo,
+		ca.Cantidad,
+		a.Precio_Estandar
+	FROM 
+		Cotizacion_Articulos ca
+	JOIN 
+		Articulo a ON ca.Articulo = a.Codigo_Articulo
+	WHERE 
+		ca.Codigo_Cotizacion = @CodigoCotizacion
+);
+go
 
-select * from Cliente
+

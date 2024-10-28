@@ -19,6 +19,8 @@
 
     // Crear una lista de usuarios
     List<Usuario> listaUsuarios = usuario.ObtenerUsuarios();
+    // Crear una lista de roles
+    List<Rol> roleUsuario = usuario.ObtenerUsuariosPorRol();
 
 
 }
@@ -217,6 +219,26 @@
 
     }
 </div>
+
+<h2>Listado de Usuario por Rol</h2>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Rol</th>
+                <th>Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rol in roleUsuario)
+            {
+                <tr>
+                    <td>@rol.Nombre_Rol</td>
+                    <td>@rol.Nombre_Usuario</td>
+                </tr>
+            }
+        </tbody>
+    </table</div>
 
 <!-- Modal para agregar usuario -->
 <div class="modal fade" id="agregarModal" tabindex="-1" aria-labelledby="agregarModalLabel" aria-hidden="true">

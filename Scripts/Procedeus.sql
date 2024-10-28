@@ -162,7 +162,8 @@ BEGIN
         Tipo,
         Zona,
         Sector,
-        Probabilidad
+        Probabilidad,
+		Monto_Total
     )
     VALUES (
         @NuevoCodigo,
@@ -175,7 +176,8 @@ BEGIN
         @Tipo,
         @Zona,
         @Sector,
-        @Probabilidad
+        @Probabilidad,
+		0
     );
 
     -- Asignar el nuevo código al parámetro de salida
@@ -183,23 +185,55 @@ BEGIN
 END;
 go
 
--- Procedimiento para agregar articulos a la cotización
-create or alter procedure Agregar_Articulos_Cotizacion 
-	@Cotizacion varchar(12),
-	@Articulo varchar(12),
-	@Cantidad int
-as
-begin
-	-- Agregar articulos a la tabla intermedia
-	insert into Cotizacion_Articulos (Codigo_Cotizacion, Articulo, Cantidad)
-	values (@Cotizacion, @Articulo, @Cantidad);
-	
-end;
-go
 
--- Procedimiento para calcular cotizaci�n
+
+-- Procedimiento para agregar articulos a la cotización
+CREATE OR ALTER PROCEDURE Agregar_Articulos_Cotizacion 
+    @Cotizacion VARCHAR(12),
+    @Articulo VARCHAR(12),
+    @Cantidad INT
+AS
+BEGIN
+    -- Declarar variables para los cálculos
+    DECLARE @PrecioUnitario DECIMAL(18, 2);
+    DECLARE @SubtotalArticulo DECIMAL(18, 2);
+    DECLARE @MontoTotalActual DECIMAL(18, 2);
+
+    -- Obtener el precio unitario del artículo
+    SELECT @PrecioUnitario = Precio_Estandar
+    FROM Articulo
+    WHERE Codigo_Articulo = @Articulo;
+
+    -- Calcular el subtotal para el artículo
+    SET @SubtotalArticulo = @PrecioUnitario * @Cantidad;
+
+    -- Insertar el artículo en la tabla intermedia Cotizacion_Articulos
+    INSERT INTO Cotizacion_Articulos (Codigo_Cotizacion, Articulo, Cantidad)
+    VALUES (@Cotizacion, @Articulo, @Cantidad);
+
+    -- Obtener el monto total actual de la cotización
+    SELECT @MontoTotalActual = Monto_Total
+    FROM Cotizacion
+    WHERE Codigo_Cotizacion = @Cotizacion;
+
+    -- Actualizar el monto total de la cotización sumando el nuevo subtotal
+    UPDATE Cotizacion
+    SET Monto_Total = @MontoTotalActual + @SubtotalArticulo
+    WHERE Codigo_Cotizacion = @Cotizacion;
+END;
+GO
+
+select * from Cotizacion_Articulos
+
+select * from Cotizacion
+
+select * from Articulo
+
+
+
+-- Procedimiento para editar cotizaci�n
 create or alter procedure Editar_Cotizacion
-	@Cotizacion varchar (12)
+	@Cotizacion varchar (12),
     @Cliente varchar(12),
     @Vendedor varchar(12),
     @Mes_Proyectado_Cierre date = NULL,
@@ -208,10 +242,10 @@ create or alter procedure Editar_Cotizacion
     @Tipo varchar(20) = NULL,
     @Zona varchar(30) = NULL,
     @Sector varchar(30) = NULL,
-    @Probabilidad varchar(4) = NULL,
+    @Probabilidad varchar(4) = NULL
 as
 begin
-UPDATE Cotizaciones
+UPDATE Cotizacion
     set 
         Cliente = @Cliente,
         Vendedor = @Vendedor,

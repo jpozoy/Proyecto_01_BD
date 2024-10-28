@@ -193,5 +193,38 @@ namespace Proyecto_01_BD.Clases
             conexion.Cerrar();
         }
 
+        public List<Articulo2> ObtenerArticulosPorCotizacion(string codigoCotizacion)
+        {
+            List<Articulo2> articulos = new List<Articulo2>();
+
+            // Conectarse a la base de datos
+            conexion.Abrir();
+
+            string query = @"SELECT * FROM Obtener_Articulos_Cotizacion(@CodigoCotizacion);";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                comando.Parameters.AddWithValue("@CodigoCotizacion", codigoCotizacion);
+
+                using (SqlDataReader reader = comando.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Articulo2 articulo = new Articulo2
+                        {
+                            codigo_articulo = reader["Codigo_Articulo"].ToString(),
+                            nombre_articulo = reader["Nombre_Articulo"].ToString(),
+                            cantidad = Convert.ToInt32(reader["Cantidad"]),
+                            costo = Convert.ToDecimal(reader["Precio_Estandar"])
+                        };
+                        articulos.Add(articulo);
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return articulos;
+        }
+
     }
 }

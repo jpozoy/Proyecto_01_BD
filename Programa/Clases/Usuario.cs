@@ -202,5 +202,46 @@ namespace Proyecto_01_BD.Clases
             conexion.Cerrar();
         }
 
+        //Metodo para obtener usuarios por rol
+        public List<Rol> ObtenerUsuariosPorRol()
+        {
+            List<Rol> resultados = new List<Rol>();
+
+            // Abrir la conexión
+            conexion.Abrir();
+
+            string query = @"
+        SELECT 
+            r.Nombre_Rol, 
+            CONCAT(u.Nombre, ' ', u.Apellido1, ' ', u.Apellido2) AS Nombre_Usuario
+        FROM 
+            Rol r
+        JOIN 
+            Rol_Usuarios ru ON r.Nombre_Rol = ru.Nombre_Rol
+        JOIN 
+            Usuario u ON ru.Cedula_Usuario = u.Cedula
+        ORDER BY 
+            r.Nombre_Rol;";
+
+            // Ejecutar el query
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader lector = comando.ExecuteReader())
+                {
+                    while (lector.Read())
+                    {
+                        resultados.Add(new Rol
+                        {
+                            Nombre_Rol = lector["Nombre_Rol"].ToString(),
+                            Nombre_Usuario = lector["Nombre_Usuario"].ToString()
+                        });
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return resultados;
+        }
+
     }
 }
