@@ -1,19 +1,8 @@
-﻿@page
+@page
 @using Proyecto_01_BD.Clases
 @functions {
-    // Clase interna para representar un movimiento en el inventario
-    public class MovimientoInventario
-    {
-        public string TipoMovimiento { get; set; }
-        public int CodigoArticulo { get; set; }
-        public int CodigoBodegaOrigen { get; set; }
-        public int CodigoBodegaDestino { get; set; }
-        public int Cantidad { get; set; }
-        public DateTime FechaMovimiento { get; set; }
-    }
-
     // Lista para almacenar los movimientos de inventario
-    public List<MovimientoInventario> MovimientosInventario { get; set; } = new List<MovimientoInventario>();
+    public List<MovimientoInventario> MovimientosInventario { get; set; } = MovimientoInventario.ObtenerMovimientos();
 
     // Método para procesar el registro del movimiento de inventario
     public void OnPostRegistrarMovimiento(string tipoMovimiento, int codigoArticulo, int codigoBodegaOrigen, int codigoBodegaDestino, int cantidad)
@@ -22,13 +11,17 @@
         {
             TipoMovimiento = tipoMovimiento,
             CodigoArticulo = codigoArticulo,
-            CodigoBodegaOrigen = codigoBodegaOrigen, 
+            CodigoBodegaOrigen = codigoBodegaOrigen,
             CodigoBodegaDestino = codigoBodegaDestino,
             Cantidad = cantidad,
             FechaMovimiento = DateTime.Now
         };
 
-        MovimientosInventario.Add(movimiento);
+        // Llama al método para registrar el movimiento en la base de datos
+        movimiento.RegistrarMovimiento(movimiento);
+
+        // Recargar la lista de movimientos para reflejar el nuevo movimiento registrado
+        MovimientosInventario = MovimientoInventario.ObtenerMovimientos();
     }
 }
 

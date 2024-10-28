@@ -84,7 +84,7 @@ create or alter procedure Crear_Rol
 @Module varchar(20)
 as
 begin
-    -- Comenzar una transacción para mantener la consistencia
+    -- Comenzar una transacciÃ³n para mantener la consistencia
     begin tran;
     
     -- Verificar si el rol ya existe
@@ -94,11 +94,11 @@ begin
         insert into Rol (Nombre_Rol) values (@Rol_Nombre);
     end
 
-    -- Insertar la relación en la tabla intermedia Rol_Modulo_Accion
+    -- Insertar la relaciÃ³n en la tabla intermedia Rol_Modulo_Accion
     insert into Rol_Modulo_Accion (Nombre_Rol, Accion, Modulo) 
     values (@Rol_Nombre, @Accion, @Module);
 
-    -- Confirmar la transacción
+    -- Confirmar la transacciÃ³n
     commit tran;
 end;
 go
@@ -109,7 +109,7 @@ create or alter procedure Asignar_Rol
     @Rol varchar(20)
 as
 begin
-    -- Verificar si el rol ya está asignado al usuario
+    -- Verificar si el rol ya estÃ¡ asignado al usuario
     if not exists (
         select 1 
         from Rol_Usuarios 
@@ -138,14 +138,14 @@ CREATE OR ALTER PROCEDURE Registrar_Cotizacion
     @Zona varchar(30) = NULL,
     @Sector varchar(30) = NULL,
     @Probabilidad varchar(4) = NULL,
-    @CodigoCotizacionSalida varchar(12) OUTPUT -- Parámetro de salida
+    @CodigoCotizacionSalida varchar(12) OUTPUT -- ParÃ¡metro de salida
 AS
 BEGIN
     SET NOCOUNT ON;
 
     DECLARE @NuevoCodigo varchar(12);
 
-    -- Generar el próximo Codigo_Cotizacion consecutivo
+    -- Generar el prÃ³ximo Codigo_Cotizacion consecutivo
     SELECT @NuevoCodigo = 
         RIGHT('000000' + CAST(ISNULL(MAX(CAST(Codigo_Cotizacion AS INT)), 0) + 1 AS VARCHAR), 6)
     FROM Cotizacion;
@@ -178,12 +178,12 @@ BEGIN
         @Probabilidad
     );
 
-    -- Asignar el nuevo código al parámetro de salida
+    -- Asignar el nuevo cÃ³digo al parÃ¡metro de salida
     SET @CodigoCotizacionSalida = @NuevoCodigo;
 END;
 go
 
--- Procedimiento para agregar articulos a la cotización
+-- Procedimiento para agregar articulos a la cotizaciÃ³n
 create or alter procedure Agregar_Articulos_Cotizacion 
 	@Cotizacion varchar(12),
 	@Articulo varchar(12),
@@ -197,7 +197,7 @@ begin
 end;
 go
 
--- Procedimiento para calcular cotización
+-- Procedimiento para calcular cotizaciï¿½n
 create or alter procedure Editar_Cotizacion
 	@Cotizacion varchar (12)
     @Cliente varchar(12),
@@ -226,3 +226,54 @@ UPDATE Cotizaciones
     where Codigo_Cotizacion = @Cotizacion;
 end;
 go
+
+select * from Cotizacion
+select * from Cotizacion_Articulos
+
+CREATE OR ALTER PROCEDURE sp_InsertarMovimientoInventario
+    @TipoMovimiento VARCHAR(20),
+    @CodigoArticulo INT,
+    @CodigoBodegaOrigen INT = NULL,
+    @CodigoBodegaDestino INT,
+    @Cantidad INT,
+    @FechaMovimiento DATETIME
+AS
+BEGIN
+    BEGIN TRY
+        INSERT INTO Movimiento_Inventario (TipoMovimiento, Codigo_Articulo, Codigo_Bodega_Origen, Codigo_Bodega_Destino, Cantidad, FechaMovimiento)
+        VALUES (@TipoMovimiento, @CodigoArticulo, @CodigoBodegaOrigen, @CodigoBodegaDestino, @Cantidad, @FechaMovimiento);
+    END TRY
+    BEGIN CATCH
+        -- Manejo de errores
+        SELECT ERROR_MESSAGE() AS ErrorMensaje;
+    END CATCH
+END;
+GO
+
+
+---sp para registrar la planilla y calcula el pago
+CREATE PROCEDURE sp_RegistrarPlanilla
+    @Cedula VARCHAR(12),
+    @HorasTrabajadas INT,
+    @HorasExtras INT,
+    @Salario DECIMAL(18, 2),
+    @SalarioTotal DECIMAL(18, 2) OUTPUT
+AS
+BEGIN
+    DECLARE @SalarioPorHora DECIMAL(18, 2);
+    DECLARE @PagoHorasExtras DECIMAL(18, 2);
+
+    -- Calcular el salario por hora
+    SET @SalarioPorHora = @Salario / 200;
+
+    -- Calcular el pago de las horas extras
+    SET @PagoHorasExtras = @HorasExtras * @SalarioPorHora * 1.5;
+
+    -- Salario total incluyendo el pago de horas extras
+    SET @SalarioTotal = @Salario + @PagoHorasExtras;
+
+    -- Insertar el registro en la tabla de planilla
+    INSERT INTO Planilla_Usuario (Cedula_Usuario, Horas_Trabajadas, Horas_Extras, Salario_Pagado)
+    VALUES (@Cedula, @HorasTrabajadas, @HorasExtras, @SalarioTotal);
+END
+
