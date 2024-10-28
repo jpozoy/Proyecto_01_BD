@@ -1,0 +1,249 @@
+﻿@page
+@using Proyecto_01_BD.Clases;
+@{
+
+    //Crear una instancia de CalagoDAO
+
+    CatalogoDAO catalogoDAO = new CatalogoDAO();
+    //Obtener datos (a modo de catalago)
+    List<Cliente> clientes = catalogoDAO.ObtenerClientes();
+    List<Usuario> usuarios = catalogoDAO.ObtenerUsuarios();
+    List<string> zonas = catalogoDAO.ObtenerZona();
+    List<string> sectores = catalogoDAO.ObtenerSector();
+    List<string> tipos = catalogoDAO.ObtenerTipoCotizacion();
+    List<string> estados = catalogoDAO.EstadoCotizacion();
+    List<string> probabilidades = catalogoDAO.ProbabilidadCotizacion();
+    List<Articulo2> articulos = catalogoDAO.ObtenerArticulos();
+    var codigoCotizacion = Request.Query["codigo"]; // Obtener el código de la URL
+    Cotizacion cotizacion = null;
+
+    if (!string.IsNullOrEmpty(codigoCotizacion))
+    {
+        cotizacion = ObtenerCotizacionPorCodigo(codigoCotizacion);
+    }
+}
+
+<h1>Editar Cotización</h1>
+
+@if (cotizacion != null)
+{
+
+    <!-- Sección de creación de cotizaciones -->
+    <div class="seccion" id="crear-cotizacion">
+        <h2>Agregar Cotización</h2>
+        <form method="post" onsubmit="enviarArticulos(event)">
+            <!-- Cliente -->
+            <label for="cliente">Cliente:</label>
+            <select name="cliente" id="cliente" class="form-control">
+                <option value="">Seleccione un cliente</option>
+                @foreach (var cliente in clientes)
+                {
+                    if (cliente.Cedula == cotizacion.Cliente)
+                    {
+                        <option value="@cliente.Cedula" selected>@cliente.NombreCompleto</option>
+                    }
+                    else
+                    {
+                        <option value="@cliente.Cedula">@cliente.NombreCompleto</option>
+                    }
+                }
+            </select>
+
+            <!-- Vendedor -->
+            <label for="vendedor">Vendedor:</label>
+            <select name="vendedor" id="vendedor" class="form-control">
+                <option value="">Seleccione un vendedor</option>
+                @foreach (var vendedor in usuarios)
+                {
+                    if (vendedor.Cedula == cotizacion.Vendedor)
+                    {
+                        <option value="@vendedor.Cedula" selected>@vendedor.NombreCompleto</option>
+                    }
+                    else
+                    {
+                        <option value="@vendedor.Cedula">@vendedor.NombreCompleto</option>
+                    }
+                }
+            </select>
+
+            <!-- Zona -->
+            <div class="form-group">
+                <label for="zona">Zona:</label>
+                <select id="zona" name="zona" required>
+                    <option value="">Seleccione una zona</option>
+                    @foreach (var zona in zonas)
+                    {
+                        if (zona == cotizacion.Zona)
+                        {
+                            <option value="@zona" selected>@zona</option>
+                        }
+                        else
+                        {
+                            <option value="@zona">@zona</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Sector -->
+            <div class="form-group">
+                <label for="sector">Sector:</label>
+                <select id="sector" name="sector" required>
+                    <option value="">Seleccione un sector</option>
+                    @foreach (var sector in sectores)
+                    {
+                        if (sector == cotizacion.Sector)
+                        {
+                            <option value="@sector" selected>@sector</option>
+                        }
+                        else
+                        {
+                            <option value="@sector">@sector</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Tipo -->
+            <div class="form-group">
+                <label for="tipo">Tipo:</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="">Seleccione un tipo</option>
+                    @foreach (var tipo in tipos)
+                    {
+                        if (tipo == cotizacion.Tipo)
+                        {
+                            <option value="@tipo" selected>@tipo</option>
+                        }
+                        else
+                        {
+                            <option value="@tipo">@tipo</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Estado -->
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccione un estado</option>
+                    @foreach (var estado in estados)
+                    {
+                        if (estado == cotizacion.Estado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Probabilidad -->
+            <div class="form-group">
+                <label for="probabilidad">Probabilidad:</label>
+                <select id="probabilidad" name="probabilidad" required>
+                    <option value="">Seleccione una probabilidad</option>
+                    @foreach (var probabilidad in probabilidades)
+                    {
+                        if (probabilidad == cotizacion.Probabilidad)
+                        {
+                            <option value="@probabilidad" selected>@probabilidad</option>
+                        }
+                        else
+                        {
+                            <option value="@probabilidad">@probabilidad</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" required>@cotizacion.Descripcion</textarea>
+            </div>
+
+            <!-- Fecha proyectada cierre -->
+            <div class="form-group">
+                <label for="fecha">Mes proyectado cierre:</label>
+                <input type="month" id="fecha" name="fecha" value="@cotizacion.Mes_Proyectado_Cierre.ToString("yyyy-MM")" required />
+            </div>
+
+            <!-- Sección para manejar artículos -->
+            <div class="form">
+                <!-- Formulario para agregar un artículo -->
+                <label for="nombreArticulo">Artículo:</label>
+                <select id="nombreArticulo" class="form-control">
+                    <option value="">Seleccione un artículo</option>
+                    @foreach (var articulo in articulos)
+                    {
+                        <option value='@Html.Raw(Json.Serialize(articulo))'>@articulo.nombre_articulo</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cantidadArticulo">Cantidad:</label>
+                <input type="number" id="cantidadArticulo" class="form-control" />
+            </div>
+
+            <!-- Agregar botón para enviar el formulario -->
+            <button type="submit" class="btn btn-primary">Editar Cotización</button>
+        </form>
+    </div>
+
+}
+else
+{
+    <p>No se encontró la cotización.</p>
+}
+<!-- Agregar botón para enviar el formulario -->
+
+@functions {
+    private Cotizacion ObtenerCotizacionPorCodigo(string codigo)
+    {
+        GestorCotizacion gestor = new GestorCotizacion();
+        return gestor.ObtenerCotizacionCodigo(codigo);
+    }
+    public IActionResult OnPost()
+    {
+        // Obtener los datos del formulario
+        var cliente = Request.Form["cliente"];
+        var vendedor = Request.Form["vendedor"];
+        var mesProyectadoCierre = DateTime.Parse(Request.Form["fecha"]);
+        var descripcion = Request.Form["descripcion"];
+        var estado = Request.Form["estado"];
+        var tipo = Request.Form["tipo"];
+        var zona = Request.Form["zona"];
+        var sector = Request.Form["sector"];
+        var probabilidad = Request.Form["probabilidad"];
+        var codigoCotizacion = Request.Query["codigo"]; // Obtener el código de la URL
+
+        // Crear una instancia de Cotizacion
+        Cotizacion cotizacion = new Cotizacion
+            {
+                Codigo_Cotizacion = codigoCotizacion, // Asume que tienes esta propiedad en Cotizacion
+                Cliente = cliente,
+                Vendedor = vendedor,
+                Mes_Proyectado_Cierre = mesProyectadoCierre,
+                Descripcion = descripcion,
+                Estado = estado,
+                Tipo = tipo,
+                Zona = zona,
+                Sector = sector,
+                Probabilidad = probabilidad
+            };
+
+        // Crear una instancia de GestorCotizacion para actualizar
+        GestorCotizacion gestor = new GestorCotizacion();
+        gestor.ActualizarCotizacion(cotizacion); // Llamar al método para actualizar
+
+        // Redirigir o mostrar un mensaje de éxito
+        return RedirectToPage("/Cotizacion");
+
+    }
+}

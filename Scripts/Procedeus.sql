@@ -197,6 +197,32 @@ begin
 end;
 go
 
-
-select * from Cotizacion
-select * from Cotizacion_Articulos
+-- Procedimiento para calcular cotización
+create or alter procedure Editar_Cotizacion
+	@Cotizacion varchar (12)
+    @Cliente varchar(12),
+    @Vendedor varchar(12),
+    @Mes_Proyectado_Cierre date = NULL,
+    @Descripcion varchar(50) = NULL,
+    @Estado varchar(20) = NULL,
+    @Tipo varchar(20) = NULL,
+    @Zona varchar(30) = NULL,
+    @Sector varchar(30) = NULL,
+    @Probabilidad varchar(4) = NULL,
+as
+begin
+UPDATE Cotizaciones
+    set 
+        Cliente = @Cliente,
+        Vendedor = @Vendedor,
+        Mes_Proyectado_Cierre = @Mes_Proyectado_Cierre,
+        Descripcion = @Descripcion,
+        Estado = @Estado,
+        Tipo = @Tipo,
+		Fecha = CAST(GETDATE() AS DATE),
+        Zona = @Zona,
+        Sector = @Sector,
+        Probabilidad = @Probabilidad
+    where Codigo_Cotizacion = @Cotizacion;
+end;
+go

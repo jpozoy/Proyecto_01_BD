@@ -182,7 +182,7 @@ aside .sidebar li{
 /*Modulo cotizaciones*/
 .grid-table-cotizacion {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 4 columnas de igual tama o */
+    grid-template-columns: repeat(7, 1fr); /* 4 columnas de igual tama o */
     gap: 10px; /* Espacio entre celdas */
     background-color: #f8f8f8;
     padding: 10px;

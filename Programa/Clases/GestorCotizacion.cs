@@ -115,5 +115,83 @@ namespace Proyecto_01_BD.Clases
             conexion.Cerrar();
             return cotizaciones;
         }
+        public Cotizacion ObtenerCotizacionCodigo(string codigo)
+        {
+            // Conectarse a la base de datos
+            conexion.Abrir();
+
+            // Crear la consulta con un parámetro
+            string query = "SELECT * FROM ObtenerCotizacionPorCodigo(@CodigoCotizacion)";
+
+            using (SqlCommand comando = new SqlCommand(query, conexion.conectarbd))
+            {
+                // Agregar el parámetro al comando
+                comando.Parameters.AddWithValue("@CodigoCotizacion", codigo);
+
+                // Ejecutar el comando y obtener los resultados
+                using (SqlDataReader reader = comando.ExecuteReader())
+                {
+                    // Aquí puedes procesar los resultados y crear la instancia de Cotizacion
+                    Cotizacion cotizacion = null;
+
+                    if (reader.Read())
+                    {
+                        cotizacion = new Cotizacion
+                        {
+                            // Asignar valores de las columnas a los atributos de Cotizacion
+                            Codigo_Cotizacion = reader["Codigo_Cotizacion"].ToString(),
+                            Cliente = reader["Cliente"].ToString(),
+                            Vendedor = reader["Vendedor"].ToString(),
+                            Monto_Total = reader.GetDecimal(reader.GetOrdinal("Monto_Total")),
+                            Fecha = reader.GetDateTime(reader.GetOrdinal("Fecha")),
+                            Tipo = reader["Tipo"].ToString(),
+                            Zona = reader["Zona"].ToString(),
+                            Sector = reader["Sector"].ToString(),
+                            Probabilidad = reader["Probabilidad"].ToString(),
+                            Estado = reader["Estado"].ToString(),
+                            Descripcion = reader["Descripcion"].ToString(),
+                            Mes_Proyectado_Cierre = reader.GetDateTime(reader.GetOrdinal("Mes_Proyectado_Cierre"))
+
+                            // Agregar otros campos según tu estructura de la tabla
+                        };
+                    }
+
+                    return cotizacion;
+                }
+            }
+        }
+        //Agregar nuevas cotizaciones
+        public void ActualizarCotizacion(Cotizacion cotizacion)
+        {
+            // Conectarse a la base de datos
+            conexion.Abrir();
+
+            // Llamar al procedimiento almacenado
+            string storedProcedure = "Editar_Cotizacion";
+
+            using (SqlCommand comando = new SqlCommand(storedProcedure, conexion.conectarbd))
+            {
+                // Indicar que se está llamando al procedimiento
+                comando.CommandType = System.Data.CommandType.StoredProcedure;
+
+                // Agregar los parámetros al procedimiento almacenado
+                comando.Parameters.AddWithValue("@Cotizacion", cotizacion.Codigo_Cotizacion); // Asumiendo que tienes una propiedad 'Codigo_Cotizacion' en Cotizacion
+                comando.Parameters.AddWithValue("@Cliente", cotizacion.Cliente);
+                comando.Parameters.AddWithValue("@Vendedor", cotizacion.Vendedor);
+                comando.Parameters.AddWithValue("@Mes_Proyectado_Cierre", cotizacion.Mes_Proyectado_Cierre); // Ajusta según la propiedad real
+                comando.Parameters.AddWithValue("@Descripcion", cotizacion.Descripcion);
+                comando.Parameters.AddWithValue("@Estado", cotizacion.Estado);
+                comando.Parameters.AddWithValue("@Tipo", cotizacion.Tipo);
+                comando.Parameters.AddWithValue("@Zona", cotizacion.Zona);
+                comando.Parameters.AddWithValue("@Sector", cotizacion.Sector);
+                comando.Parameters.AddWithValue("@Probabilidad", cotizacion.Probabilidad);
+
+                // Ejecutar el procedimiento almacenado
+                comando.ExecuteNonQuery();
+            }
+
+            conexion.Cerrar();
+        }
+
     }
 }

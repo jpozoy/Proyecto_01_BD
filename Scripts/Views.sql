@@ -29,6 +29,7 @@ select * from Listado_Cotizaciones
 
 
 select * from Cotizacion
+go
 
 CREATE VIEW Vista_ArticulosPorBodega
 AS

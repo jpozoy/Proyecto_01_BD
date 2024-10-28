@@ -294,9 +294,9 @@ namespace Proyecto_01_BD.Clases
         }
 
         // Metodo para obtener Articulos
-        public List<Articulo> ObtenerArticulos()
+        public List<Articulo2> ObtenerArticulos()
         {
-            List<Articulo> articulos = new List<Articulo>();
+            List<Articulo2> articulos = new List<Articulo2>();
             conexion.Abrir();
 
             string query = @"SELECT Codigo_Articulo, Nombre_Articulo, Costo FROM Articulo";
@@ -308,7 +308,7 @@ namespace Proyecto_01_BD.Clases
                     while (lector.Read())
                     {
                         // Crear un objeto Cliente con los valores de la consulta
-                        Articulo articulo = new Articulo
+                        Articulo2 articulo = new Articulo2
                         {
                             codigo_articulo = lector["Codigo_Articulo"].ToString(),
                             nombre_articulo = lector["Nombre_Articulo"].ToString(),

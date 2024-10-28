@@ -140,6 +140,11 @@ INSERT INTO Bodega (Codigo_Bodega, Nombre, Ubicacion, Capacidad_En_Toneladas, Es
 ('B004', 'Bodega Este', 'Heredia', 90, 450, 'SI'),
 ('B005', 'Bodega Oeste', 'Puntarenas', 70, 350, 'SI');
 
+select * from Inventario
+
+
+insert into Inventario(Codigo_Bodega, Codigo_Articulo, Cantidad) values ('B001', 'A030', 5), ('B005', 'A024', 10)
+
 -- Relación entre bodegas y familias (N:M)
 INSERT INTO Bodega_Familia (Codigo_Bodega, Codigo_Familia) VALUES
 ('B001', 'F001'),

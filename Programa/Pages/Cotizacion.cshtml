@@ -14,7 +14,7 @@
     List<string> tipos = catalogoDAO.ObtenerTipoCotizacion();
     List<string> estados = catalogoDAO.EstadoCotizacion();
     List<string> probabilidades = catalogoDAO.ProbabilidadCotizacion();
-    List<Articulo> articulos = catalogoDAO.ObtenerArticulos();
+    List<Articulo2> articulos = catalogoDAO.ObtenerArticulos();
 
     //Crear instacia de GestorCotizacion
     GestorCotizacion gestorCotizacion = new GestorCotizacion();
@@ -28,7 +28,7 @@
     GestorCotizacion gestorCotizacion = new GestorCotizacion();
 
     public void OnPost(string cliente, string vendedor, string direccion, string zona, string sector, string tipo, string estado,
-                       string probabilidad, string descripcion, DateTime fecha, List<Articulo> articulos)
+                       string probabilidad, string descripcion, DateTime fecha, List<Articulo2> articulos)
     {
         //Crear una instancia de Cotizacion
         Cotizacion cotizacion = new Cotizacion
@@ -73,6 +73,7 @@
         <div class="grid-header">Fecha</div>
         <div class="grid-header">Monto_Total</div>
         <div class="grid-header">Estado</div>
+        <div class="grid-header">Acciones</div>
 
         <!-- Datos de ejemplo -->
         @foreach (var cotizacion in cotizaciones)
@@ -83,7 +84,25 @@
             <div class="grid-item">@cotizacion.Fecha</div>
             <div class="grid-item">@cotizacion.Monto_Total</div>
             <div class="grid-item">@cotizacion.Estado</div>
+            <div class="grid-item">
+                <!-- Formulario para el botón editar cotizacion-->
+                <a asp-page="/Editar_Cotizacion" asp-route-codigo="@cotizacion.Codigo_Cotizacion">Editar</a>
+
+                <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cotizacion.Codigo_Cotizacion">
+                    Eliminar
+                </button>
+                <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cotizacion.Codigo_Cotizacion">
+                    Ver
+                </button>
+                <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cotizacion.Codigo_Cotizacion">
+                    Agregar Tarea
+                </button>
+                <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cotizacion.Codigo_Cotizacion">
+                    Convertir Factura
+                </button>
+            </div>
         }
+
 
     </div>
 </div>

@@ -39,7 +39,6 @@
         }
         else if (action == "registrar")
         {
-            Console.WriteLine("Xd se esta registrando");
             // Crear una nueva instancia de Usuario con los datos del formulario
             Usuario nuevoUsuario = new Usuario
                 {
@@ -122,19 +121,19 @@
         <div class="grid-item">@cot.Correo</div>
         <div class="grid-item">@cot.Puesto</div>
         <div class="grid-item">
-            <!-- Formulario para el botón editar salario-->
-            <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cot.Cedula">
-                Editar Salario
-            </button>
-            <!-- Formulario para el botón editar puesto -->
-            <button type="submit" class="btn btn-primary" name="action" value="editarPuestoModal" data-bs-toggle="modal" data-bs-target="#editarPuestoModal-@cot.Cedula">
-                Editar Puesto
-            </button>
+        <!-- Formulario para el botón editar salario-->
+        <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cot.Cedula">
+            Editar Salario
+        </button>
+        <!-- Formulario para el botón editar puesto -->
+        <button type="submit" class="btn btn-primary" name="action" value="editarPuestoModal" data-bs-toggle="modal" data-bs-target="#editarPuestoModal-@cot.Cedula">
+            Editar Puesto
+        </button>
 
-            <!-- Formulario para el botón asignar rol -->
-            <button type="submit" class="btn btn-primary" name="action" value="asignarRol" data-bs-toggle="modal" data-bs-target="#asignarRolModal-@cot.Cedula">
-                Asignar Rol
-            </button>
+        <!-- Formulario para el botón asignar rol -->
+        <button type="submit" class="btn btn-primary" name="action" value="asignarRol" data-bs-toggle="modal" data-bs-target="#asignarRolModal-@cot.Cedula">
+            Asignar Rol
+        </button>
         </div>
         //Editar Salario
         <div class="modal fade" id="editarSalarioModal-@cot.Cedula" tabindex="-1" aria-labelledby="editarSalarioModallLabel-@cot.Cedula" aria-hidden="true">
