@@ -1,0 +1,70 @@
+﻿@page
+@model Proyecto_01_BD.Pages.ReportesModel
+@{
+}
+
+<div class="grid-container">
+    <a href="/Reportes/Ventas" class="card">
+        <div class="card-content">
+            <h3>Ventas</h3>
+            <p>Descripción de la página 1.</p>
+        </div>
+    </a>
+    <a href="/RutaDePagina2" class="card">
+        <div class="card-content">
+            <h3>Página 2</h3>
+            <p>Descripción de la página 2.</p>
+        </div>
+    </a>
+
+</div>
+
+
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* Ajustar*/
+        gap: 20px; 
+        padding: 20px;
+    }
+
+    .card {
+        display: block;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        text-decoration: none;
+        color: #333;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-logo {
+        width: 100%;
+        height: 150px;
+        object-fit: cover; 
+        border-bottom: 1px solid #ddd;
+    }
+
+    .card-content {
+        padding: 15px;
+    }
+
+        .card-content h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #007bff;
+        }
+
+        .card-content p {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+</style>

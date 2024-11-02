@@ -68,3 +68,15 @@ JOIN
 JOIN
     Usuario u ON u.Cedula = pu.Cedula_Usuario;
 
+SELECT 
+    r.Nombre_Rol, 
+    u.Cedula, 
+    CONCAT(u.Nombre, ' ', u.Apellido1, ' ', u.Apellido2) AS NombreCompleto
+FROM 
+    Rol r
+JOIN 
+    Rol_Usuarios ru ON r.Nombre_Rol = ru.Nombre_Rol
+JOIN 
+    Usuario u ON ru.Cedula_Usuario = u.Cedula
+ORDER BY 
+    r.Nombre_Rol;

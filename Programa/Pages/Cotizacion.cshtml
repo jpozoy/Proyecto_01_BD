@@ -88,18 +88,8 @@
                 <!-- Formulario para el botón editar cotizacion-->
                 <a asp-page="/Editar_Cotizacion" asp-route-codigo="@cotizacion.Codigo_Cotizacion">Editar</a>
 
-                <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cotizacion.Codigo_Cotizacion">
-                    Eliminar
-                </button>
-
                 <a asp-page="/DetalleCotizacion" asp-route-codigo="@cotizacion.Codigo_Cotizacion">Ver</a>
 
-                <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cotizacion.Codigo_Cotizacion">
-                    Agregar Tarea
-                </button>
-                <button type="button" class="btn btn-primary" name="action" value="editarSalarioModal" data-bs-toggle="modal" data-bs-target="#editarSalarioModal-@cotizacion.Codigo_Cotizacion">
-                    Convertir Factura
-                </button>
             </div>
         }
 
