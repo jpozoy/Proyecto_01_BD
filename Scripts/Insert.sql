@@ -1,5 +1,6 @@
 -- Insertar 30 puestos
 INSERT INTO Puesto (Puesto) VALUES
+('Vendedor'),
 ('Gerente'),
 ('Analista'),
 ('Desarrollador'),
@@ -30,7 +31,6 @@ INSERT INTO Puesto (Puesto) VALUES
 ('Sociólogo'),
 ('Asistente'),
 ('Conserje');
-
 
 -- Insertar 30 departamentos
 INSERT INTO Departamento (Departamento) VALUES
@@ -120,7 +120,7 @@ INSERT INTO Articulo (Codigo_Articulo, Nombre_Articulo, Activo, Precio_Estandar,
 ('A017', 'Smartphone', 'SI', 600.00, 180, 400, 'Smartphone 5G', 'F011'),
 ('A018', 'Perfume', 'SI', 40.00, 250, 15, 'Perfume de mujer', 'F013'),
 ('A019', 'Gafas de sol', 'SI', 25.00, 150, 20, 'Gafas de sol polarizadas', 'F019'),
-('A020', 'Supl. vitamínico', 'SI', 15.00, 500, 8, 'Vitaminas A, C, D', 'F022'), -- Nombre ajustado
+('A020', 'Supl. vitamínico', 'SI', 15.00, 500, 8, 'Vitaminas A, C, D', 'F022'),
 ('A021', 'Champú', 'SI', 10.00, 600, 4, 'Champú anticaspa', 'F022'),
 ('A022', 'Juguete de madera', 'SI', 30.00, 1000, 25, 'Juguete educativo', 'F006'),
 ('A023', 'Cargador portátil', 'SI', 20.00, 300, 12, 'Cargador de 10000mAh', 'F024'),
@@ -130,7 +130,41 @@ INSERT INTO Articulo (Codigo_Articulo, Nombre_Articulo, Activo, Precio_Estandar,
 ('A027', 'Videojuego', 'SI', 60.00, 300, 45, 'Videojuego para consola', 'F028'),
 ('A028', 'Reloj inteligente', 'SI', 150.00, 200, 90, 'Reloj con GPS', 'F024'),
 ('A029', 'Lentes VR', 'SI', 300.00, 600, 150, 'Lentes de realidad virtual', 'F028'),
-('A030', 'Guitarra eléct.', 'SI', 500.00, 3500, 200, 'Guitarra eléctrica de 6 cuerdas', 'F027'); -- Nombre ajustado
+('A030', 'Guitarra eléct.', 'SI', 500.00, 3500, 200, 'Guitarra eléctrica de 6 cuerdas', 'F027'); 
+
+-- Insertar 5 productos de Electrónica (F001)
+INSERT INTO Articulo (Codigo_Articulo, Nombre_Articulo, Activo, Precio_Estandar, Peso, Costo, Descripcion, Codigo_Familia) VALUES
+('A031', 'Televisor 50"', 'SI', 600.00, 15000, 450, 'Televisor UHD de 50 pulgadas', 'F001'),
+('A032', 'Consola de video', 'SI', 300.00, 1200, 250, 'Consola de videojuegos de última generación', 'F001'),
+('A033', 'Bocina Bluetooth', 'SI', 45.00, 600, 30, 'Bocina portátil Bluetooth', 'F001'),
+('A034', 'Cámara de seguridad', 'SI', 100.00, 500, 70, 'Cámara de seguridad para interiores', 'F001'),
+('A035', 'Router Wi-Fi', 'SI', 70.00, 300, 50, 'Router de alta velocidad', 'F001');
+
+-- Insertar 5 productos de Hogar (F020)
+INSERT INTO Articulo (Codigo_Articulo, Nombre_Articulo, Activo, Precio_Estandar, Peso, Costo, Descripcion, Codigo_Familia) VALUES
+('A036', 'Ventilador de pie', 'SI', 50.00, 6000, 35, 'Ventilador ajustable de pie', 'F020'),
+('A037', 'Aspiradora', 'SI', 120.00, 4500, 80, 'Aspiradora de mano potente', 'F020'),
+('A038', 'Plancha de ropa', 'SI', 30.00, 1500, 20, 'Plancha de vapor', 'F020'),
+('A039', 'Tostadora', 'SI', 25.00, 1200, 15, 'Tostadora de pan de 2 ranuras', 'F020'),
+('A040', 'Licuadora', 'SI', 60.00, 2500, 40, 'Licuadora de 500W', 'F020');
+
+-- Insertar 5 productos de Alimentos (F008)
+INSERT INTO Articulo (Codigo_Articulo, Nombre_Articulo, Activo, Precio_Estandar, Peso, Costo, Descripcion, Codigo_Familia) VALUES
+('A041', 'Paquete de arroz', 'SI', 2.00, 1000, 1, 'Paquete de arroz de 1kg', 'F008'),
+('A042', 'Cereal de avena', 'SI', 4.00, 500, 2, 'Cereal de avena integral', 'F008'),
+('A043', 'Botella de agua', 'SI', 1.00, 500, 0.5, 'Botella de agua de 500ml', 'F008'),
+('A044', 'Leche en polvo', 'SI', 8.00, 1000, 5, 'Leche en polvo entera', 'F008'),
+('A045', 'Caja de té', 'SI', 3.00, 300, 2, 'Caja con 20 bolsitas de té', 'F008');
+
+-- Insertar 5 productos de Ropa (F004)
+INSERT INTO Articulo (Codigo_Articulo, Nombre_Articulo, Activo, Precio_Estandar, Peso, Costo, Descripcion, Codigo_Familia) VALUES
+('A046', 'Pantalón', 'SI', 40.00, 500, 25, 'Pantalón de mezclilla para hombre', 'F004'),
+('A047', 'Falda de algodón', 'SI', 30.00, 200, 18, 'Falda casual de algodón', 'F004'),
+('A048', 'Suéter con capucha', 'SI', 35.00, 700, 22, 'Suéter de algodón con capucha', 'F004'),
+('A049', 'Gorra deportiva', 'SI', 15.00, 150, 10, 'Gorra ajustable', 'F004'),
+('A050', 'Bufanda de lana', 'SI', 20.00, 100, 12, 'Bufanda de lana para invierno', 'F004');
+
+select * from Articulo;
 
 -- Insertar 5 bodegas
 INSERT INTO Bodega (Codigo_Bodega, Nombre, Ubicacion, Capacidad_En_Toneladas, Espacio_Cubico, Estado) VALUES
@@ -138,9 +172,15 @@ INSERT INTO Bodega (Codigo_Bodega, Nombre, Ubicacion, Capacidad_En_Toneladas, Es
 ('B002', 'Bodega Norte', 'Alajuela', 80, 400, 'SI'),
 ('B003', 'Bodega Sur', 'Cartago', 60, 300, 'SI'),
 ('B004', 'Bodega Este', 'Heredia', 90, 450, 'SI'),
-('B005', 'Bodega Oeste', 'Puntarenas', 70, 350, 'SI');
+('B005', 'Bodega Oeste', 'Puntarenas', 70, 350, 'SI'),
+('B006', 'Bodega Pacífico', 'Limón', 65, 325, 'SI'),
+('B007', 'Bodega Atlántico', 'Guanacaste', 85, 425, 'SI'),
+('B008', 'Bodega Central 2', 'San José', 75, 375, 'SI'),
+('B009', 'Bodega Norte 2', 'Alajuela', 95, 475, 'SI'),
+('B010', 'Bodega Sur 2', 'Cartago', 55, 275, 'SI');
 
 select * from Inventario
+--Agregar Entradas de Inventario
 
 
 insert into Inventario(Codigo_Bodega, Codigo_Articulo, Cantidad) values ('B001', 'A030', 5), ('B005', 'A024', 10)
@@ -179,7 +219,6 @@ INSERT INTO Bodega_Familia (Codigo_Bodega, Codigo_Familia) VALUES
 ('B005', 'F029'),
 ('B005', 'F030');
 
--- Insertar 30 zonas
 -- Insertar 30 zonas
 INSERT INTO Zona (Nombre_Zona, Descripcion_zona) VALUES
 ('Zona Central', 'Centro de la ciudad'),
@@ -247,8 +286,6 @@ INSERT INTO Sector (Nombre_Sector, Descripcion_Sector) VALUES
 ('Sector Entretenimiento', 'Cines, teatros, etc.'),
 ('Sector Deportivo', 'Gimnasios y servicios deportivos');
 
-
--- Insertar 30 clientes
 -- Insertar 30 clientes
 INSERT INTO Cliente (Cedula, Nombre, Apellido1, Apellido2, Celular, Correo, Fax, Zona, Sector) VALUES
 ('101230123', 'Juan', 'Pérez', 'González', '88887777', 'juan.perez@mail.com', '22223333', 'Zona Central', 'Sector Comercial'),
@@ -351,6 +388,43 @@ INSERT INTO Tareas_Caso (Codigo_Tarea, Nombre_Tarea, Decripcion_Tarea, Codigo_Ca
 ('T029', 'Procesar pago', 'Resolver el problema reportado con el pago del cliente', 'CS029'),
 ('T030', 'Verificar estado del caso', 'Comprobar el estado del caso abierto por el cliente', 'CS030');
 
+-- Inserts por proc de Usuarios (30)
+EXEC Registrar_Usuario '00112233441', 'Juan', 'Perez', 'Lopez', '88887777', 'juan.perez@example.com', '1985-03-15', 'San José', '2024-01-01', 1200.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233442', 'Maria', 'Gomez', 'Rodriguez', '88887778', 'maria.gomez@example.com', '1990-07-20', 'Alajuela', '2023-02-15', 1000.00, 'Vendedor', 'Ventas ', 'password123';
+EXEC Registrar_Usuario '00112233443', 'Carlos', 'Ramirez', 'Mendez', '88887779', 'carlos.ramirez@example.com', '1988-10-10', 'Cartago', '2024-03-01', 1500.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233444', 'Laura', 'Sanchez', 'Jimenez', '88887780', 'laura.sanchez@example.com', '1995-12-05', 'Heredia', '2023-05-10', 1400.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233445', 'Luis', 'Rojas', 'Castro', '88887781', 'luis.rojas@example.com', '1992-04-25', 'Puntarenas', '2024-06-15', 1300.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233446', 'Ana', 'Fernandez', 'Vargas', '88887782', 'ana.fernandez@example.com', '1987-08-18', 'Limon', '2023-07-25', 1250.00, 'Diseñador', 'Marketing', 'password123';
+EXEC Registrar_Usuario '00112233447', 'Jose', 'Lopez', 'Salazar', '88887783', 'jose.lopez@example.com', '1989-11-22', 'Guanacaste', '2024-08-05', 1350.00, 'Diseñador', 'Marketing', 'password123';
+EXEC Registrar_Usuario '00112233448', 'Carmen', 'Vega', 'Monge', '88887784', 'carmen.vega@example.com', '1991-02-28', 'San José', '2023-09-15', 1150.00, 'Diseñador', 'Marketing', 'password123';
+EXEC Registrar_Usuario '00112233449', 'Miguel', 'Mora', 'Diaz', '88887785', 'miguel.mora@example.com', '1985-06-12', 'Alajuela', '2024-11-01', 1600.00, 'Analista', 'Marketing', 'password123';
+EXEC Registrar_Usuario '00112233450', 'Rosa', 'Rivera', 'Martinez', '88887786', 'rosa.rivera@example.com', '1993-09-25', 'Cartago', '2024-12-01', 1100.00, 'Analista', 'Marketing', 'password123';
+EXEC Registrar_Usuario '00112233451', 'Daniel', 'Castillo', 'Hernandez', '88887787', 'daniel.castillo@example.com', '1986-01-30', 'Heredia', '2024-01-20', 1700.00, 'Desarrollador', 'Desarrollo', 'password123';
+EXEC Registrar_Usuario '00112233452', 'Patricia', 'Herrera', 'Gutierrez', '88887788', 'patricia.herrera@example.com', '1994-03-11', 'Puntarenas', '2023-03-15', 1450.00, 'Desarrollador', 'Desarrollo', 'password123';
+EXEC Registrar_Usuario '00112233453', 'Raul', 'Soto', 'Alfaro', '88887789', 'raul.soto@example.com', '1983-05-16', 'San José', '2023-04-10', 1550.00, 'Desarrollador', 'Desarrollo', 'password123';
+EXEC Registrar_Usuario '00112233454', 'Sofia', 'Campos', 'Aguilar', '88887790', 'sofia.campos@example.com', '1997-07-07', 'Limon', '2024-09-05', 1120.00, 'Desarrollador', 'Desarrollo', 'password123';
+EXEC Registrar_Usuario '00112233455', 'Ricardo', 'Araya', 'Solano', '88887791', 'ricardo.araya@example.com', '1984-12-17', 'Alajuela', '2023-06-25', 1050.00, 'Desarrollador', 'Desarrollo', 'password123';
+EXEC Registrar_Usuario '00112233456', 'Elena', 'Zamora', 'Mora', '88887792', 'elena.zamora@example.com', '1986-10-01', 'Cartago', '2024-02-28', 1320.00, 'Técnico', 'Soporte Técnico', 'password123';
+EXEC Registrar_Usuario '00112233457', 'Gabriel', 'Valverde', 'Espinoza', '88887793', 'gabriel.valverde@example.com', '1992-06-22', 'San José', '2023-07-10', 1200.00, 'Técnico', 'Soporte Técnico', 'password123';
+EXEC Registrar_Usuario '00112233458', 'Julia', 'Meza', 'Porras', '88887794', 'julia.meza@example.com', '1990-05-18', 'Heredia', '2023-10-05', 1475.00, 'Técnico', 'Soporte Técnico', 'password123';
+EXEC Registrar_Usuario '00112233459', 'Andres', 'Quesada', 'Murillo', '88887795', 'andres.quesada@example.com', '1982-08-24', 'Limon', '2024-04-01', 1250.00, 'Técnico', 'Soporte Técnico', 'password123';
+EXEC Registrar_Usuario '00112233460', 'Natalia', 'Gonzalez', 'Quirós', '88887796', 'natalia.gonzalez@example.com', '1993-03-19', 'Guanacaste', '2023-11-01', 1350.00, 'Técnico', 'Soporte Técnico', 'password123';
+EXEC Registrar_Usuario '00112233461', 'Oscar', 'Villalobos', 'Jiménez', '88887797', 'oscar.villalobos@example.com', '1981-02-02', 'Puntarenas', '2024-06-15', 1600.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233462', 'Yolanda', 'Leiva', 'Montero', '88887798', 'yolanda.leiva@example.com', '1994-09-28', 'San José', '2023-01-18', 1425.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233463', 'Manuel', 'Diaz', 'Vargas', '88887799', 'manuel.diaz@example.com', '1995-06-29', 'Cartago', '2024-07-22', 1170.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233464', 'Claudia', 'Molina', 'Pérez', '88887800', 'claudia.molina@example.com', '1989-10-08', 'San José', '2024-02-10', 1300.00, 'Vendedor', 'Ventas', 'password123';
+EXEC Registrar_Usuario '00112233465', 'Francisco', 'Salas', 'Guzmán', '88887801', 'francisco.salas@example.com', '1987-05-04', 'Heredia', '2023-05-20', 1400.00, 'Coordinador', 'Administración', 'password123';
+EXEC Registrar_Usuario '00112233466', 'Teresa', 'Quintana', 'Vargas', '88887802', 'teresa.quintana@example.com', '1996-08-15', 'Alajuela', '2024-01-05', 1125.00, 'Administrador', 'Administración', 'password123';
+EXEC Registrar_Usuario '00112233467', 'Enrique', 'Alvarez', 'Loaiza', '88887803', 'enrique.alvarez@example.com', '1991-12-09', 'Puntarenas', '2023-03-05', 1540.00, 'Gerente', 'Administración', 'password';
+
+
+select * from Departamento;
+INSERT INTO Departamento (Departamento) VALUES
+('Administración')
+
+
+select * from Usuario;
+
 Insert into Rol (Nombre_Rol, Descripcion) values 
 ('Admin','Rol administrativo'),
 ('Editor','Permisos de edicion'),
@@ -379,4 +453,15 @@ insert into Tipo_Cotizacion (Tipo) values ('Detalle') , ('Mayoreo'), ('Preventa'
 insert into Probabilidad_Cotizacion (Probabilidad) values ('0%'),('25%'), ('50%'), ('75%'), ('100%');
 
 select * from Probabilidad_Cotizacion
+
+--Insert Local(2)
+insert into T_Local (Cedula_Local, Nombre_Local) values 
+('132465798','La Guacima'),
+('312645978','El Rey');
+
+--Inserts de 30 Ventas (Facturas) sin monto
+insert into Factura(Numero_Factura, Cliente, Vendedor, Cedula_Local, Fecha) values
+('F001','101230123','00112233441','132465798', GETDATE());
+
+select * from Factura;
 

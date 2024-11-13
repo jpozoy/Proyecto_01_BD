@@ -31,4 +31,13 @@ Return (
 );
 go
 
-
+create or alter function obtener (@CodigoCotizacion varchar(12))
+returns @cotiza table (
+	Vendedor varchar(12),
+	Codigo varchar(12)
+)
+as
+begin
+	insert into @cotiza
+	select Vendedor, Codigo_Cotizacion from Cotizacion where Codigo_Cotizacion = @CodigoCotizacion;	
+end;

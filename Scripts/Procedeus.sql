@@ -311,3 +311,7 @@ BEGIN
     VALUES (@Cedula, @HorasTrabajadas, @HorasExtras, @SalarioTotal);
 END
 
+
+--Procedimiento para registrar Entradas en Inventario
+create procedure Registrar_Entrada_Articulo
+	@
