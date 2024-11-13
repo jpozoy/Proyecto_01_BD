@@ -181,9 +181,11 @@ INSERT INTO Bodega (Codigo_Bodega, Nombre, Ubicacion, Capacidad_En_Toneladas, Es
 
 select * from Inventario
 --Agregar Entradas de Inventario
+insert into Entrada_Inventario(Codigo_Movimiento,Usuario, Bodega_Destino, Fecha_Hora) values ('M001', '00112233466', 'B001', GETDATE());
 
 
-insert into Inventario(Codigo_Bodega, Codigo_Articulo, Cantidad) values ('B001', 'A030', 5), ('B005', 'A024', 10)
+select * from Entrada_Inventario;
+insert into Inventario(Codigo_Bodega, Codigo_Articulo, Cantidad) values ('B001', 'A030', 5), ('B005', 'A024', 10);
 
 -- Relación entre bodegas y familias (N:M)
 INSERT INTO Bodega_Familia (Codigo_Bodega, Codigo_Familia) VALUES
@@ -207,7 +209,6 @@ INSERT INTO Bodega_Familia (Codigo_Bodega, Codigo_Familia) VALUES
 ('B004', 'F018'),
 ('B005', 'F019'),
 ('B005', 'F020'),
-
 ('B001', 'F021'),
 ('B001', 'F022'),
 ('B002', 'F023'),
@@ -388,7 +389,7 @@ INSERT INTO Tareas_Caso (Codigo_Tarea, Nombre_Tarea, Decripcion_Tarea, Codigo_Ca
 ('T029', 'Procesar pago', 'Resolver el problema reportado con el pago del cliente', 'CS029'),
 ('T030', 'Verificar estado del caso', 'Comprobar el estado del caso abierto por el cliente', 'CS030');
 
--- Inserts por proc de Usuarios (30)
+-- Inserts por proc de Usuarios 
 EXEC Registrar_Usuario '00112233441', 'Juan', 'Perez', 'Lopez', '88887777', 'juan.perez@example.com', '1985-03-15', 'San José', '2024-01-01', 1200.00, 'Vendedor', 'Ventas', 'password123';
 EXEC Registrar_Usuario '00112233442', 'Maria', 'Gomez', 'Rodriguez', '88887778', 'maria.gomez@example.com', '1990-07-20', 'Alajuela', '2023-02-15', 1000.00, 'Vendedor', 'Ventas ', 'password123';
 EXEC Registrar_Usuario '00112233443', 'Carlos', 'Ramirez', 'Mendez', '88887779', 'carlos.ramirez@example.com', '1988-10-10', 'Cartago', '2024-03-01', 1500.00, 'Vendedor', 'Ventas', 'password123';
@@ -463,5 +464,5 @@ insert into T_Local (Cedula_Local, Nombre_Local) values
 insert into Factura(Numero_Factura, Cliente, Vendedor, Cedula_Local, Fecha) values
 ('F001','101230123','00112233441','132465798', GETDATE());
 
-select * from Factura;
+select * from Cotizacion;
 
