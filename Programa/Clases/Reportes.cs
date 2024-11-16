@@ -172,6 +172,50 @@ namespace Proyecto_01_BD.Clases
 
             return resultados;
         }
+
+        public List<Dictionary<string, object>> TareasMasAntiguas()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+        
+            try
+            {
+                // Abrir conexión
+                conexion.Abrir();
+        
+                // Consulta SQL para obtener las tareas más antiguas desde la vista
+                string query = "SELECT * FROM vw_Top15TareasMasAntiguas";
+        
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                    {
+                        { "Codigo_Tarea", reader["Codigo_Tarea"] },
+                        { "Nombre_Tarea", reader["Nombre_Tarea"] },
+                        { "Decripcion_Tarea", reader["Decripcion_Tarea"] },
+                        { "Codigo_Referencia", reader["Codigo_Referencia"] },
+                        { "Fecha_Inicio", reader["Fecha_Inicio"] },
+                        { "Fecha_Fin", reader["Fecha_Fin"] }
+                    };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las tareas más antiguas: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+        
+            return resultados;
+            }
     }
 
     
