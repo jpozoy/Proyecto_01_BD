@@ -1,4 +1,56 @@
 ﻿@page
 @model Proyecto_01_BD.Pages.Reportes.VentasModel
+@using Proyecto_01_BD.Clases;
 @{
+    // Puedes definir los datos del gráfico desde el modelo o la base de datos.
+    var meses = new[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo" };
+    var ventas = new[] { 1000, 1500, 2000, 1800, 2200 };
+    Reportes reportes = new Reportes();
+
 }
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Ventas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Reporte de Ventas</h1>
+
+    <!-- Aquí se va a mostrar el gráfico -->
+    <canvas id="ventasChart" width="400" height="200"></canvas>
+
+    <script>
+        // Obtener los datos desde la página Razor (en este caso, desde las variables de C#)
+        var meses = @Html.Raw(Json.Serialize(meses));
+        var ventas = @Html.Raw(Json.Serialize(ventas));
+
+        // Configuración y creación del gráfico
+        var ctx = document.getElementById('ventasChart').getContext('2d');
+        var ventasChart = new Chart(ctx, {
+            type: 'bar', // Tipo de gráfico (barras)
+            data: {
+                labels: meses, // Etiquetas de los meses
+                datasets: [{
+                    label: 'Ventas Mensuales',
+                    data: ventas, // Datos de las ventas
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Color de fondo
+                    borderColor: 'rgba(75, 192, 192, 1)', // Color del borde
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true, // Hacerlo responsivo
+                scales: {
+                    y: {
+                        beginAtZero: true // Iniciar el eje Y en 0
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

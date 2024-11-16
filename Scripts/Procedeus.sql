@@ -310,8 +310,34 @@ BEGIN
     INSERT INTO Planilla_Usuario (Cedula_Usuario, Horas_Trabajadas, Horas_Extras, Salario_Pagado)
     VALUES (@Cedula, @HorasTrabajadas, @HorasExtras, @SalarioTotal);
 END
+Go;
 
 
---Procedimiento para registrar Entradas en Inventario
-create procedure Registrar_Entrada_Articulo
-	@
+--Procedimiento para Agregar ArticulosAFactura
+CREATE OR ALTER PROCEDURE AgregarArticuloAFactura
+    @Numero_Factura varchar(12),
+    @Articulo varchar(12),
+    @Cantidad int,
+    @Codigo_Bodega varchar(12)
+AS
+BEGIN
+    DECLARE @PrecioUnitario decimal(18,2);
+    DECLARE @MontoTotalArticulo decimal(18,2);
+
+    -- Obtener el precio unitario del artículo
+    SELECT @PrecioUnitario = Precio_Estandar
+    FROM Articulo
+    WHERE Codigo_Articulo = @Articulo;
+
+    -- Calcular el monto total del artículo
+    SET @MontoTotalArticulo = @PrecioUnitario * @Cantidad;
+
+    -- Insertar el detalle de la factura
+    INSERT INTO Detalle_Factura (Numero_Factura, Articulo, Cantidad, Codigo_Bodega)
+    VALUES (@Numero_Factura, @Articulo, @Cantidad, @Codigo_Bodega);
+
+    -- Actualizar el monto total de la factura
+    UPDATE Factura
+    SET Monto = Monto + @MontoTotalArticulo
+    WHERE Numero_Factura = @Numero_Factura;
+END;
