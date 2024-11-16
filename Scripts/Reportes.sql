@@ -1,4 +1,4 @@
--- Reportes --
+lllll-- Reportes --
 
 -- Top 10 productos más cotizados
 CREATE VIEW Top10_ProductosCotizados AS
@@ -127,8 +127,17 @@ RETURN
 );
 GO
 
+
+-- Consulta sin filtro de año.
 SELECT * 
 FROM dbo.FiltrarVentasPorFamilia(NULL, NULL, NULL, NULL);
+-- Consulta con rangos de fechas. 
+SELECT * 
+FROM dbo.FiltrarVentasPorFamilia(NULL, NULL, '2024-01-01', '2024-01-31');
+-- Consulta con filtro de mes-año.
+SELECT * 
+FROM dbo.FiltrarVentasPorFamilia(1, 2024, NULL, NULL);
+
 
 select * from Movimiento_Inventario
 select * from Inventario

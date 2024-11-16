@@ -1,0 +1,102 @@
+﻿@page
+@using Proyecto_01_BD.Clases;
+@{
+    Reportes reportes = new Reportes();
+
+    // Leer valores enviados por el formulario
+    int? mesSeleccionado = string.IsNullOrEmpty(Request.Query["mes"]) ? (int?)null : int.Parse(Request.Query["mes"]);
+    int? anioSeleccionado = string.IsNullOrEmpty(Request.Query["anio"]) ? (int?)null : int.Parse(Request.Query["anio"]);
+    DateTime? fechaInicio = string.IsNullOrEmpty(Request.Query["fechaInicio"]) ? (DateTime?)null : DateTime.Parse(Request.Query["fechaInicio"]);
+    DateTime? fechaFin = string.IsNullOrEmpty(Request.Query["fechaFin"]) ? (DateTime?)null : DateTime.Parse(Request.Query["fechaFin"]);
+
+    // Llamar al método con los filtros
+    var resultado = reportes.FiltrarVentasPorFamilia(mesSeleccionado, anioSeleccionado, fechaInicio, fechaFin);
+}
+
+<h3>Reporte de Ventas por Familia</h3>
+
+<!-- Formulario para los filtros -->
+<form method="get">
+    <label for="mes">Mes:</label>
+    <select id="mes" name="mes">
+        <option value="">Seleccionar</option>
+        @for (int i = 1; i <= 12; i++)
+        {
+            <option value="@i">@i</option>
+        }
+    </select>
+
+    <label for="anio">Año:</label>
+    <input type="number" id="anio" name="anio" value="@(Request.Query["anio"])" min="2000" max="2100" />
+
+    <label for="fechaInicio">Fecha Inicio:</label>
+    <input type="date" id="fechaInicio" name="fechaInicio" value="@(Request.Query["fechaInicio"])" />
+
+    <label for="fechaFin">Fecha Fin:</label>
+    <input type="date" id="fechaFin" name="fechaFin" value="@(Request.Query["fechaFin"])" />
+
+    <button type="submit">Aplicar Filtros</button>
+</form>
+
+<!-- Contenedor para el gráfico -->
+<div style="height: 400px">
+    <canvas id="graficoCircular"></canvas>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Datos del gráfico generados desde el servidor
+    const datos = {
+        labels: @Html.Raw(Json.Serialize(resultado.Select(r => r["NombreFamilia"]))),
+        datasets: [{
+            label: 'Ventas por Familia',
+            data: @Html.Raw(Json.Serialize(resultado.Select(r => r["TotalVentas"]))),
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF',
+                '#FF9F40'
+            ],
+            hoverOffset: 4
+        }]
+    };
+
+    // Configuración del gráfico
+    const config = {
+        type: 'pie',
+        data: datos,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            const valor = tooltipItem.raw;
+                            return ` ${tooltipItem.label}: $${valor.toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    };
+
+    // Renderizar el gráfico
+    const ctx = document.getElementById('graficoCircular').getContext('2d');
+    const graficoCircular = new Chart(ctx, config);
+</script>
+
+<style>
+    #graficoCircular {
+        width: 600px;
+        height: 600px;
+    }
+</style>
