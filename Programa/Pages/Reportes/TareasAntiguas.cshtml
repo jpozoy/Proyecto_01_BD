@@ -1,0 +1,68 @@
+@page
+@using Proyecto_01_BD.Clases;
+@{
+    // Instancia de la clase Reportes
+    Reportes reportes = new Reportes();
+
+    // Obtener las 15 tareas más antiguas
+    List<Dictionary<string, object>> tareasAntiguas = reportes.TareasMasAntiguas();
+
+    // Ordenar resultados si se especifica
+    var sortOrder = Request.Query["sortOrder"];
+    if (!string.IsNullOrEmpty(sortOrder))
+    {
+        if (sortOrder == "asc")
+        {
+            tareasAntiguas = tareasAntiguas
+                .OrderBy(t => Convert.ToDateTime(t["Fecha_Inicio"]))
+                .ToList();
+        }
+        else if (sortOrder == "desc")
+        {
+            tareasAntiguas = tareasAntiguas
+                .OrderByDescending(t => Convert.ToDateTime(t["Fecha_Inicio"]))
+                .ToList();
+        }
+    }
+}
+
+<h1>Top 15 Tareas Más Antiguas</h1>
+
+<table border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+    <thead>
+        <tr>
+            <th>Código de Tarea</th>
+            <th>Nombre de la Tarea</th>
+            <th>Descripción</th>
+            <th>Referencia</th>
+            <th>
+                Fecha de Inicio
+                <a href="?sortOrder=asc">▲</a>
+                <a href="?sortOrder=desc">▼</a>
+            </th>
+            <th>Fecha de Fin</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (tareasAntiguas.Count > 0)
+        {
+            foreach (var tarea in tareasAntiguas)
+            {
+                <tr>
+                    <td>@tarea["Codigo_Tarea"]</td>
+                    <td>@tarea["Nombre_Tarea"]</td>
+                    <td>@tarea["Decripcion_Tarea"]</td>
+                    <td>@tarea["Codigo_Referencia"]</td>
+                    <td>@Convert.ToDateTime(tarea["Fecha_Inicio"]).ToString("yyyy-MM-dd")</td>
+                    <td>@(tarea["Fecha_Fin"] != DBNull.Value ? Convert.ToDateTime(tarea["Fecha_Fin"]).ToString("yyyy-MM-dd") : "Pendiente")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">No se encontraron resultados.</td>
+            </tr>
+        }
+    </tbody>
+</table>
