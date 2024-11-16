@@ -296,3 +296,4 @@ EXEC Agregar_Articulos_Cotizacion @Cotizacion = @CodigoCotizacionSalida, @Articu
 EXEC Agregar_Articulos_Cotizacion @Cotizacion = @CodigoCotizacionSalida, @Articulo = 'ART024', @Cantidad = 20;
 EXEC Agregar_Articulos_Cotizacion @Cotizacion = @CodigoCotizacionSalida, @Articulo = 'ART025', @Cantidad = 25;
 
+select * from Caso

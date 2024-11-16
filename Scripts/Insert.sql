@@ -350,9 +350,22 @@ ALTER TABLE Tareas_Caso
 ADD Fecha_Inicio DATE NOT NULL,
     Fecha_Fin DATE NULL;
 
+--Añadirle fecha de inicio y fin a las tareas de cotizacion
+ALTER TABLE Tareas_Cotizacion
+ADD Fecha_Inicio DATE NOT NULL,
+    Fecha_Fin DATE NULL;
+
 ALTER TABLE Tareas_Caso
 ALTER COLUMN Nombre_Tarea varchar(100) NOT NULL;
 
+ALTER TABLE Caso
+ALTER COLUMN Descripcion varchar(200) NOT NULL;
+
+ALTER TABLE Caso
+ALTER COLUMN Asunto varchar(100) NOT NULL;
+
+select * from Tareas_Caso
+select * from Caso
 
 -- Insertar 30 casos
 INSERT INTO Caso (Codigo_Caso, Cliente, Vendedor, Direccion, Asunto, Tipo, Estado, Prioridad, Descripcion, Fecha) VALUES
