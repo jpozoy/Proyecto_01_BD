@@ -34,6 +34,8 @@ namespace Proyecto_01_BD.Clases
             return resultados;
 
         }
+
+        //Reportes de ventas por familia
         public List<Dictionary<string, object>> FiltrarVentasPorFamilia(int? mes = null, int? anio = null, DateTime? fechaInicio = null, DateTime? fechaFin = null)
         {
             List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
@@ -74,7 +76,105 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        //Reportes de ventas por sector
+        public List<Dictionary<string, object>> FiltrarVentasPorSector(int? mes, int? anio, DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                // Abrir conexión a la base de datos
+                conexion.Abrir();
+
+                // Construir la consulta SQL con parámetros
+                string query = @"SELECT Sector, Fecha, Total_Ventas FROM dbo.FiltrarVentasPorSector(@Mes, @Anio, @FechaInicio, @FechaFin)";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    // Agregar parámetros con valores o DBNull si son nulos
+                    command.Parameters.AddWithValue("@Mes", mes.HasValue ? (object)mes.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@Anio", anio.HasValue ? (object)anio.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaInicio", fechaInicio.HasValue ? (object)fechaInicio.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaFin", fechaFin.HasValue ? (object)fechaFin.Value : DBNull.Value);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Leer resultados y llenar la lista
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                    {
+                        { "Sector", reader["Sector"] },
+                        { "Fecha", reader["Fecha"] },
+                        { "Total_Ventas", reader["Total_Ventas"] }
+                    };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores (puedes registrar el error si es necesario)
+                throw new Exception("Error al filtrar ventas por sector: " + ex.Message);
+            }
+            finally
+            {
+                // Cerrar conexión a la base de datos
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+        // Obtener ventas y cotizaciones por departamentos
+        public List<Dictionary<string, object>> FiltrarVentasYCotizacionesPorDepartamento(int? mes, int? anio, DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+
+                string query = @"
+            SELECT Departamento, TotalVentas, TotalCotizaciones
+            FROM dbo.FiltrarVentasYCotizacionesPorDepartamento(@Mes, @Anio, @FechaInicio, @FechaFin)";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    command.Parameters.AddWithValue("@Mes", mes.HasValue ? (object)mes.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@Anio", anio.HasValue ? (object)anio.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaInicio", fechaInicio.HasValue ? (object)fechaInicio.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaFin", fechaFin.HasValue ? (object)fechaFin.Value : DBNull.Value);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                    {
+                        { "Departamento", reader["Departamento"] },
+                        { "TotalVentas", reader["TotalVentas"] },
+                        { "TotalCotizaciones", reader["TotalCotizaciones"] }
+                    };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al filtrar ventas y cotizaciones por departamento: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
     }
+
+    
 
 
 }

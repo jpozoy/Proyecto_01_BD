@@ -1,7 +1,7 @@
-lllll-- Reportes --
+-- Reportes --
 
 -- Top 10 productos más cotizados
-CREATE VIEW Top10_ProductosCotizados AS
+CREATE OR ALTER VIEW Top10_ProductosCotizados AS
 SELECT TOP 10
     a.Nombre_Articulo,
     a.Descripcion,
@@ -38,33 +38,6 @@ select Sector, Total_Ventas from VentasPorSector
 
 Go
 
-CREATE FUNCTION dbo.Fn_VentasPorSector (
-    @FechaInicio DATE,
-    @FechaFin DATE
-)
-RETURNS TABLE
-AS
-RETURN
-(
-    SELECT 
-        Sector,
-        SUM(Total_Ventas) AS Total_Ventas
-    FROM 
-        VentasPorSector
-    WHERE 
-        Fecha BETWEEN @FechaInicio AND @FechaFin
-    GROUP BY 
-        Sector
-);
-
-DECLARE @FechaInicio DATE = '2023-01-01';
-DECLARE @FechaFin DATE = '2023-12-31';
-
--- Reporte de ventas por sector.
-
-SELECT *
-FROM dbo.Fn_VentasPorSector(@FechaInicio, @FechaFin)
-ORDER BY Total_Ventas DESC;
 
 CREATE OR ALTER FUNCTION FiltrarVentasPorSector(
     @Mes INT = NULL,
@@ -91,7 +64,11 @@ RETURN
 GO
 
 SELECT * 
-FROM dbo.FiltrarVentasPorSector('10', '2023', NULL, NULL);\
+FROM dbo.FiltrarVentasPorSector(NULL, NULL, NULL, NULL);
+GO
+
+SELECT * 
+FROM dbo.FiltrarVentasPorSector('10', '2023', NULL, NULL);
 GO
 
 -- Reporte de familias vendidas
@@ -133,11 +110,12 @@ SELECT *
 FROM dbo.FiltrarVentasPorFamilia(NULL, NULL, NULL, NULL);
 -- Consulta con rangos de fechas. 
 SELECT * 
-FROM dbo.FiltrarVentasPorFamilia(NULL, NULL, '2024-01-01', '2024-01-31');
+FROM dbo.FiltrarVentasPorFamilia(NULL, NULL, '2024-01-01', '2024-03-30');
 -- Consulta con filtro de mes-año.
 SELECT * 
 FROM dbo.FiltrarVentasPorFamilia(1, 2024, NULL, NULL);
 
+-- 
 
 select * from Movimiento_Inventario
 select * from Inventario

@@ -1,0 +1,81 @@
+﻿@page
+@using Proyecto_01_BD.Clases;
+@{
+    Reportes reportes = new Reportes();
+
+    // Leer valores enviados por el formulario
+    int? mesSeleccionado = string.IsNullOrEmpty(Request.Query["mes"]) ? (int?)null : int.Parse(Request.Query["mes"]);
+    int? anioSeleccionado = string.IsNullOrEmpty(Request.Query["anio"]) ? (int?)null : int.Parse(Request.Query["anio"]);
+    DateTime? fechaInicio = string.IsNullOrEmpty(Request.Query["fechaInicio"]) ? (DateTime?)null : DateTime.Parse(Request.Query["fechaInicio"]);
+    DateTime? fechaFin = string.IsNullOrEmpty(Request.Query["fechaFin"]) ? (DateTime?)null : DateTime.Parse(Request.Query["fechaFin"]);
+
+    // Llamar al método con los filtros
+    var resultado = reportes.FiltrarVentasYCotizacionesPorDepartamento(mesSeleccionado, anioSeleccionado, fechaInicio, fechaFin);
+}
+
+<h3>Reporte de Ventas y Cotizaciones por departamento</h3>
+
+<!-- Formulario para los filtros -->
+<form method="get">
+    <label for="mes">Mes:</label>
+    <select id="mes" name="mes">
+        <option value="">Seleccionar</option>
+        @for (int i = 1; i <= 12; i++)
+        {
+            <option value="@i">@i</option>
+        }
+    </select>
+
+    <label for="anio">Año:</label>
+    <input type="number" id="anio" name="anio" value="@(Request.Query["anio"])" min="2000" max="2100" />
+
+    <label for="fechaInicio">Fecha Inicio:</label>
+    <input type="date" id="fechaInicio" name="fechaInicio" value="@(Request.Query["fechaInicio"])" />
+
+    <label for="fechaFin">Fecha Fin:</label>
+    <input type="date" id="fechaFin" name="fechaFin" value="@(Request.Query["fechaFin"])" />
+
+    <button type="submit">Aplicar Filtros</button>
+</form>
+
+<!-- Contenedor del gráfico -->
+<canvas id="ventasCotizacionesChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Obtener los datos desde el backend
+    var departamentos = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(resultado.Select(r => r["Departamento"]).ToList()));
+    var ventas = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(resultado.Select(r => r["TotalVentas"]).ToList()));
+    var cotizaciones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(resultado.Select(r => r["TotalCotizaciones"]).ToList()));
+
+
+    // Crear el gráfico de barras
+    var ctx = document.getElementById('ventasCotizacionesChart').getContext('2d');
+    var ventasCotizacionesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: departamentos, // Departamentos en el eje X
+            datasets: [{
+                label: 'Ventas',
+                data: ventas, // Datos de ventas
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Cotizaciones',
+                data: cotizaciones, // Datos de cotizaciones
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
