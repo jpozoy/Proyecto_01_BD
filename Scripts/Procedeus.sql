@@ -223,13 +223,6 @@ BEGIN
 END;
 GO
 
-select * from Cotizacion_Articulos
-
-select * from Cotizacion
-
-select * from Articulo
-
-
 
 -- Procedimiento para editar cotizaci�n
 create or alter procedure Editar_Cotizacion
@@ -261,29 +254,6 @@ UPDATE Cotizacion
 end;
 go
 
-select * from Cotizacion
-select * from Cotizacion_Articulos
-
-CREATE OR ALTER PROCEDURE sp_InsertarMovimientoInventario
-    @TipoMovimiento VARCHAR(20),
-    @CodigoArticulo INT,
-    @CodigoBodegaOrigen INT = NULL,
-    @CodigoBodegaDestino INT,
-    @Cantidad INT,
-    @FechaMovimiento DATETIME
-AS
-BEGIN
-    BEGIN TRY
-        INSERT INTO Movimiento_Inventario (TipoMovimiento, Codigo_Articulo, Codigo_Bodega_Origen, Codigo_Bodega_Destino, Cantidad, FechaMovimiento)
-        VALUES (@TipoMovimiento, @CodigoArticulo, @CodigoBodegaOrigen, @CodigoBodegaDestino, @Cantidad, @FechaMovimiento);
-    END TRY
-    BEGIN CATCH
-        -- Manejo de errores
-        SELECT ERROR_MESSAGE() AS ErrorMensaje;
-    END CATCH
-END;
-GO
-
 
 ---sp para registrar la planilla y calcula el pago
 CREATE PROCEDURE sp_RegistrarPlanilla
@@ -311,7 +281,6 @@ BEGIN
     VALUES (@Cedula, @HorasTrabajadas, @HorasExtras, @SalarioTotal);
 END
 Go;
-
 
 --Procedimiento para Agregar ArticulosAFactura
 CREATE OR ALTER PROCEDURE AgregarArticuloAFactura
@@ -341,3 +310,84 @@ BEGIN
     SET Monto = Monto + @MontoTotalArticulo
     WHERE Numero_Factura = @Numero_Factura;
 END;
+GO
+
+
+-- [ Procedimientos de Entradas, Movimientos, Salidas de Inventario ]
+CREATE OR ALTER PROCEDURE Movimiento_Entre_Bodegas
+    @Codigo_Movimiento varchar(12),
+    @Codigo_Articulo varchar(12),
+    @Cantidad int
+AS
+BEGIN
+    BEGIN TRY
+        -- Declarar variables para las bodegas de origen y destino
+        DECLARE @Bodega_Origen varchar(12);
+        DECLARE @Bodega_Destino varchar(12);
+
+        -- Obtener las bodegas de origen y destino a partir de Movimiento_Inventario
+        SELECT 
+            @Bodega_Origen = Bodega_Origen,
+            @Bodega_Destino = Bodega_Destino
+        FROM Movimiento_Inventario
+        WHERE Codigo_Movimiento = @Codigo_Movimiento;
+
+        -- Verificar que las bodegas se hayan encontrado
+        IF @Bodega_Origen IS NULL OR @Bodega_Destino IS NULL
+        BEGIN
+            THROW 50000, 'No se encontraron las bodegas de origen o destino para el código de movimiento proporcionado.', 1;
+        END
+
+        -- Restar la cantidad en la bodega de origen
+        UPDATE Inventario
+        SET Cantidad = Cantidad - @Cantidad
+        WHERE Codigo_Bodega = @Bodega_Origen AND Codigo_Articulo = @Codigo_Articulo;
+
+        -- Validar que la operación de resta no cause cantidades negativas
+        IF @@ROWCOUNT = 0 OR EXISTS (
+            SELECT 1
+            FROM Inventario
+            WHERE Codigo_Bodega = @Bodega_Origen AND Codigo_Articulo = @Codigo_Articulo AND Cantidad < 0
+        )
+        BEGIN
+            THROW 50001, 'No hay suficiente inventario en la bodega de origen.', 1;
+        END
+
+        -- Sumar la cantidad en la bodega de destino
+        UPDATE Inventario
+        SET Cantidad = Cantidad + @Cantidad
+        WHERE Codigo_Bodega = @Bodega_Destino AND Codigo_Articulo = @Codigo_Articulo;
+
+        -- Si no existe el artículo en la bodega destino, agregarlo
+        IF @@ROWCOUNT = 0
+        BEGIN
+            INSERT INTO Inventario (Codigo_Bodega, Codigo_Articulo, Cantidad)
+            VALUES (@Bodega_Destino, @Codigo_Articulo, @Cantidad);
+        END
+
+        -- Insertar el registro en la tabla Movimiento_Articulo
+        INSERT INTO Movimiento_Articulo (Codigo_Movimiento, Codigo_Articulo, Cantidad)
+        VALUES (@Codigo_Movimiento, @Codigo_Articulo, @Cantidad);
+
+    END TRY
+    BEGIN CATCH
+        -- Manejo de errores
+        SELECT 
+            ERROR_NUMBER() AS ErrorNumero,
+            ERROR_MESSAGE() AS ErrorMensaje,
+            ERROR_SEVERITY() AS Severidad,
+            ERROR_STATE() AS Estado,
+            ERROR_LINE() AS Linea,
+            ERROR_PROCEDURE() AS Procedimiento;
+    END CATCH
+END;
+GO
+Insert into Movimiento_Inventario(Codigo_Movimiento, Bodega_Origen, Bodega_Destino, Usuario, Fecha_Hora)
+VALUES ('Mov01', 'B005', 'B001', '00112233466', GETDATE())
+
+Exec Movimiento_Entre_Bodegas 'Mov01', 'A026', 2
+
+select * from Movimiento_Inventario
+select * from Movimiento_Articulo
+select * from Inventario
+select * from Bodega

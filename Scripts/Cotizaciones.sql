@@ -1,5 +1,7 @@
 --Inserts de Cotizaciones Por procedimiento
 
+
+select * from Cotizacion
 DECLARE @CodigoCotizacionSalida VARCHAR(12);
 
 
