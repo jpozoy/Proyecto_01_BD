@@ -578,6 +578,50 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        /**
+         * @method CantidadTareasPorUsuario
+         * @description Obtiene la cantidad de tareas asignadas a cada usuario desde la base de datos.
+         * @return List<Dictionary<string, object>> Lista de usuarios con su cantidad de tareas asignadas.
+         */
+        public List<Dictionary<string, object>> CantidadTareasPorUsuario()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+                string query = "SELECT UsuarioID, Usuario, TotalTareasCaso, TotalTareasCotizacion, TotalTareas FROM vw_CantidadTareasPorUsuario";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "UsuarioID", reader["UsuarioID"] },
+                                { "Usuario", reader["Usuario"] },
+                                { "TotalTareasCaso", reader["TotalTareasCaso"] },
+                                { "TotalTareasCotizacion", reader["TotalTareasCotizacion"] },
+                                { "TotalTareas", reader["TotalTareas"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener la cantidad de tareas por usuario: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
 
     }
 
