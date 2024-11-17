@@ -221,5 +221,28 @@ FROM vw_TopBodegasMasArticulos
 ORDER BY CantidadTotal DESC;
 
 
+/**
+ * @summary Vista para obtener el Top 10 de productos más vendidos.
+ * @description Calcula el total de productos vendidos agrupados por artículo.
+ * @returns Código de artículo, nombre, descripción y cantidad total vendida.
+ */
+CREATE OR ALTER VIEW vw_TopProductosMasVendidos AS
+SELECT 
+    a.Codigo_Articulo,
+    a.Nombre_Articulo,
+    a.Descripcion,
+    SUM(df.Cantidad) AS CantidadVendida
+FROM 
+    Detalle_Factura df
+JOIN 
+    Articulo a ON df.Articulo = a.Codigo_Articulo
+GROUP BY 
+    a.Codigo_Articulo, a.Nombre_Articulo, a.Descripcion
+
+SELECT TOP 10 * 
+FROM vw_TopProductosMasVendidos
+ORDER BY CantidadVendida DESC;
+
+
 
 
