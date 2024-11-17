@@ -282,3 +282,21 @@ LEFT JOIN Tareas_Cotizacion tco ON co.Codigo_Cotizacion = tco.Codigo_Cotizacion
 GROUP BY u.Cedula, u.Nombre, u.Apellido1, u.Apellido2;
 
 SELECT * FROM vw_CantidadTareasPorUsuario;
+
+/**
+ * @file vw_VentasPorSectorDepartamento.sql
+ * @description Vista para obtener las ventas agrupadas por sector y departamento.
+ */
+
+CREATE OR ALTER VIEW vw_VentasPorSectorDepartamento AS
+SELECT 
+    c.Sector AS Sector,
+    u.Departamento AS Departamento,
+    SUM(f.Monto) AS TotalVentas
+FROM Factura f
+INNER JOIN Cliente c ON f.Cliente = c.Cedula
+INNER JOIN Usuario u ON f.Vendedor = u.Cedula
+GROUP BY c.Sector, u.Departamento;
+SELECT * FROM vw_VentasPorSectorDepartamento;
+
+
