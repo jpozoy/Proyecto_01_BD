@@ -1,0 +1,89 @@
+@page
+@using Proyecto_01_BD.Clases;
+@{
+    // Instancia del reporte
+    Reportes reportes = new Reportes();
+
+    // Obtener los datos
+    List<Dictionary<string, object>> datosZona = reportes.ConsultarClientesVentasPorZona();
+
+    // Manejar el ordenamiento según el parámetro recibido
+    var sortOrder = Request.Query["sortOrder"];
+    if (!string.IsNullOrEmpty(sortOrder))
+    {
+        if (sortOrder == "asc")
+        {
+            datosZona = datosZona.OrderBy(d => Convert.ToInt32(d["CantidadClientes"])).ToList();
+        }
+        else if (sortOrder == "desc")
+        {
+            datosZona = datosZona.OrderByDescending(d => Convert.ToInt32(d["CantidadClientes"])).ToList();
+        }
+    }
+}
+
+<h1>Cantidad de Clientes y Ventas por Zona</h1>
+
+<table border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+    <thead>
+        <tr>
+            <th>Zona</th>
+            <th>
+                Cantidad de Clientes
+                <a href="?sortOrder=asc">▲</a>
+                <a href="?sortOrder=desc">▼</a>
+            </th>
+            <th>
+                Monto Total de Ventas
+                <a href="?sortOrder=ascMonto">▲</a>
+                <a href="?sortOrder=descMonto">▼</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (datosZona.Count > 0)
+        {
+            foreach (var zona in datosZona)
+            {
+                <tr>
+                    <td>@zona["Zona"]</td>
+                    <td>@zona["CantidadClientes"]</td>
+                    <td>@zona["MontoTotalVentas"]</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">No se encontraron resultados.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f4f4f4;
+    }
+
+        th a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 12px;
+        }
+
+            th a:hover {
+                text-decoration: underline;
+            }
+</style>
