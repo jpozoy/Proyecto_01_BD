@@ -143,5 +143,17 @@ GROUP BY
 GO
 SELECT * FROM vw_ClientesVentasPorZona;
 
+---Ventas y cotizaciones por mes, por año. Gráfico de barras. Sin filtro 
+CREATE VIEW vw_VentasMensualesAnuales AS
+SELECT 
+    YEAR(Fecha) AS Anio,  ---año
+    MONTH(Fecha) AS Mes,  ---mes
+    SUM(Monto) AS TotalVentas ---sumar monto como total de ventas
+FROM Factura ---de Factura
+GROUP BY YEAR(Fecha), MONTH(Fecha); 
+
+
+SELECT * FROM vw_VentasMensualesAnuales;
+
 
 
