@@ -168,5 +168,20 @@ GROUP BY YEAR(Fecha_Cierre), MONTH(Fecha_Cierre);
 select * from Cotizacion
 SELECT * FROM vw_VentasYCotizacionesMensualesAnuales;
 
+--Planilla por departamento, por mes. Departamento y monto. Gráfico circular. 
+CREATE OR ALTER VIEW vw_PlanillaPorDepartamentoMes AS
+SELECT 
+    p.Codigo_Planilla,
+    MONTH(p.Fecha) AS Mes,
+    YEAR(p.Fecha) AS Anio,
+    pu.Departamento,
+    SUM(pu.Salario_Pagado) AS MontoTotal
+FROM Planilla p
+JOIN Planilla_Usuario pu ON p.Codigo_Planilla = pu.Codigo_Planilla
+GROUP BY p.Codigo_Planilla, MONTH(p.Fecha), YEAR(p.Fecha), pu.Departamento;
+
+select * from vw_PlanillaPorDepartamentoMes
+
+
 
 
