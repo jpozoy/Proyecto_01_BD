@@ -216,6 +216,55 @@ namespace Proyecto_01_BD.Clases
 
             return resultados;
         }
+
+        
+        /**
+         * Consulta la cantidad de clientes y el monto total de ventas agrupados por zona.
+         *
+         * Este método se conecta a la base de datos y ejecuta una consulta sobre la vista
+         * `vw_ClientesVentasPorZona`. Devuelve una lista de diccionarios, donde cada diccionario
+         * contiene los datos agrupados por zona: el nombre de la zona, la cantidad de clientes
+         * y el monto total de ventas en esa zona.
+         *
+         * @return List<Dictionary<String, Object>> Una lista de diccionarios con las siguientes claves:
+         *         <ul>
+         *           <li><b>Zona:</b> El nombre de la zona geográfica.</li>
+         *           <li><b>CantidadClientes:</b> La cantidad de clientes únicos en la zona.</li>
+         *           <li><b>MontoTotalVentas:</b> El monto total de las ventas en la zona.</li>
+         *         </ul>
+         *
+         * @throws Exception Si ocurre algún problema al conectar con la base de datos
+         *                   o ejecutar la consulta.
+         *
+         * @see vw_ClientesVentasPorZona Vista en la base de datos que agrupa los datos.
+         */
+        public List<Dictionary<string, object>> ConsultarClientesVentasPorZona()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+            conexion.Abrir();
+
+            string query = "SELECT Zona, CantidadClientes, MontoTotalVentas FROM vw_ClientesVentasPorZona";
+
+            using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Dictionary<string, object> resultado = new Dictionary<string, object>
+                {
+                    { "Zona", reader["Zona"] },
+                    { "CantidadClientes", reader["CantidadClientes"] },
+                    { "MontoTotalVentas", reader["MontoTotalVentas"] }
+                };
+                        resultados.Add(resultado);
+                    }
+                }
+            }
+
+            conexion.Cerrar();
+            return resultados;
+        }
     }
 
 }
