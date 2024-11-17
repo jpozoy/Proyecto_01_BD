@@ -1,0 +1,56 @@
+@page
+@model Proyecto_01_BD.Pages.Reportes.TopBodegasModel
+@using Proyecto_01_BD.Clases;
+@{
+    Reportes reportes = new Reportes();
+    List<Dictionary<string, object>> topBodegas = reportes.TopBodegasMasArticulos();
+
+    // Ordenar los datos según el parámetro `sortOrder`
+    var sortOrder = Request.Query["sortOrder"];
+    if (!string.IsNullOrEmpty(sortOrder))
+    {
+        if (sortOrder == "asc")
+        {
+            topBodegas = topBodegas.OrderBy(b => Convert.ToInt32(b["CantidadTotal"])).ToList();
+        }
+        else if (sortOrder == "desc")
+        {
+            topBodegas = topBodegas.OrderByDescending(b => Convert.ToInt32(b["CantidadTotal"])).ToList();
+        }
+    }
+}
+
+<h1>Top de Bodegas con Más Artículos Almacenados</h1>
+
+<table border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+    <thead>
+        <tr>
+            <th>Código de Bodega</th>
+            <th>Nombre</th>
+            <th>
+                Cantidad Total de Artículos
+                <a href="?sortOrder=asc">▲</a>
+                <a href="?sortOrder=desc">▼</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (topBodegas.Count > 0)
+        {
+            foreach (var bodega in topBodegas)
+            {
+                <tr>
+                    <td>@bodega["Codigo_Bodega"]</td>
+                    <td>@bodega["Nombre"]</td>
+                    <td>@bodega["CantidadTotal"]</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">No se encontraron resultados.</td>
+            </tr>
+        }
+    </tbody>
+</table>
