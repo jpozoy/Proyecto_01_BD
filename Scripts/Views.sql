@@ -144,16 +144,29 @@ GO
 SELECT * FROM vw_ClientesVentasPorZona;
 
 ---Ventas y cotizaciones por mes, por año. Gráfico de barras. Sin filtro 
-CREATE VIEW vw_VentasMensualesAnuales AS
+CREATE OR ALTER VIEW vw_VentasYCotizacionesMensualesAnuales AS
 SELECT 
-    YEAR(Fecha) AS Anio,  ---año
-    MONTH(Fecha) AS Mes,  ---mes
-    SUM(Monto) AS TotalVentas ---sumar monto como total de ventas
-FROM Factura ---de Factura
-GROUP BY YEAR(Fecha), MONTH(Fecha); 
+    YEAR(Fecha) AS Anio,
+    MONTH(Fecha) AS Mes,
+    SUM(Monto) AS TotalVentas,
+    NULL AS TotalCotizaciones -- Ventas de la tabla Factura
+FROM Factura
+GROUP BY YEAR(Fecha), MONTH(Fecha)
+
+UNION ALL
+
+SELECT 
+    YEAR(Fecha_Cierre) AS Anio,
+    MONTH(Fecha_Cierre) AS Mes,
+    NULL AS TotalVentas,
+    SUM(Monto_Total) AS TotalCotizaciones -- Cotizaciones de la tabla Cotizacion con fecha de cierre
+FROM Cotizacion
+WHERE Estado IN ('aprobada', 'denegada','abierta')
+GROUP BY YEAR(Fecha_Cierre), MONTH(Fecha_Cierre);
 
 
-SELECT * FROM vw_VentasMensualesAnuales;
+select * from Cotizacion
+SELECT * FROM vw_VentasYCotizacionesMensualesAnuales;
 
 
 
