@@ -323,6 +323,60 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        /// <summary>
+        /// Obtiene los datos de la vista vw_PlanillaPorDepartamentoMes,
+        /// agrupando por departamento y sumando los montos totales.
+        /// </summary>
+        /// <returns>Lista de diccionarios con el departamento y el monto total de salarios pagados.</returns>
+        public List<Dictionary<string, object>> PlanillaPorDepartamentoMes()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                // Abrir la conexión a la base de datos
+                conexion.Abrir();
+
+                // Consulta para obtener los datos de la vista
+                string query = @"
+                    SELECT 
+                        Departamento, 
+                        SUM(MontoTotal) AS MontoTotal
+                    FROM vw_PlanillaPorDepartamentoMes
+                    GROUP BY Departamento";
+
+                // Ejecutar la consulta
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Leer los resultados
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Departamento", reader["Departamento"] },
+                                { "MontoTotal", reader["MontoTotal"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores y registrar el mensaje de error
+                throw new Exception("Error al obtener datos de la planilla por departamento: " + ex.Message);
+            }
+            finally
+            {
+                // Cerrar la conexión a la base de datos
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
     }
 
 }
