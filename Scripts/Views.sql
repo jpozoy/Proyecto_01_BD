@@ -193,6 +193,33 @@ GROUP BY YEAR(Fecha), MONTH(Fecha);
 
 select * from vw_MontoPagadoPorPlanillaMesAnio
 
+/**
+ * @summary Vista para obtener el top de bodegas con más artículos almacenados.
+ * @description Esta vista calcula la cantidad total de artículos almacenados en cada bodega
+ *              y ordena las bodegas en orden descendente según la cantidad.
+ * @returns Bodega (Código de bodega), Nombre (Nombre de la bodega), CantidadTotal (Total de artículos).
+ */
+/**
+ * @summary Vista para obtener el top de bodegas con más artículos almacenados.
+ * @description Esta vista calcula la cantidad total de artículos almacenados en cada bodega.
+ * @returns Bodega (Código de bodega), Nombre (Nombre de la bodega), CantidadTotal (Total de artículos).
+ */
+CREATE OR ALTER VIEW vw_TopBodegasMasArticulos AS
+SELECT 
+    b.Codigo_Bodega,
+    b.Nombre,
+    SUM(i.Cantidad) AS CantidadTotal
+FROM 
+    Inventario i
+JOIN 
+    Bodega b ON i.Codigo_Bodega = b.Codigo_Bodega
+GROUP BY 
+    b.Codigo_Bodega, b.Nombre;
+
+SELECT TOP 10 *
+FROM vw_TopBodegasMasArticulos
+ORDER BY CantidadTotal DESC;
+
 
 
 
