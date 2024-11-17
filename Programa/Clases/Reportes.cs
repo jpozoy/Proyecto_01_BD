@@ -487,6 +487,98 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        /**
+         * @summary Método para obtener el Top 10 de productos más vendidos.
+         * @description Consulta la vista `vw_TopProductosMasVendidos`.
+         * @returns Lista con los productos más vendidos y su cantidad total.
+         */
+        public List<Dictionary<string, object>> TopProductosMasVendidos()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+        
+            try
+            {
+                // Abrir la conexión
+                conexion.Abrir();
+        
+                // Consulta a la vista
+                string query = "SELECT TOP 10 Codigo_Articulo, Nombre_Articulo, Descripcion, CantidadVendida FROM vw_TopProductosMasVendidos";
+        
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Codigo_Articulo", reader["Codigo_Articulo"] },
+                                { "Nombre_Articulo", reader["Nombre_Articulo"] },
+                                { "Descripcion", reader["Descripcion"] },
+                                { "CantidadVendida", reader["CantidadVendida"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el Top 10 de productos más vendidos: " + ex.Message);
+            }
+            finally
+            {
+                // Cerrar la conexión
+                conexion.Cerrar();
+            }
+        
+            return resultados;
+        }
+
+        /**
+         * @method ProductosMasComprados
+         * @description Obtiene el Top 10 de productos más comprados desde la base de datos.
+         * @return List<Dictionary<string, object>> Una lista de diccionarios con la descripción, cantidad total y monto total de los productos.
+         */
+        public List<Dictionary<string, object>> ProductosMasComprados()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+                string query = "SELECT Descripcion, TotalCantidad, TotalMonto FROM vw_TopProductosComprados";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Descripcion", reader["Descripcion"] },
+                                { "TotalCantidad", reader["TotalCantidad"] },
+                                { "TotalMonto", reader["TotalMonto"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el Top 10 de productos más comprados: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
+
     }
 
 }
