@@ -128,4 +128,20 @@ FROM (
 ) AS TareasCombinadas
 ORDER BY Fecha_Inicio ASC;
 
+---Cantidad de clientes por zona y cantidad de ventas por zona
+CREATE VIEW vw_ClientesVentasPorZona AS
+SELECT 
+    c.Zona, ---cliente zona
+    COUNT(DISTINCT c.Cedula) AS CantidadClientes, ---Contar la cantidad de clientes
+    ISNULL(SUM(f.Monto), 0) AS MontoTotalVentas  --- Sumar el total de ventas
+FROM 
+    Cliente c
+LEFT JOIN 
+    Factura f ON c.Cedula = f.Cliente ---Factura
+GROUP BY 
+    c.Zona; ---Se agrupa por zona
+GO
+SELECT * FROM vw_ClientesVentasPorZona;
+
+
 
