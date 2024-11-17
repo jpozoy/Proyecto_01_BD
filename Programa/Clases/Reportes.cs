@@ -377,6 +377,61 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        /**
+         * Obtiene el monto total pagado por planilla agrupado por año y mes.
+         * Los datos son calculados a partir de la vista `vw_MontoPagadoPorPlanillaMesAnio`.
+         *
+         * @return Una lista de diccionarios donde cada elemento contiene:
+         *         - "Anio" (int): El año en el que se generaron las planillas.
+         *         - "Mes" (int): El número del mes (1 para enero, 2 para febrero, etc.).
+         *         - "MontoTotal" (decimal): El monto total pagado por planillas en ese mes y año.
+         * @throws Exception Si ocurre un error durante la consulta o la conexión con la base de datos.
+         */
+        public List<Dictionary<string, object>> MontoPagadoPorPlanillaMesAnio()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                // Abrir la conexión a la base de datos
+                conexion.Abrir();
+
+                // Consulta para obtener los datos de la vista
+                string query = "SELECT Anio, Mes, MontoTotal FROM vw_MontoPagadoPorPlanillaMesAnio";
+
+                // Ejecutar la consulta
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        // Leer los resultados
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Anio", reader["Anio"] },
+                                { "Mes", reader["Mes"] },
+                                { "MontoTotal", reader["MontoTotal"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores y registrar el mensaje de error
+                throw new Exception("Error al obtener datos del monto pagado por planilla: " + ex.Message);
+            }
+            finally
+            {
+                // Cerrar la conexión a la base de datos
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
     }
 
 }
