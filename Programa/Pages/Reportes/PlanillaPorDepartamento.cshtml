@@ -1,0 +1,63 @@
+@page
+@model Proyecto_01_BD.Pages.Reportes.PlanillaPorDepartamentoModel
+@using Proyecto_01_BD.Clases;
+@{
+    Reportes reportes = new Reportes();
+
+    // Obtener datos para el gráfico circular desde el método en Reportes.cs
+    var datosGrafico = reportes.PlanillaPorDepartamentoMes();
+
+    // Extraer departamentos y montos
+    var departamentos = datosGrafico.Select(d => d["Departamento"].ToString()).ToArray();
+    var montos = datosGrafico.Select(d => Convert.ToDecimal(d["MontoTotal"])).ToArray();
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planilla por Departamento</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Planilla por Departamento y Mes</h1>
+    <canvas id="graficoPlanilla" width="400" height="400"></canvas>
+    <script>
+        // Datos para el gráfico
+        var departamentos = @Html.Raw(Json.Serialize(departamentos));
+        var montos = @Html.Raw(Json.Serialize(montos));
+
+        var ctx = document.getElementById('graficoPlanilla').getContext('2d');
+        var graficoPlanilla = new Chart(ctx, {
+            type: 'pie', // Gráfico circular
+            data: {
+                labels: departamentos, // Nombres de departamentos
+                datasets: [{
+                    data: montos, // Montos de los salarios
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+</body>
+</html>
