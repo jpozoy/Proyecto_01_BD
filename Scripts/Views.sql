@@ -261,5 +261,24 @@ GROUP BY a.Nombre_Articulo
 SELECT TOP 10 * FROM vw_TopProductosComprados
 ORDER BY TotalCantidad DESC;
 
+/**
+ * @file vw_CantidadTareasPorUsuario.sql
+ * @description Vista para obtener la cantidad de tareas asignadas a cada usuario,
+ * incluyendo tareas de casos y tareas de cotizaciones.
+ */
 
+CREATE OR ALTER VIEW vw_CantidadTareasPorUsuario AS
+SELECT 
+    u.Cedula AS UsuarioID,
+    u.Nombre + ' ' + u.Apellido1 + ' ' + u.Apellido2 AS Usuario,
+    COUNT(tc.Codigo_Tarea) AS TotalTareasCaso,
+    COUNT(tco.Codigo_Tarea) AS TotalTareasCotizacion,
+    COUNT(tc.Codigo_Tarea) + COUNT(tco.Codigo_Tarea) AS TotalTareas
+FROM Usuario u
+LEFT JOIN Caso c ON u.Cedula = c.Vendedor
+LEFT JOIN Tareas_Caso tc ON c.Codigo_Caso = tc.Codigo_Caso
+LEFT JOIN Cotizacion co ON u.Cedula = co.Vendedor
+LEFT JOIN Tareas_Cotizacion tco ON co.Codigo_Cotizacion = tco.Codigo_Cotizacion
+GROUP BY u.Cedula, u.Nombre, u.Apellido1, u.Apellido2;
 
+SELECT * FROM vw_CantidadTareasPorUsuario;
