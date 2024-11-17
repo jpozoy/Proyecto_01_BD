@@ -243,6 +243,23 @@ SELECT TOP 10 *
 FROM vw_TopProductosMasVendidos
 ORDER BY CantidadVendida DESC;
 
+/**
+ * @file vw_TopProductosComprados.sql
+ * @description Vista para obtener el Top 10 de productos más comprados, basado en la cantidad total de artículos y el monto total.
+ * La vista utiliza datos de las tablas Entrada_Articulo y Articulo.
+ */
+
+CREATE OR ALTER VIEW vw_TopProductosComprados AS
+SELECT TOP 10
+    a.Nombre_Articulo AS Descripcion,
+    SUM(ea.Cantidad) AS TotalCantidad,
+    SUM(ea.Cantidad * a.Precio_Estandar) AS TotalMonto
+FROM Entrada_Articulo ea
+JOIN Articulo a ON ea.Codigo_Articulo = a.Codigo_Articulo
+GROUP BY a.Nombre_Articulo
+
+SELECT TOP 10 * FROM vw_TopProductosComprados
+ORDER BY TotalCantidad DESC;
 
 
 
