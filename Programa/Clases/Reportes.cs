@@ -268,43 +268,44 @@ namespace Proyecto_01_BD.Clases
 
         
         /// <summary>
-        /// Obtiene el total de ventas agrupadas por mes y año desde la vista `vw_VentasMensualesAnuales`.
-        /// Los resultados se ordenan por año y mes en orden ascendente.
+        /// Obtiene los datos de ventas y cotizaciones agrupados por mes y año desde la vista `vw_VentasYCotizacionesMensualesAnuales`.
         /// </summary>
         /// <returns>
-        /// Una lista de diccionarios donde cada diccionario representa un registro con las claves:
-        /// - "Anio": El año correspondiente a las ventas.
-        /// - "Mes": El mes correspondiente a las ventas.
-        /// - "TotalVentas": La suma total de ventas para ese mes y año.
+        /// Una lista de diccionarios, donde cada registro contiene:
+        /// - "Anio": El año.
+        /// - "Mes": El mes.
+        /// - "TotalVentas": El monto total de ventas (puede ser null).
+        /// - "TotalCotizaciones": El monto total de cotizaciones (puede ser null).
         /// </returns>
         /// <exception cref="Exception">
-        /// Se lanza una excepción si ocurre un error al obtener los datos desde la base de datos.
+        /// Lanza una excepción si ocurre un error al consultar la base de datos.
         /// </exception>
-        public List<Dictionary<string, object>> ObtenerVentasPorMesAnio()
+        public List<Dictionary<string, object>> ObtenerVentasYCotizacionesMensualesAnuales()
         {
             List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
-
+        
             try
             {
                 // Abre la conexión a la base de datos.
                 conexion.Abrir();
-
-                // Consulta SQL para obtener los datos ordenados.
-                string query = "SELECT * FROM vw_VentasMensualesAnuales ORDER BY Anio, Mes";
-
+        
+                // Consulta la vista.
+                string query = "SELECT * FROM vw_VentasYCotizacionesMensualesAnuales ORDER BY Anio, Mes";
+        
                 using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        // Lee los resultados y los agrega a la lista.
+                        // Lee los datos y los agrega a la lista.
                         while (reader.Read())
                         {
                             Dictionary<string, object> resultado = new Dictionary<string, object>
-                    {
-                        { "Anio", reader["Anio"] },
-                        { "Mes", reader["Mes"] },
-                        { "TotalVentas", reader["TotalVentas"] }
-                    };
+                            {
+                                { "Anio", reader["Anio"] },
+                                { "Mes", reader["Mes"] },
+                                { "TotalVentas", reader["TotalVentas"] != DBNull.Value ? (decimal?)reader["TotalVentas"] : null },
+                                { "TotalCotizaciones", reader["TotalCotizaciones"] != DBNull.Value ? (decimal?)reader["TotalCotizaciones"] : null }
+                            };
                             resultados.Add(resultado);
                         }
                     }
@@ -312,17 +313,16 @@ namespace Proyecto_01_BD.Clases
             }
             catch (Exception ex)
             {
-                // Lanza una excepción con un mensaje detallado en caso de error.
-                throw new Exception("Error al obtener ventas por mes y año: " + ex.Message);
+                throw new Exception("Error al obtener ventas y cotizaciones mensuales y anuales: " + ex.Message);
             }
             finally
             {
-                // Cierra la conexión a la base de datos.
                 conexion.Cerrar();
             }
-
+        
             return resultados;
         }
+
     }
 
 }
