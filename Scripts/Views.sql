@@ -182,6 +182,17 @@ GROUP BY p.Codigo_Planilla, MONTH(p.Fecha), YEAR(p.Fecha), pu.Departamento;
 
 select * from vw_PlanillaPorDepartamentoMes
 
+--- Monto pagado por planilla por mes y por año
+CREATE OR ALTER VIEW vw_MontoPagadoPorPlanillaMesAnio AS
+SELECT 
+    YEAR(Fecha) AS Anio,
+    MONTH(Fecha) AS Mes,
+    SUM(Monto) AS MontoTotal
+FROM Planilla
+GROUP BY YEAR(Fecha), MONTH(Fecha);
+
+select * from vw_MontoPagadoPorPlanillaMesAnio
+
 
 
 
