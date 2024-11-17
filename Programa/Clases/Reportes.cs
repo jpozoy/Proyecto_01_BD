@@ -432,6 +432,61 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        /**
+         * @summary Método para obtener el top de bodegas con más artículos almacenados.
+         * @description Consulta la vista `vw_TopBodegasMasArticulos` y permite ordenar los resultados.
+         * @param sortOrder Define el orden: ascendente ("asc") o descendente ("desc").
+         * @returns List<Dictionary<string, object>> - Lista con el código, nombre de la bodega y cantidad total de artículos.
+         */
+        public List<Dictionary<string, object>> TopBodegasMasArticulos(string sortOrder = "desc")
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+        
+            try
+            {
+                conexion.Abrir();
+        
+                string query = "SELECT TOP 10 Codigo_Bodega, Nombre, CantidadTotal FROM vw_TopBodegasMasArticulos ";
+        
+                // Agregar ordenación dinámica
+                if (sortOrder == "asc")
+                {
+                    query += "ORDER BY CantidadTotal ASC";
+                }
+                else
+                {
+                    query += "ORDER BY CantidadTotal DESC";
+                }
+        
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                    {
+                        { "Codigo_Bodega", reader["Codigo_Bodega"] },
+                        { "Nombre", reader["Nombre"] },
+                        { "CantidadTotal", reader["CantidadTotal"] }
+                    };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el top de bodegas: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+        
+            return resultados;
+        }
+
     }
 
 }
