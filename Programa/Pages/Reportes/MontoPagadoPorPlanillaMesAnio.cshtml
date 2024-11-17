@@ -1,0 +1,59 @@
+@page
+@model Proyecto_01_BD.Pages.Reportes.MontoPlanillaModel
+@using Proyecto_01_BD.Clases;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    Reportes reportes = new Reportes();
+    var datos = reportes.MontoPagadoPorPlanillaMesAnio();
+
+    // Extraer datos para el gráfico
+    var aniosMeses = datos.Select(d => $"{d["Anio"]}-{d["Mes"]:00}").ToArray();
+    var montos = datos.Select(d => Convert.ToDecimal(d["MontoTotal"])).ToArray();
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monto Pagado por Planilla</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Monto Pagado por Planilla</h1>
+
+    <!-- Contenedor del gráfico -->
+    <canvas id="planillaChart" width="400" height="200"></canvas>
+
+    <script>
+        // Obtener los datos desde Razor
+        var aniosMeses = @Html.Raw(Json.Serialize(aniosMeses));
+        var montos = @Html.Raw(Json.Serialize(montos));
+
+        // Configurar y renderizar el gráfico
+        var ctx = document.getElementById('planillaChart').getContext('2d');
+        var planillaChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: aniosMeses,
+                datasets: [{
+                    label: 'Monto Pagado (por mes y año)',
+                    data: montos,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
