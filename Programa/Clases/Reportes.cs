@@ -623,6 +623,49 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        /**
+         * @method VentasPorSectorDepartamento
+         * @description Obtiene las ventas agrupadas por sector y departamento.
+         * @return List<Dictionary<string, object>> Lista de ventas por sector y departamento.
+         */
+        public List<Dictionary<string, object>> VentasPorSectorDepartamento()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+                string query = "SELECT Sector, Departamento, TotalVentas FROM vw_VentasPorSectorDepartamento";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Sector", reader["Sector"] },
+                                { "Departamento", reader["Departamento"] },
+                                { "TotalVentas", reader["TotalVentas"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las ventas por sector y departamento: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
     }
 
 }
