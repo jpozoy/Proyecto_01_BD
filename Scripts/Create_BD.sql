@@ -723,3 +723,42 @@ BEGIN
 		foreign key (Codigo_Caso) references Caso(Codigo_Caso)
     );
 END
+GO
+
+
+--Reporte de movientos entre bodegas
+CREATE OR ALTER FUNCTION FiltrarMovimientosPorBodega(
+    @TipoMovimiento NVARCHAR(10) = NULL, -- 'Entrada' o 'Salida'
+    @FechaInicio DATE = NULL,
+    @FechaFin DATE = NULL
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT 
+        b.Nombre AS Bodega,
+        b.Ubicacion,
+        COUNT(CASE WHEN @TipoMovimiento = 'Entrada' THEN ei.Codigo_Movimiento END) AS TotalEntradas,
+        COUNT(CASE WHEN @TipoMovimiento = 'Salida' THEN f.Numero_Factura END) AS TotalSalidas,
+        COUNT(DISTINCT ei.Codigo_Movimiento) + COUNT(DISTINCT f.Numero_Factura) AS TotalMovimientos
+    FROM 
+        Bodega b
+    LEFT JOIN 
+        Entrada_Inventario ei ON b.Codigo_Bodega = ei.Bodega_Destino 
+        AND (@FechaInicio IS NULL OR ei.Fecha_Hora >= @FechaInicio)
+        AND (@FechaFin IS NULL OR ei.Fecha_Hora <= @FechaFin)
+    LEFT JOIN 
+        Factura f ON b.Codigo_Bodega = f.Cedula_Local 
+        AND (@FechaInicio IS NULL OR f.Fecha >= @FechaInicio)
+        AND (@FechaFin IS NULL OR f.Fecha <= @FechaFin)
+    WHERE 
+        @TipoMovimiento IS NULL -- Sin filtro, incluye todos los movimientos
+        OR (@TipoMovimiento = 'Entrada' AND ei.Codigo_Movimiento IS NOT NULL)
+        OR (@TipoMovimiento = 'Salida' AND f.Numero_Factura IS NOT NULL)
+    GROUP BY 
+        b.Nombre, b.Ubicacion
+    HAVING 
+        COUNT(DISTINCT ei.Codigo_Movimiento) > 0 OR COUNT(DISTINCT f.Numero_Factura) > 0
+);
+GO

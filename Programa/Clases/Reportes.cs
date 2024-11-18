@@ -173,8 +173,80 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        public List<Dictionary<string, object>> TopBodegasTransadas()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+            //Conectarse a la base de datos
+            conexion.Abrir();
+            //Llamar al procedimiento almacenado
+            string query = "select Codigo_Bodega, Nombre_Bodega, Total_Transacciones from Top_Bodegas_Movimientos";
+
+            using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Dictionary<string, object> resultado = new Dictionary<string, object>();
+                        resultado["Codigo_Bodega"] = reader["Codigo_Bodega"];
+                        resultado["Nombre_Bodega"] = reader["Nombre_Bodega"];
+                        resultado["Total_Transacciones"] = reader["Total_Transacciones"];
+                        resultados.Add(resultado);
+                    }
+                }
+            }
+            return resultados;
+
+        }
+        // Obtener ventas y cotizaciones por departamentos
+        public List<Dictionary<string, object>> FiltrarMovimientosBodegas(int? mes, int? anio, DateTime? fechaInicio, DateTime? fechaFin, string tipoMovimiento = null)
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+
+                string query = @"SELECT NombreBodega, TotalEntradas, TotalSalidas, TotalMovimientos FROM dbo.FiltrarMovimientosPorBodega(@Mes, @Anio, @FechaInicio, @FechaFin, @TipoMovimiento)";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    command.Parameters.AddWithValue("@Mes", mes.HasValue ? (object)mes.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@Anio", anio.HasValue ? (object)anio.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaInicio", fechaInicio.HasValue ? (object)fechaInicio.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaFin", fechaFin.HasValue ? (object)fechaFin.Value : DBNull.Value);
+                    command.Parameters.AddWithValue("@TipoMovimiento", string.IsNullOrEmpty(tipoMovimiento) ? DBNull.Value : (object)tipoMovimiento);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                    {
+                        { "NombreBodega", reader["NombreBodega"] },
+                        { "TotalEntradas", reader["TotalEntradas"] },
+                        { "TotalSalidas", reader["TotalSalidas"] },
+                        { "TotalMovimientos", reader["TotalMovimientos"] }
+                    };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al filtrar movimientos por bodega: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
         //Obtiene las 15 tareas mas antiguas sin cerrar
-         public List<Dictionary<string, object>> ObtenerTareasMasAntiguas()
+        public List<Dictionary<string, object>> ObtenerTareasMasAntiguas()
         {
             List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
 

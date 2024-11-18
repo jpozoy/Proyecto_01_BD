@@ -1,0 +1,95 @@
+﻿@page
+@using Proyecto_01_BD.Clases;
+
+@{
+    Reportes reportes = new Reportes();
+
+    // Leer valores enviados por el formulario
+    int? mesSeleccionado = string.IsNullOrEmpty(Request.Query["mes"]) ? (int?)null : int.Parse(Request.Query["mes"]);
+    int? anioSeleccionado = string.IsNullOrEmpty(Request.Query["anio"]) ? (int?)null : int.Parse(Request.Query["anio"]);
+    DateTime? fechaInicio = string.IsNullOrEmpty(Request.Query["fechaInicio"]) ? (DateTime?)null : DateTime.Parse(Request.Query["fechaInicio"]);
+    DateTime? fechaFin = string.IsNullOrEmpty(Request.Query["fechaFin"]) ? (DateTime?)null : DateTime.Parse(Request.Query["fechaFin"]);
+    string tipoMovimiento = Request.Query["tipoMovimiento"];
+
+    // Llamar al método con los filtros
+    var resultado = reportes.FiltrarMovimientosBodegas(mesSeleccionado, anioSeleccionado, fechaInicio, fechaFin, tipoMovimiento);
+}
+
+<h3>Reporte de Movimientos por Bodega</h3>
+
+<!-- Formulario para los filtros -->
+<form method="get">
+    <label for="mes">Mes:</label>
+    <select id="mes" name="mes">
+        <option value="">Seleccionar</option>
+        @for (int i = 1; i <= 12; i++)
+        {
+            <option value="@i">@i</option>
+        }
+    </select>
+
+    <label for="anio">Año:</label>
+    <input type="number" id="anio" name="anio" value="@(Request.Query["anio"])" min="2000" max="2100" />
+
+    <label for="fechaInicio">Fecha Inicio:</label>
+    <input type="date" id="fechaInicio" name="fechaInicio" value="@(Request.Query["fechaInicio"])" />
+
+    <label for="fechaFin">Fecha Fin:</label>
+    <input type="date" id="fechaFin" name="fechaFin" value="@(Request.Query["fechaFin"])" />
+
+    <label for="tipoMovimiento">Tipo Movimiento:</label>
+    <button type="submit">Aplicar Filtros</button>
+</form>
+
+<!-- Contenedor para el gráfico -->
+<div style="height: 400px">
+    <canvas id="graficoPie"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Datos del gráfico generados desde el servidor
+    const datos = {
+        labels: @Html.Raw(Json.Serialize(resultado.Select(r => r["NombreBodega"]))), // Eje X (Bodegas)
+        datasets: [
+            {
+                label: 'Movimientos',
+                data: @Html.Raw(Json.Serialize(resultado.Select(r => Convert.ToDecimal(r["TotalEntradas"]) + Convert.ToDecimal(r["TotalSalidas"])))), // Suma de Entradas y Salidas
+                backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#FF9F40'], // Colores para el gráfico
+                hoverOffset: 4
+            }
+        ]
+    };
+
+    // Configuración del gráfico de tipo Pie
+    const config = {
+        type: 'pie',
+        data: datos,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            return `${tooltipItem.label}: ${tooltipItem.raw}`;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    // Renderizar el gráfico
+    const ctx = document.getElementById('graficoPie').getContext('2d');
+    const graficoPie = new Chart(ctx, config);
+</script>
+
+<style>
+    #graficoPie {
+        width: 100%;
+        height: 400px;
+    }
+</style>

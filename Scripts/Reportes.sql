@@ -116,46 +116,102 @@ SELECT *
 FROM dbo.FiltrarVentasPorFamilia(1, 2024, NULL, NULL);
 GO
 
--- Consulta para reportes de ventas y cotizaciones por departamento
-CREATE OR ALTER FUNCTION FiltrarVentasYCotizacionesPorDepartamento(
+CREATE OR ALTER FUNCTION FiltrarMovimientosPorBodega(
     @Mes INT = NULL,
     @Anio INT = NULL,
     @FechaInicio DATE = NULL,
-    @FechaFin DATE = NULL
+    @FechaFin DATE = NULL,
+    @TipoMovimiento NVARCHAR(10) = NULL -- Valores posibles: 'Entrada', 'Salida', NULL para ambos
 )
 RETURNS TABLE
 AS
 RETURN
 (
     SELECT 
-        u.Departamento,
-        COUNT(DISTINCT f.Numero_Factura) AS TotalVentas,
-        COUNT(DISTINCT c.Codigo_Cotizacion) AS TotalCotizaciones
+        b.Nombre AS NombreBodega,
+        CASE 
+            WHEN @TipoMovimiento = 'Entrada' OR @TipoMovimiento IS NULL 
+            THEN COUNT(DISTINCT ei.Codigo_Movimiento)
+            ELSE 0 
+        END AS TotalEntradas,
+        CASE 
+            WHEN @TipoMovimiento = 'Salida' OR @TipoMovimiento IS NULL 
+            THEN COUNT(DISTINCT f.Numero_Factura)
+            ELSE 0 
+        END AS TotalSalidas,
+        CASE 
+            WHEN @TipoMovimiento IS NULL 
+            THEN COUNT(DISTINCT ei.Codigo_Movimiento) + COUNT(DISTINCT f.Numero_Factura)
+            ELSE 0
+        END AS TotalMovimientos
     FROM 
-        Usuario u
+        Bodega b
     LEFT JOIN 
-        Factura f ON u.Cedula = f.Vendedor
+        Entrada_Inventario ei ON b.Codigo_Bodega = ei.Bodega_Destino
     LEFT JOIN 
-        Cotizacion c ON u.Cedula = c.Vendedor
+        Detalle_Factura df ON b.Codigo_Bodega = df.Codigo_Bodega
+    LEFT JOIN 
+        Factura f ON df.Numero_Factura = f.Numero_Factura
     WHERE 
-        (@Mes IS NULL OR (MONTH(f.Fecha) = @Mes OR MONTH(c.Fecha) = @Mes))
-        AND (@Anio IS NULL OR (YEAR(f.Fecha) = @Anio OR YEAR(c.Fecha) = @Anio))
-        AND (@FechaInicio IS NULL OR (f.Fecha >= @FechaInicio OR c.Fecha >= @FechaInicio))
-        AND (@FechaFin IS NULL OR (f.Fecha <= @FechaFin OR c.Fecha <= @FechaFin))
+        (@Mes IS NULL OR (MONTH(ei.Fecha_Hora) = @Mes OR MONTH(f.Fecha) = @Mes))
+        AND (@Anio IS NULL OR (YEAR(ei.Fecha_Hora) = @Anio OR YEAR(f.Fecha) = @Anio))
+        AND (@FechaInicio IS NULL OR (ei.Fecha_Hora >= @FechaInicio OR f.Fecha >= @FechaInicio))
+        AND (@FechaFin IS NULL OR (ei.Fecha_Hora <= @FechaFin OR f.Fecha <= @FechaFin))
     GROUP BY 
-        u.Departamento
+        b.Nombre
     HAVING 
-        COUNT(DISTINCT f.Numero_Factura) > 0 OR COUNT(DISTINCT c.Codigo_Cotizacion) > 0
+        (COUNT(DISTINCT ei.Codigo_Movimiento) > 0 OR COUNT(DISTINCT f.Numero_Factura) > 0)
 );
 GO
 
 
 SELECT * 
-FROM FiltrarVentasYCotizacionesPorDepartamento(NULL, NULL, NULL, NULL);
+FROM dbo.FiltrarMovimientosPorBodega(NULL, NULL, NULL, NULL, NULL);
+GO
 
+-- Consulta para top de articulos transados
+CREATE OR ALTER VIEW Top_Bodegas_Movimientos AS
+WITH Movimientos_Bodega AS (
+    -- Contar movimientos donde la bodega es de origen
+    SELECT 
+        Bodega_Origen AS Codigo_Bodega,
+        SUM(MA.Cantidad) AS Total_Articulos
+    FROM 
+        Movimiento_Inventario MI
+    INNER JOIN 
+        Movimiento_Articulo MA ON MI.Codigo_Movimiento = MA.Codigo_Movimiento
+    GROUP BY 
+        Bodega_Origen
 
-select * from Movimiento_Inventario
-select * from Inventario
+    UNION ALL
 
+    -- Contar movimientos donde la bodega es de destino
+    SELECT 
+        Bodega_Destino AS Codigo_Bodega,
+        SUM(MA.Cantidad) AS Total_Articulos
+    FROM 
+        Movimiento_Inventario MI
+    INNER JOIN 
+        Movimiento_Articulo MA ON MI.Codigo_Movimiento = MA.Codigo_Movimiento
+    GROUP BY 
+        Bodega_Destino
+)
+-- Sumar totales de entrada y salida para cada bodega
+SELECT 
+    B.Codigo_Bodega,
+    B.Nombre AS Nombre_Bodega,
+    SUM(Total_Articulos) AS Total_Transacciones
+FROM 
+    Movimientos_Bodega MB
+INNER JOIN 
+    Bodega B ON MB.Codigo_Bodega = B.Codigo_Bodega
+GROUP BY 
+    B.Codigo_Bodega, B.Nombre;
+GO
+
+SELECT TOP 10 *
+FROM Top_Bodegas_Movimientos
+ORDER BY Total_Transacciones DESC;
+GO
 
 
