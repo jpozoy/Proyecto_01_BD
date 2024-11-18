@@ -1,0 +1,53 @@
+@page
+@using Proyecto_01_BD.Clases;
+@{
+    Reportes reportes = new Reportes();
+    var cantidadTareasPorUsuario = reportes.CantidadTareasPorUsuario();
+}
+
+<h1>Cantidad de Tareas por Usuario</h1>
+
+<table border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+    <thead>
+        <tr>
+            <th>ID Usuario</th>
+            <th>Nombre Usuario</th>
+            <th>
+                Tareas de Casos
+                <a href="?sortOrder=casosAsc">▲</a>
+                <a href="?sortOrder=casosDesc">▼</a>
+            </th>
+            <th>
+                Tareas de Cotizaciones
+                <a href="?sortOrder=cotizacionesAsc">▲</a>
+                <a href="?sortOrder=cotizacionesDesc">▼</a>
+            </th>
+            <th>
+                Total de Tareas
+                <a href="?sortOrder=totalAsc">▲</a>
+                <a href="?sortOrder=totalDesc">▼</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (cantidadTareasPorUsuario.Count > 0)
+        {
+            foreach (var usuario in cantidadTareasPorUsuario)
+            {
+                <tr>
+                    <td>@usuario["UsuarioID"]</td>
+                    <td>@usuario["Usuario"]</td>
+                    <td>@usuario["TotalTareasCaso"]</td>
+                    <td>@usuario["TotalTareasCotizacion"]</td>
+                    <td>@usuario["TotalTareas"]</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">No se encontraron resultados.</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -432,6 +432,240 @@ namespace Proyecto_01_BD.Clases
             return resultados;
         }
 
+        /**
+         * @summary Método para obtener el top de bodegas con más artículos almacenados.
+         * @description Consulta la vista `vw_TopBodegasMasArticulos` y permite ordenar los resultados.
+         * @param sortOrder Define el orden: ascendente ("asc") o descendente ("desc").
+         * @returns List<Dictionary<string, object>> - Lista con el código, nombre de la bodega y cantidad total de artículos.
+         */
+        public List<Dictionary<string, object>> TopBodegasMasArticulos(string sortOrder = "desc")
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+        
+            try
+            {
+                conexion.Abrir();
+        
+                string query = "SELECT TOP 10 Codigo_Bodega, Nombre, CantidadTotal FROM vw_TopBodegasMasArticulos ";
+        
+                // Agregar ordenación dinámica
+                if (sortOrder == "asc")
+                {
+                    query += "ORDER BY CantidadTotal ASC";
+                }
+                else
+                {
+                    query += "ORDER BY CantidadTotal DESC";
+                }
+        
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                    {
+                        { "Codigo_Bodega", reader["Codigo_Bodega"] },
+                        { "Nombre", reader["Nombre"] },
+                        { "CantidadTotal", reader["CantidadTotal"] }
+                    };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el top de bodegas: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+        
+            return resultados;
+        }
+
+        /**
+         * @summary Método para obtener el Top 10 de productos más vendidos.
+         * @description Consulta la vista `vw_TopProductosMasVendidos`.
+         * @returns Lista con los productos más vendidos y su cantidad total.
+         */
+        public List<Dictionary<string, object>> TopProductosMasVendidos()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+        
+            try
+            {
+                // Abrir la conexión
+                conexion.Abrir();
+        
+                // Consulta a la vista
+                string query = "SELECT TOP 10 Codigo_Articulo, Nombre_Articulo, Descripcion, CantidadVendida FROM vw_TopProductosMasVendidos";
+        
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Codigo_Articulo", reader["Codigo_Articulo"] },
+                                { "Nombre_Articulo", reader["Nombre_Articulo"] },
+                                { "Descripcion", reader["Descripcion"] },
+                                { "CantidadVendida", reader["CantidadVendida"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el Top 10 de productos más vendidos: " + ex.Message);
+            }
+            finally
+            {
+                // Cerrar la conexión
+                conexion.Cerrar();
+            }
+        
+            return resultados;
+        }
+
+        /**
+         * @method ProductosMasComprados
+         * @description Obtiene el Top 10 de productos más comprados desde la base de datos.
+         * @return List<Dictionary<string, object>> Una lista de diccionarios con la descripción, cantidad total y monto total de los productos.
+         */
+        public List<Dictionary<string, object>> ProductosMasComprados()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+                string query = "SELECT Descripcion, TotalCantidad, TotalMonto FROM vw_TopProductosComprados";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Descripcion", reader["Descripcion"] },
+                                { "TotalCantidad", reader["TotalCantidad"] },
+                                { "TotalMonto", reader["TotalMonto"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el Top 10 de productos más comprados: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
+        /**
+         * @method CantidadTareasPorUsuario
+         * @description Obtiene la cantidad de tareas asignadas a cada usuario desde la base de datos.
+         * @return List<Dictionary<string, object>> Lista de usuarios con su cantidad de tareas asignadas.
+         */
+        public List<Dictionary<string, object>> CantidadTareasPorUsuario()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+                string query = "SELECT UsuarioID, Usuario, TotalTareasCaso, TotalTareasCotizacion, TotalTareas FROM vw_CantidadTareasPorUsuario";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "UsuarioID", reader["UsuarioID"] },
+                                { "Usuario", reader["Usuario"] },
+                                { "TotalTareasCaso", reader["TotalTareasCaso"] },
+                                { "TotalTareasCotizacion", reader["TotalTareasCotizacion"] },
+                                { "TotalTareas", reader["TotalTareas"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener la cantidad de tareas por usuario: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
+        /**
+         * @method VentasPorSectorDepartamento
+         * @description Obtiene las ventas agrupadas por sector y departamento.
+         * @return List<Dictionary<string, object>> Lista de ventas por sector y departamento.
+         */
+        public List<Dictionary<string, object>> VentasPorSectorDepartamento()
+        {
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+
+            try
+            {
+                conexion.Abrir();
+                string query = "SELECT Sector, Departamento, TotalVentas FROM vw_VentasPorSectorDepartamento";
+
+                using (SqlCommand command = new SqlCommand(query, conexion.conectarbd))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Dictionary<string, object> resultado = new Dictionary<string, object>
+                            {
+                                { "Sector", reader["Sector"] },
+                                { "Departamento", reader["Departamento"] },
+                                { "TotalVentas", reader["TotalVentas"] }
+                            };
+                            resultados.Add(resultado);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las ventas por sector y departamento: " + ex.Message);
+            }
+            finally
+            {
+                conexion.Cerrar();
+            }
+
+            return resultados;
+        }
+
     }
 
 }

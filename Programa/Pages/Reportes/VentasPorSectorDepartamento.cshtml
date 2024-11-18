@@ -1,0 +1,65 @@
+@page
+@using Proyecto_01_BD.Clases;
+@{
+    Reportes reportes = new Reportes();
+    var ventasPorSectorDepartamento = reportes.VentasPorSectorDepartamento();
+
+    // Convertir los datos en formato JSON para el gráfico
+    var sectores = ventasPorSectorDepartamento.Select(v => v["Sector"].ToString()).Distinct().ToList();
+    var departamentos = ventasPorSectorDepartamento.Select(v => v["Departamento"].ToString()).Distinct().ToList();
+    var datos = new List<object>();
+
+    foreach (var departamento in departamentos)
+    {
+        var valores = new List<decimal>();
+        foreach (var sector in sectores)
+        {
+            var venta = ventasPorSectorDepartamento.FirstOrDefault(v => v["Sector"].ToString() == sector && v["Departamento"].ToString() == departamento);
+            valores.Add(venta != null ? Convert.ToDecimal(venta["TotalVentas"]) : 0);
+        }
+        datos.Add(new { label = departamento, data = valores });
+    }
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas por Sector y Departamento</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Ventas por Sector y Departamento</h1>
+
+    <canvas id="ventasChart" width="400" height="200"></canvas>
+
+    <script>
+        var sectores = @Html.Raw(Json.Serialize(sectores));
+        var datos = @Html.Raw(Json.Serialize(datos));
+
+        var ctx = document.getElementById('ventasChart').getContext('2d');
+        var ventasChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sectores,
+                datasets: datos.map(d => ({
+                    label: d.label,
+                    data: d.data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }))
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

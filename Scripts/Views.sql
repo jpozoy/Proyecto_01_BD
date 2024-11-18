@@ -193,6 +193,110 @@ GROUP BY YEAR(Fecha), MONTH(Fecha);
 
 select * from vw_MontoPagadoPorPlanillaMesAnio
 
+/**
+ * @summary Vista para obtener el top de bodegas con más artículos almacenados.
+ * @description Esta vista calcula la cantidad total de artículos almacenados en cada bodega
+ *              y ordena las bodegas en orden descendente según la cantidad.
+ * @returns Bodega (Código de bodega), Nombre (Nombre de la bodega), CantidadTotal (Total de artículos).
+ */
+/**
+ * @summary Vista para obtener el top de bodegas con más artículos almacenados.
+ * @description Esta vista calcula la cantidad total de artículos almacenados en cada bodega.
+ * @returns Bodega (Código de bodega), Nombre (Nombre de la bodega), CantidadTotal (Total de artículos).
+ */
+CREATE OR ALTER VIEW vw_TopBodegasMasArticulos AS
+SELECT 
+    b.Codigo_Bodega,
+    b.Nombre,
+    SUM(i.Cantidad) AS CantidadTotal
+FROM 
+    Inventario i
+JOIN 
+    Bodega b ON i.Codigo_Bodega = b.Codigo_Bodega
+GROUP BY 
+    b.Codigo_Bodega, b.Nombre;
 
+SELECT TOP 10 *
+FROM vw_TopBodegasMasArticulos
+ORDER BY CantidadTotal DESC;
+
+
+/**
+ * @summary Vista para obtener el Top 10 de productos más vendidos.
+ * @description Calcula el total de productos vendidos agrupados por artículo.
+ * @returns Código de artículo, nombre, descripción y cantidad total vendida.
+ */
+CREATE OR ALTER VIEW vw_TopProductosMasVendidos AS
+SELECT 
+    a.Codigo_Articulo,
+    a.Nombre_Articulo,
+    a.Descripcion,
+    SUM(df.Cantidad) AS CantidadVendida
+FROM 
+    Detalle_Factura df
+JOIN 
+    Articulo a ON df.Articulo = a.Codigo_Articulo
+GROUP BY 
+    a.Codigo_Articulo, a.Nombre_Articulo, a.Descripcion
+
+SELECT TOP 10 * 
+FROM vw_TopProductosMasVendidos
+ORDER BY CantidadVendida DESC;
+
+/**
+ * @file vw_TopProductosComprados.sql
+ * @description Vista para obtener el Top 10 de productos más comprados, basado en la cantidad total de artículos y el monto total.
+ * La vista utiliza datos de las tablas Entrada_Articulo y Articulo.
+ */
+
+CREATE OR ALTER VIEW vw_TopProductosComprados AS
+SELECT TOP 10
+    a.Nombre_Articulo AS Descripcion,
+    SUM(ea.Cantidad) AS TotalCantidad,
+    SUM(ea.Cantidad * a.Precio_Estandar) AS TotalMonto
+FROM Entrada_Articulo ea
+JOIN Articulo a ON ea.Codigo_Articulo = a.Codigo_Articulo
+GROUP BY a.Nombre_Articulo
+
+SELECT TOP 10 * FROM vw_TopProductosComprados
+ORDER BY TotalCantidad DESC;
+
+/**
+ * @file vw_CantidadTareasPorUsuario.sql
+ * @description Vista para obtener la cantidad de tareas asignadas a cada usuario,
+ * incluyendo tareas de casos y tareas de cotizaciones.
+ */
+
+CREATE OR ALTER VIEW vw_CantidadTareasPorUsuario AS
+SELECT 
+    u.Cedula AS UsuarioID,
+    u.Nombre + ' ' + u.Apellido1 + ' ' + u.Apellido2 AS Usuario,
+    COUNT(tc.Codigo_Tarea) AS TotalTareasCaso,
+    COUNT(tco.Codigo_Tarea) AS TotalTareasCotizacion,
+    COUNT(tc.Codigo_Tarea) + COUNT(tco.Codigo_Tarea) AS TotalTareas
+FROM Usuario u
+LEFT JOIN Caso c ON u.Cedula = c.Vendedor
+LEFT JOIN Tareas_Caso tc ON c.Codigo_Caso = tc.Codigo_Caso
+LEFT JOIN Cotizacion co ON u.Cedula = co.Vendedor
+LEFT JOIN Tareas_Cotizacion tco ON co.Codigo_Cotizacion = tco.Codigo_Cotizacion
+GROUP BY u.Cedula, u.Nombre, u.Apellido1, u.Apellido2;
+
+SELECT * FROM vw_CantidadTareasPorUsuario;
+
+/**
+ * @file vw_VentasPorSectorDepartamento.sql
+ * @description Vista para obtener las ventas agrupadas por sector y departamento.
+ */
+
+CREATE OR ALTER VIEW vw_VentasPorSectorDepartamento AS
+SELECT 
+    c.Sector AS Sector,
+    u.Departamento AS Departamento,
+    SUM(f.Monto) AS TotalVentas
+FROM Factura f
+INNER JOIN Cliente c ON f.Cliente = c.Cedula
+INNER JOIN Usuario u ON f.Vendedor = u.Cedula
+GROUP BY c.Sector, u.Departamento;
+SELECT * FROM vw_VentasPorSectorDepartamento;
 
 

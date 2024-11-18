@@ -1,0 +1,45 @@
+@page
+@using Proyecto_01_BD.Clases;
+@{
+    Reportes reportes = new Reportes();
+    var productosMasComprados = reportes.ProductosMasComprados();
+}
+
+<h1>Top 10 de Productos Más Comprados</h1>
+
+<table border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+    <thead>
+        <tr>
+            <th>Descripción</th>
+            <th>
+                Total Cantidad
+                <a href="?sortOrder=cantidadAsc">▲</a>
+                <a href="?sortOrder=cantidadDesc">▼</a>
+            </th>
+            <th>
+                Total Monto
+                <a href="?sortOrder=montoAsc">▲</a>
+                <a href="?sortOrder=montoDesc">▼</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (productosMasComprados.Count > 0)
+        {
+            foreach (var producto in productosMasComprados)
+            {
+                <tr>
+                    <td>@producto["Descripcion"]</td>
+                    <td>@producto["TotalCantidad"]</td>
+                    <td>@producto["TotalMonto"]</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">No se encontraron resultados.</td>
+            </tr>
+        }
+    </tbody>
+</table>
