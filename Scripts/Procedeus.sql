@@ -312,8 +312,63 @@ BEGIN
 END;
 GO
 
-
 -- [ Procedimientos de Entradas, Movimientos, Salidas de Inventario ]
+
+CREATE OR ALTER PROCEDURE Entrada_Bodega 
+    @Codigo_Movimiento varchar(12),
+    @Codigo_Articulo varchar(12),
+    @Cantidad int
+AS
+BEGIN
+    BEGIN TRY
+        -- Declarar variable para la bodega destino
+        DECLARE @Bodega_Destino varchar(12);
+
+        -- Obtener el código de la bodega destino desde Entrada_Inventario
+        SELECT @Bodega_Destino = Bodega_Destino
+        FROM Entrada_Inventario
+        WHERE Codigo_Movimiento = @Codigo_Movimiento;
+
+        -- Validar que la bodega destino exista
+        IF @Bodega_Destino IS NULL
+        BEGIN
+            THROW 50000, 'No se encontró la bodega destino para el código de movimiento proporcionado.', 1;
+        END
+
+        -- Intentar actualizar la cantidad del artículo en el inventario
+        UPDATE Inventario
+        SET Cantidad = Cantidad + @Cantidad
+        WHERE Codigo_Bodega = @Bodega_Destino AND Codigo_Articulo = @Codigo_Articulo;
+
+        -- Si no existe el artículo en la bodega destino, agregarlo
+        IF @@ROWCOUNT = 0
+        BEGIN
+            INSERT INTO Inventario (Codigo_Bodega, Codigo_Articulo, Cantidad)
+            VALUES (@Bodega_Destino, @Codigo_Articulo, @Cantidad);
+        END
+
+        -- Insertar el registro del movimiento en la tabla Movimiento_Articulo
+        INSERT INTO Movimiento_Articulo (Codigo_Movimiento, Codigo_Articulo, Cantidad)
+        VALUES (@Codigo_Movimiento, @Codigo_Articulo, @Cantidad);
+
+    END TRY
+    BEGIN CATCH
+        -- Manejo de errores
+        SELECT 
+            ERROR_NUMBER() AS ErrorNumero,
+            ERROR_MESSAGE() AS ErrorMensaje,
+            ERROR_SEVERITY() AS Severidad,
+            ERROR_STATE() AS Estado,
+            ERROR_LINE() AS Linea,
+            ERROR_PROCEDURE() AS Procedimiento;
+    END CATCH
+END;
+GO
+
+select * from Entrada_Articulo
+go
+
+-- Movimiento entre bodegas
 CREATE OR ALTER PROCEDURE Movimiento_Entre_Bodegas
     @Codigo_Movimiento varchar(12),
     @Codigo_Articulo varchar(12),
@@ -382,10 +437,84 @@ BEGIN
     END CATCH
 END;
 GO
+
 Insert into Movimiento_Inventario(Codigo_Movimiento, Bodega_Origen, Bodega_Destino, Usuario, Fecha_Hora)
 VALUES ('Mov01', 'B005', 'B001', '00112233466', GETDATE())
 
 Exec Movimiento_Entre_Bodegas 'Mov01', 'A026', 2
+
+-- Salidas de inventario
+CREATE OR ALTER PROCEDURE AgregarArticuloAFactura
+    @Numero_Factura varchar(12),
+    @Articulo varchar(12),
+    @Cantidad int,
+    @Codigo_Bodega varchar(12)
+AS
+BEGIN
+    BEGIN TRY
+        -- Declaración de variables
+        DECLARE @PrecioUnitario decimal(18,2);
+        DECLARE @MontoTotalArticulo decimal(18,2);
+        DECLARE @CantidadDisponible int;
+
+        -- Verificar que el artículo exista en la bodega con suficiente inventario
+        SELECT @CantidadDisponible = Cantidad
+        FROM Inventario
+        WHERE Codigo_Bodega = @Codigo_Bodega AND Codigo_Articulo = @Articulo;
+
+        IF @CantidadDisponible IS NULL
+        BEGIN
+            THROW 50000, 'El artículo no existe en la bodega especificada.', 1;
+        END
+
+        IF @CantidadDisponible < @Cantidad
+        BEGIN
+            THROW 50001, 'No hay suficiente inventario del artículo en la bodega.', 1;
+        END
+
+        -- Obtener el precio unitario del artículo
+        SELECT @PrecioUnitario = Precio_Estandar
+        FROM Articulo
+        WHERE Codigo_Articulo = @Articulo;
+
+        IF @PrecioUnitario IS NULL
+        BEGIN
+            THROW 50002, 'El artículo especificado no tiene un precio establecido.', 1;
+        END
+
+        -- Calcular el monto total del artículo
+        SET @MontoTotalArticulo = @PrecioUnitario * @Cantidad;
+
+        -- Insertar el detalle de la factura
+        INSERT INTO Detalle_Factura (Numero_Factura, Articulo, Cantidad, Codigo_Bodega)
+        VALUES (@Numero_Factura, @Articulo, @Cantidad, @Codigo_Bodega);
+
+        -- Actualizar el monto total de la factura
+        UPDATE Factura
+        SET Monto = ISNULL(Monto, 0) + @MontoTotalArticulo
+        WHERE Numero_Factura = @Numero_Factura;
+
+        -- Reducir la cantidad del inventario en la bodega correspondiente
+        UPDATE Inventario
+        SET Cantidad = Cantidad - @Cantidad
+        WHERE Codigo_Bodega = @Codigo_Bodega AND Codigo_Articulo = @Articulo;
+
+    END TRY
+    BEGIN CATCH
+        -- Manejo de errores
+        SELECT 
+            ERROR_NUMBER() AS ErrorNumero,
+            ERROR_MESSAGE() AS ErrorMensaje,
+            ERROR_SEVERITY() AS Severidad,
+            ERROR_STATE() AS Estado,
+            ERROR_LINE() AS Linea,
+            ERROR_PROCEDURE() AS Procedimiento;
+    END CATCH
+END;
+GO
+
+
+
 
 select * from Movimiento_Inventario
 select * from Movimiento_Articulo
